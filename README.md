@@ -1,2 +1,2 @@
 # Eventree
-Our project for Software Development-III(CSE 3100)
+A comprehensive, one-stop platform connecting clients with event service vendors.
