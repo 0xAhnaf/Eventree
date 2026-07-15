@@ -1,0 +1,26 @@
+.client-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  font-family: sans-serif;
+}
+
+.client-card {
+  padding: 3rem;
+  border-radius: 16px;
+  background-color: #eff6ff; /* soft blue */
+  border: 2px solid #3b82f6;
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1);
+  max-width: 500px;
+  text-align: center;
+}
+
+.badge {
+  background-color: #3b82f6;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}

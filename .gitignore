@@ -1,0 +1,12 @@
+# =========================================================================
+# Frontend Specific (React / Vite / Node)
+# =========================================================================
+# Ignore the dependencies folder
+frontend/node_modules/
+
+# Ignore production build outputs
+frontend/dist/
+frontend/build/
+
+# Ignore local environment variable files (where secrets are kept)
+frontend/.env
