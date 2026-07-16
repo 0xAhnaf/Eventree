@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import logo from "../assets/eventree-logo2.png";
+import { Link } from "react-router-dom";
 import "./Navbar.css"; 
 
 function Navbar() {
@@ -44,7 +45,7 @@ function Navbar() {
           </a>
 
 
-          <a href="#" className="navbar-nav-link">
+          <a href="/client" className="navbar-nav-link">
             Browse Vendors
           </a>
 
