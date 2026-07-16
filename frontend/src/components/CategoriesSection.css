@@ -1,0 +1,133 @@
+/* Section Container */
+.categories-section {
+  background-color: #fffaf5; 
+  padding: 5rem 1.5rem; 
+}
+
+.categories-container {
+  margin: 0 auto; 
+  max-width: 80rem; 
+}
+
+/* Heading Section */
+.categories-header {
+  margin-bottom: 3.5rem; 
+  text-align: center; 
+}
+
+.categories-subtitle {
+  font-size: 0.875rem; 
+  text-transform: uppercase; 
+  letter-spacing: 0.3em; 
+  color: #b0873c; 
+  margin: 0;
+}
+
+.categories-title {
+  margin-top: 0.75rem; 
+  font-family: serif; 
+  font-size: 1.875rem; 
+  font-weight: 700; 
+  color: #003d2c; 
+  margin-bottom: 0;
+}
+
+.categories-description {
+  margin: 1.25rem auto 0; 
+  max-width: 42rem; 
+  line-height: 1.75rem; 
+  color: #4b5563; 
+}
+
+/* Grid Layout */
+.categories-grid {
+  display: grid;
+  gap: 1.5rem; 
+  grid-template-columns: 1fr; 
+}
+
+
+.category-card {
+  display: flex;                 
+  flex-direction: column;       
+  height: 100%;                  
+  border-radius: 1rem; 
+  border: 1px solid #eee3d7; 
+  background-color: #ffffff; 
+  padding: 1.5rem; 
+  text-align: center; 
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
+}
+
+.category-card:hover {
+  transform: translateY(-0.5rem); 
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
+}
+
+/* Icon Wrapper inside Card */
+.category-icon {
+  margin: 0 auto 1.25rem; 
+  display: flex;
+  height: 4rem; 
+  width: 4rem; 
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px; 
+  background-color: #e7f0eb; 
+  font-size: 1.875rem; 
+  transition: background-color 0.3s ease;
+}
+
+/* Group Hover Effect */
+.category-card:hover .category-icon {
+  background-color: #003d2c; 
+}
+
+/* Card Content */
+.category-card-title {
+  font-family: serif; 
+  font-size: 1.25rem; 
+  font-weight: 700; 
+  color: #003d2c; 
+  margin: 0;
+}
+
+.category-card-desc {
+  margin-top: 0.75rem; 
+  font-size: 0.875rem; 
+  line-height: 1.5rem; 
+  color: #4b5563; 
+}
+
+/* Explore Button - FIXED ALIGNMENT */
+.category-btn {
+  margin-top: auto;              
+  padding-top: 1.25rem;          
+  font-size: 0.875rem; 
+  font-weight: 600; 
+  color: #b0873c; 
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* --- Media Queries --- */
+
+@media (min-width: 640px) {
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr); 
+  }
+}
+
+@media (min-width: 768px) {
+  .categories-title {
+    font-size: 3rem; 
+  }
+}
+
+@media (min-width: 1024px) {
+  .categories-grid {
+    grid-template-columns: repeat(5, 1fr); 
+  }
+}

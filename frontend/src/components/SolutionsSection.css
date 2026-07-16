@@ -1,0 +1,104 @@
+/* Section Container */
+.solutions-section {
+  background-color: #003d2c; /* bg-[#003d2c] */
+  padding: 5rem 1.5rem; /* py-20 px-6 */
+  color: #ffffff; /* text-white */
+}
+
+.solutions-container {
+  margin: 0 auto; /* mx-auto */
+  max-width: 80rem; /* max-w-7xl */
+}
+
+/* Heading Section */
+.solutions-header {
+  margin: 0 auto 3.5rem; /* mx-auto mb-14 */
+  max-width: 48rem; /* max-w-3xl */
+  text-align: center; /* text-center */
+}
+
+.solutions-subtitle {
+  font-size: 0.875rem; /* text-sm */
+  text-transform: uppercase; /* uppercase */
+  letter-spacing: 0.3em; /* tracking-[0.3em] */
+  color: #d6b36a; /* text-[#d6b36a] */
+  margin: 0;
+}
+
+.solutions-title {
+  margin-top: 0.75rem; /* mt-3 */
+  font-family: serif; /* font-serif */
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700; /* font-bold */
+  margin-bottom: 0;
+}
+
+.solutions-header-desc {
+  margin-top: 1.25rem; /* mt-5 */
+  line-height: 1.75rem; /* leading-7 */
+  color: #d1d5db; /* text-gray-300 */
+}
+
+/* Grid Layout */
+.solutions-grid {
+  display: grid;
+  gap: 1.5rem; /* gap-6 */
+  grid-template-columns: 1fr; /* Default mobile layout */
+}
+
+/* Individual Solution Card */
+.solution-card {
+  border-radius: 1rem; /* rounded-2xl */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* border-white/10 */
+  background-color: rgba(255, 255, 255, 0.05); /* bg-white/5 */
+  padding: 1.75rem; /* p-7 */
+  transition: transform 0.3s ease, background-color 0.3s ease; /* transition */
+}
+
+.solution-card:hover {
+  transform: translateY(-0.5rem); /* hover:-translate-y-2 */
+  background-color: rgba(255, 255, 255, 0.1); /* hover:bg-white/10 */
+}
+
+/* Card Content */
+.solution-number {
+  margin-bottom: 1.25rem; /* mb-5 */
+  font-family: serif; /* font-serif */
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 700; /* font-bold */
+  color: #d6b36a; /* text-[#d6b36a] */
+}
+
+.solution-card-title {
+  font-family: serif; /* font-serif */
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700; /* font-bold */
+  margin: 0;
+}
+
+.solution-card-desc {
+  margin-top: 1rem; /* mt-4 */
+  line-height: 1.75rem; /* leading-7 */
+  color: #d1d5db; /* text-gray-300 */
+  margin-bottom: 0;
+}
+
+/* --- Media Queries --- */
+
+/* Medium devices (md: 768px and up) */
+@media (min-width: 768px) {
+  .solutions-title {
+    font-size: 3rem; /* md:text-5xl */
+  }
+
+  .solutions-grid {
+    grid-template-columns: repeat(2, 1fr); /* md:grid-cols-2 */
+  }
+}
+
+/* Large devices (lg: 1024px and up) */
+@media (min-width: 1024px) {
+  .solutions-grid {
+    grid-template-columns: repeat(3, 1fr); /* lg:grid-cols-3 */
+  }
+}

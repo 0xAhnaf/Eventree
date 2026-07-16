@@ -1,0 +1,43 @@
+/* Section Background and Spacing */
+.stats-section {
+  background-color: #003d2c; /* bg-[#003d2c] */
+  padding: 4rem 1.5rem; /* py-16 px-6 */
+  color: #ffffff; /* text-white */
+}
+
+/* Grid Container */
+.stats-container {
+  margin: 0 auto; /* mx-auto */
+  display: grid;
+  max-width: 72rem; /* max-w-6xl */
+  gap: 2rem; /* gap-8 */
+  grid-template-columns: 1fr; /* Default for mobile */
+}
+
+/* Media Query for Medium devices (md: 768px and up) */
+@media (min-width: 768px) {
+  .stats-container {
+    grid-template-columns: repeat(4, 1fr); /* md:grid-cols-4 */
+  }
+}
+
+/* Individual Stat Item */
+.stat-item {
+  text-align: center; /* text-center */
+}
+
+/* Stat Number */
+.stat-number {
+  font-family: serif; /* font-serif */
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 700; /* font-bold */
+  color: #d6b36a; /* text-[#d6b36a] */
+  margin: 0; /* Reset default margin */
+}
+
+/* Stat Title */
+.stat-title {
+  margin-top: 0.75rem; /* mt-3 */
+  color: #e5e7eb; /* text-gray-200 */
+  margin-bottom: 0; /* Reset default margin */
+}
