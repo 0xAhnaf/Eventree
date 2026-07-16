@@ -1,0 +1,157 @@
+.booking-requests-VLP {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(113, 121, 116, 0.1);
+  box-shadow: 0 4px 10px rgba(23, 33, 29, 0.06);
+}
+
+.booking-requests-header-VLP {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.booking-requests-title-VLP {
+  font-family: "Playfair Display", serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #002319;
+  margin: 0;
+}
+
+.booking-requests-badge-VLP {
+  background-color: #ffdf9b;
+  color: #423000;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.booking-requests-table-wrap-VLP {
+  overflow-x: auto;
+}
+
+.booking-requests-table-VLP {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.booking-requests-table-VLP thead tr {
+  border-bottom: 1px solid rgba(113, 121, 116, 0.2);
+}
+
+.booking-requests-table-VLP th {
+  padding: 8px 12px 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #414845;
+  white-space: nowrap;
+}
+
+.booking-requests-action-col-VLP {
+  text-align: right;
+}
+
+.booking-requests-table-VLP tbody tr {
+  border-bottom: 1px solid rgba(113, 121, 116, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+.booking-requests-table-VLP tbody tr:hover {
+  background-color: #fff1e9;
+}
+
+.booking-requests-table-VLP td {
+  padding: 16px 12px 16px 0;
+  font-size: 14px;
+  color: #414845;
+  vertical-align: middle;
+}
+
+.booking-client-VLP {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.booking-avatar-VLP {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 50%;
+  background-color: #c3ecd8;
+  color: #002319;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.booking-client-name-VLP {
+  color: #002319;
+  font-weight: 600;
+}
+
+.booking-cell-muted-VLP {
+  color: #414845;
+  white-space: nowrap;
+}
+
+.booking-package-VLP {
+  background-color: #ffe3d1;
+  color: #27180e;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.booking-actions-VLP {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.booking-action-btn-VLP {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.booking-action-decline-VLP {
+  color: #ba1a1a;
+}
+
+.booking-action-decline-VLP:hover {
+  background-color: #ffdad6;
+}
+
+.booking-action-accept-VLP {
+  color: #002319;
+}
+
+.booking-action-accept-VLP:hover {
+  background-color: #c0ecd9;
+}
+
+.booking-empty-VLP {
+  text-align: center;
+  padding: 32px 0;
+  color: #414845;
+  font-style: italic;
+}
