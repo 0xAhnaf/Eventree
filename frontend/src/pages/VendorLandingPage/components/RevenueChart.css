@@ -1,0 +1,174 @@
+.revenue-chart-VLP {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(113, 121, 116, 0.1);
+  box-shadow: 0 4px 10px rgba(23, 33, 29, 0.06);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.revenue-chart-header-VLP {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+
+.revenue-chart-title-VLP {
+  font-family: "Playfair Display", serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #002319;
+  margin: 0;
+}
+
+.revenue-chart-legend-VLP {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.legend-item-VLP {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #414845;
+}
+
+.legend-dot-VLP {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-dot-revenue-VLP {
+  background-color: #002319;
+}
+
+.legend-dot-projection-VLP {
+  background-color: #a8cfbc;
+}
+
+.revenue-chart-bars-VLP {
+  position: relative;
+  flex: 1;
+  min-height: 200px;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.revenue-bar-VLP {
+  flex: 1;
+  min-width: 0;
+  background-color: rgba(164, 208, 189, 0.35);
+  border-radius: 8px 8px 0 0;
+  transition: background-color 0.3s ease;
+}
+
+.revenue-bar-VLP:hover {
+  background-color: rgba(164, 208, 189, 0.6);
+}
+
+.revenue-bar-active-VLP {
+  background-color: #002319;
+}
+
+.revenue-bar-active-VLP:hover {
+  background-color: #002319;
+}
+
+.revenue-chart-labels-VLP {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 8px 0;
+  margin-top: 8px;
+  border-top: 1px solid rgba(113, 121, 116, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.revenue-label-VLP {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #414845;
+}
+
+.revenue-label-active-VLP {
+  font-weight: 700;
+  color: #002319;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .revenue-chart-VLP {
+    padding: 20px;
+  }
+
+  .revenue-chart-bars-VLP {
+    gap: 8px;
+    padding: 0;
+  }
+
+  .revenue-chart-labels-VLP {
+    padding: 10px 0 0;
+  }
+
+  .revenue-label-VLP {
+    font-size: 11px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .revenue-chart-VLP {
+    padding: 16px;
+  }
+
+  .revenue-chart-header-VLP {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .revenue-chart-title-VLP {
+    font-size: 18px;
+  }
+
+  .revenue-chart-legend-VLP {
+    gap: 10px;
+  }
+
+  .legend-item-VLP {
+    font-size: 11px;
+  }
+
+  .revenue-chart-bars-VLP {
+    min-height: 160px;
+    gap: 4px;
+  }
+
+  .revenue-label-VLP {
+    font-size: 10px;
+  }
+}

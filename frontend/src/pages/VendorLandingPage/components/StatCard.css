@@ -1,0 +1,78 @@
+.stat-card-VLP {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(113, 121, 116, 0.1);
+  box-shadow: 0 4px 10px rgba(23, 33, 29, 0.06);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.stat-card-VLP:hover {
+  transform: translateY(-4px);
+}
+
+.stat-card-top-VLP {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.stat-icon-VLP {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+.stat-icon-revenue-VLP {
+  background-color: #c3ecd8;
+  color: #002319;
+}
+
+.stat-icon-bookings-VLP {
+  background-color: #ffeadd;
+  color: #002319;
+}
+
+.stat-icon-views-VLP {
+  background-color: #ffdf9b;
+  color: #423000;
+}
+
+.stat-icon-contacts-VLP {
+  background-color: #c0ecd9;
+  color: #002319;
+}
+
+.stat-trend-VLP {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding: 2px 0;
+}
+
+.stat-trend-up-VLP {
+  color: #16a34a;
+}
+
+.stat-trend-down-VLP {
+  color: #414845;
+}
+
+.stat-label-VLP {
+  font-size: 14px;
+  font-weight: 600;
+  color: #414845;
+  margin: 0 0 4px 0;
+}
+
+.stat-value-VLP {
+  font-family: "Playfair Display", serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #002319;
+  margin: 0;
+}

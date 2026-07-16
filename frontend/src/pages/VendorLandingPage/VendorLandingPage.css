@@ -1,26 +1,716 @@
-.vendor-container {
+/* ==========================================================================
+   Vendor Landing Page - Fully Responsive
+========================================================================== */
+
+/* ==========================================================================
+   Base Layout
+========================================================================== */
+
+.vlp-page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #fff8f5;
+  color: #27180e;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.vlp-layout {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+
+/* ==========================================================================
+   Sidebar
+========================================================================== */
+
+.vlp-sidebar {
+  width: 256px;
+  min-width: 256px;
+  max-width: calc(100vw - 32px);
+  height: 100vh;
+  padding: 24px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  background-color: #fff1e9;
+  border-right: 1px solid rgba(113, 121, 116, 0.2);
+
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+
+  z-index: 60;
+}
+
+.vlp-sidebar-open {
+  transform: translateX(0);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+}
+
+.vlp-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 50;
+}
+
+.vlp-sidebar-welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.vlp-sidebar-close {
+  flex-shrink: 0;
+  display: flex;
   align-items: center;
-  height: 80vh;
-  font-family: sans-serif;
+  justify-content: center;
+
+  padding: 4px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: #002319;
+  cursor: pointer;
 }
 
-.vendor-card {
-  padding: 3rem;
-  border-radius: 16px;
-  background-color: #f0fdf4; /* soft green */
-  border: 2px solid #22c55e;
-  box-shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.1);
-  max-width: 500px;
-  text-align: center;
+.vlp-sidebar-close:hover {
+  background-color: rgba(0, 35, 25, 0.08);
 }
 
-.vendor-badge {
-  background-color: #22c55e;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: bold;
+.vlp-sidebar-title {
+  margin: 0 0 4px;
+  font-family: "Playfair Display", serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #002319;
+}
+
+.vlp-sidebar-subtitle {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #414845;
+}
+
+.vlp-sidebar-nav {
+  min-width: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vlp-sidebar-link {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 16px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  border-radius: 8px;
+  color: #414845;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.vlp-sidebar-link svg {
+  flex-shrink: 0;
+}
+
+.vlp-sidebar-link:hover {
+  color: #002319;
+  background-color: rgba(250, 221, 203, 0.6);
+}
+
+.vlp-sidebar-link-active {
+  color: #ffffff;
+  background-color: #002319;
+}
+
+.vlp-sidebar-link-active:hover {
+  color: #ffffff;
+  background-color: #002319;
+}
+
+.vlp-sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(113, 121, 116, 0.2);
+}
+
+
+/* ==========================================================================
+   Main Area
+========================================================================== */
+
+.vlp-main {
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.vlp-topbar {
+  width: 100%;
+  min-width: 0;
+  padding: 16px 16px 0;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.vlp-menu-btn,
+.vlp-bell-btn {
+  flex-shrink: 0;
+  padding: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: #002319;
+  cursor: pointer;
+
+  transition: background-color 0.2s ease;
+}
+
+.vlp-menu-btn:hover,
+.vlp-bell-btn:hover {
+  background-color: #fff1e9;
+}
+
+.vlp-bell-btn {
+  margin-left: auto;
+}
+
+.vlp-bell-shake {
+  animation: vlp-shake 0.5s ease-in-out;
+}
+
+.vlp-content {
+  width: 100%;
+  max-width: 1152px;
+  min-width: 0;
+
+  margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+
+/* ==========================================================================
+   Page Header
+========================================================================== */
+
+.vlp-page-header {
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 32px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.vlp-page-header > div {
+  min-width: 0;
+}
+
+.vlp-page-title {
+  margin: 0 0 4px;
+  font-family: "Playfair Display", serif;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #002319;
+}
+
+.vlp-page-subtitle {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #414845;
+}
+
+.vlp-header-actions {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.vlp-btn {
+  min-height: 42px;
+  padding: 10px 16px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.vlp-btn svg {
+  flex-shrink: 0;
+}
+
+.vlp-btn-outline {
+  border: 1px solid #717974;
+  background: none;
+  color: #002319;
+}
+
+.vlp-btn-outline:hover {
+  background-color: #fff1e9;
+}
+
+.vlp-btn-solid {
+  border: 1px solid #002319;
+  background-color: #002319;
+  color: #ffffff;
+}
+
+.vlp-btn-solid:hover {
+  background-color: #003525;
+}
+
+.vlp-btn-solid:active {
+  transform: scale(0.97);
+}
+
+
+/* ==========================================================================
+   Stats Cards Grid
+========================================================================== */
+
+.vlp-stats-grid {
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 32px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.vlp-stats-grid > * {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* ==========================================================================
+   Bento Layout
+========================================================================== */
+
+.vlp-bento-grid {
+  width: 100%;
+  min-width: 0;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  gap: 16px;
+}
+
+.vlp-bento-chart,
+.vlp-bento-events,
+.vlp-bento-bookings {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.vlp-bento-chart > *,
+.vlp-bento-events > *,
+.vlp-bento-bookings > * {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.vlp-bento-bookings {
+  grid-column: 1 / -1;
+}
+
+
+/* ==========================================================================
+   Child Component Overflow Protection
+========================================================================== */
+
+.vlp-bento-chart .revenue-chart-VLP,
+.vlp-bento-events .upcoming-events-VLP,
+.vlp-bento-bookings .booking-requests-VLP {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.vlp-bento-chart .revenue-chart-header-VLP,
+.vlp-bento-chart .revenue-chart-bars-VLP,
+.vlp-bento-chart .revenue-chart-labels-VLP {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.vlp-bento-events .upcoming-events-list-VLP,
+.vlp-bento-events .upcoming-event-item-VLP,
+.vlp-bento-events .upcoming-event-info-VLP {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.vlp-bento-bookings .booking-requests-table-wrap-VLP {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+
+/* ==========================================================================
+   Animations
+========================================================================== */
+
+@keyframes vlp-shake {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+
+  25% {
+    transform: rotate(15deg);
+  }
+
+  50% {
+    transform: rotate(-15deg);
+  }
+
+  75% {
+    transform: rotate(10deg);
+  }
+}
+
+
+/* ==========================================================================
+   Small Mobile: 0px - 479px
+========================================================================== */
+
+@media (max-width: 479px) {
+  .vlp-content {
+    padding: 12px;
+  }
+
+  .vlp-topbar {
+    padding: 12px 12px 0;
+  }
+
+  .vlp-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .vlp-page-title {
+    font-size: 24px;
+  }
+
+  .vlp-page-subtitle {
+    font-size: 13px;
+  }
+
+  .vlp-header-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .vlp-header-actions .vlp-btn {
+    width: 100%;
+  }
+
+  .vlp-stats-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .vlp-bento-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .vlp-bento-chart,
+  .vlp-bento-events,
+  .vlp-bento-bookings {
+    grid-column: 1;
+  }
+}
+
+
+/* ==========================================================================
+   Large Mobile: 480px - 639px
+========================================================================== */
+
+@media (min-width: 480px) and (max-width: 639px) {
+  .vlp-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .vlp-bento-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .vlp-bento-chart,
+  .vlp-bento-events,
+  .vlp-bento-bookings {
+    grid-column: 1;
+  }
+}
+
+
+/* ==========================================================================
+   Tablet: 640px - 1023px
+========================================================================== */
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .vlp-content {
+    padding: 24px;
+  }
+
+  .vlp-topbar {
+    padding: 16px 24px 0;
+  }
+
+  .vlp-page-title {
+    font-size: 30px;
+  }
+
+  .vlp-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  /*
+    Tablet-এ সব বড় component full width রাখা হয়েছে।
+    এতে Revenue Chart, Upcoming Events এবং Booking Requests
+    কোনোটি ছোট বা cut হবে না।
+  */
+  .vlp-bento-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .vlp-bento-chart,
+  .vlp-bento-events,
+  .vlp-bento-bookings {
+    grid-column: 1;
+  }
+}
+
+
+/* ==========================================================================
+   Small Desktop: 1024px - 1279px
+========================================================================== */
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .vlp-menu-btn,
+  .vlp-sidebar-close,
+  .vlp-sidebar-overlay {
+    display: none;
+  }
+
+  .vlp-sidebar {
+    position: sticky;
+    top: 0;
+    left: auto;
+
+    width: 256px;
+    min-width: 256px;
+    max-width: 256px;
+    height: auto;
+    min-height: calc(100vh - 73px);
+
+    transform: none;
+    box-shadow: none;
+    z-index: auto;
+  }
+
+  .vlp-content {
+    padding: 24px;
+  }
+
+  .vlp-page-title {
+    font-size: 32px;
+  }
+
+  .vlp-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  /*
+    1024px-1279px screen-এ sidebar থাকার কারণে main content
+    তুলনামূলক ছোট হয়। তাই এখানে 3-column না দিয়ে full-width
+    stacked layout রাখা হয়েছে।
+  */
+  .vlp-bento-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .vlp-bento-chart,
+  .vlp-bento-events,
+  .vlp-bento-bookings {
+    grid-column: 1;
+  }
+}
+
+
+/* ==========================================================================
+   Regular Desktop: 1280px and Above
+========================================================================== */
+
+@media (min-width: 1280px) {
+  .vlp-menu-btn,
+  .vlp-sidebar-close,
+  .vlp-sidebar-overlay {
+    display: none;
+  }
+
+  .vlp-sidebar {
+    position: sticky;
+    top: 0;
+    left: auto;
+
+    width: 256px;
+    min-width: 256px;
+    max-width: 256px;
+    height: auto;
+    min-height: calc(100vh - 73px);
+
+    transform: none;
+    box-shadow: none;
+    z-index: auto;
+  }
+
+  .vlp-content {
+    padding: 24px;
+  }
+
+  .vlp-page-header {
+    margin-bottom: 40px;
+  }
+
+  .vlp-page-title {
+    font-size: 34px;
+  }
+
+  .vlp-stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .vlp-bento-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .vlp-bento-chart {
+    grid-column: span 2;
+  }
+
+  .vlp-bento-events {
+    grid-column: span 1;
+  }
+
+  .vlp-bento-bookings {
+    grid-column: 1 / -1;
+  }
+}
+
+
+/* ==========================================================================
+   Extra Small Devices
+========================================================================== */
+
+@media (max-width: 359px) {
+  .vlp-sidebar {
+    width: calc(100vw - 24px);
+    min-width: 0;
+    max-width: calc(100vw - 24px);
+    padding: 18px;
+  }
+
+  .vlp-content {
+    padding: 10px;
+  }
+
+  .vlp-topbar {
+    padding: 10px 10px 0;
+  }
+
+  .vlp-page-title {
+    font-size: 22px;
+  }
+
+  .vlp-btn {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
 }
