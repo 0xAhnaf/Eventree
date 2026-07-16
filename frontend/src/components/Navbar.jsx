@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import logo from "../assets/eventree-logo2.png";
 import { Link } from "react-router-dom";
@@ -73,13 +74,17 @@ function Navbar() {
 
 
           <button className="btn-outline">
-            Login
+            <Link to="/login" className="navbar-login-link">
+             Login
+            </Link>
           </button>
 
 
 
           <button className="btn-outline register">
+            <Link to="/signup" className="navbar-register-link">
             Register
+            </Link>
           </button>
 
 
@@ -145,16 +150,18 @@ function Navbar() {
 
 
             {/* Same Auth Button Style */}
+            <Link to="/login" className="navbar-login-link">
+              <button className="btn-outline mobile-auth-btn">
+                Login
+              </button>
+            </Link>
 
-            <button className="btn-outline mobile-auth-btn">
-              Login
-            </button>
 
-
-
-            <button className="btn-outline register mobile-auth-btn">
-              Register
-            </button>
+            <Link to="/signup" className="navbar-register-link">
+              <button className="btn-outline register mobile-auth-btn">
+                Register
+              </button>
+            </Link>
 
 
 
