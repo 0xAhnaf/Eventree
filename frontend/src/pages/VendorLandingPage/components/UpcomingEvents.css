@@ -3,9 +3,14 @@
   padding: 24px;
   border-radius: 12px;
   border: 1px solid rgba(113, 121, 116, 0.1);
-  height: 100%;
+
   display: flex;
   flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .upcoming-events-title-VLP {
@@ -27,6 +32,8 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  width: 100%;
+  min-width: 0;
 }
 
 .upcoming-event-date-VLP {
@@ -34,7 +41,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 50px;
+
+  width: 56px;
+  min-width: 56px;
+  flex-shrink: 0;
+
   background: #ffffff;
   border-radius: 8px;
   padding: 8px 4px;
@@ -54,17 +65,31 @@
   color: #002319;
 }
 
+/* NEW */
+.upcoming-event-info-VLP {
+  flex: 1;
+  min-width: 0;
+}
+
 .upcoming-event-name-VLP {
   font-size: 14px;
   font-weight: 600;
   color: #002319;
   margin: 0 0 2px 0;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .upcoming-event-meta-VLP {
   font-size: 12px;
   color: #414845;
   margin: 0;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .upcoming-events-btn-VLP {
@@ -77,8 +102,74 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  transition: opacity 0.2s;
 }
 
 .upcoming-events-btn-VLP:hover {
   text-decoration: underline;
+  opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+  .upcoming-events-VLP {
+    padding: 20px;
+  }
+
+  .upcoming-events-title-VLP {
+    font-size: 20px;
+  }
+
+  .upcoming-event-item-VLP {
+    gap: 12px;
+  }
+
+  .upcoming-event-date-VLP {
+    width: 50px;
+    min-width: 50px;
+  }
+
+  .upcoming-event-day-VLP {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .upcoming-events-VLP {
+    padding: 16px;
+  }
+
+  .upcoming-events-title-VLP {
+    font-size: 18px;
+  }
+
+  .upcoming-event-item-VLP {
+    gap: 10px;
+  }
+
+  .upcoming-event-date-VLP {
+    width: 44px;
+    min-width: 44px;
+    padding: 6px 2px;
+  }
+
+  .upcoming-event-month-VLP {
+    font-size: 10px;
+  }
+
+  .upcoming-event-day-VLP {
+    font-size: 18px;
+  }
+
+  .upcoming-event-name-VLP {
+    font-size: 13px;
+  }
+
+  .upcoming-event-meta-VLP {
+    font-size: 11px;
+  }
+
+  .upcoming-events-btn-VLP {
+    font-size: 13px;
+    padding: 10px 0;
+  }
 }

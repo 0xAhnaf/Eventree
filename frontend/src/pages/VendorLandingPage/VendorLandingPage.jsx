@@ -14,6 +14,8 @@ import {
   Armchair,
   Eye,
   Contact,
+  Menu, // Imported for Mobile Menu Trigger
+  X,    // Imported for Sidebar Close
 } from "lucide-react";
 import Navbar from "../../components/Navbar.jsx";
 import Footer from "../../components/Footer.jsx";
@@ -68,6 +70,7 @@ const stats = [
 
 function VendorLandingPage() {
   const [bellShake, setBellShake] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
 
   const handleBellClick = () => {
     setBellShake(true);
@@ -79,11 +82,29 @@ function VendorLandingPage() {
       <Navbar />
 
       <div className="vlp-layout">
+        {/* Mobile Backdrop Overlay */}
+        {isSidebarOpen && (
+          <div 
+            className="vlp-sidebar-overlay" 
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar Navigation */}
-        <aside className="vlp-sidebar">
+        <aside className={`vlp-sidebar ${isSidebarOpen ? "vlp-sidebar-open" : ""}`}>
           <div className="vlp-sidebar-welcome">
-            <h2 className="vlp-sidebar-title">Welcome back</h2>
-            <p className="vlp-sidebar-subtitle">Manage your premium events</p>
+            <div>
+              <h2 className="vlp-sidebar-title">Welcome back</h2>
+              <p className="vlp-sidebar-subtitle">Manage your premium events</p>
+            </div>
+            {/* Close Button Only Visible on Mobile */}
+            <button 
+              className="vlp-sidebar-close" 
+              onClick={() => setIsSidebarOpen(false)}
+              aria-label="Close menu"
+            >
+              <X size={24} />
+            </button>
           </div>
 
           <nav className="vlp-sidebar-nav">
@@ -114,6 +135,15 @@ function VendorLandingPage() {
         {/* Main Content */}
         <main className="vlp-main">
           <div className="vlp-topbar">
+            {/* Menu Toggle Trigger for Mobile / Tablet Viewports */}
+            <button 
+              className="vlp-menu-btn" 
+              onClick={() => setIsSidebarOpen(true)}
+              aria-label="Open menu"
+            >
+              <Menu size={24} />
+            </button>
+
             <button
               className={`vlp-bell-btn ${bellShake ? "vlp-bell-shake" : ""}`}
               onClick={handleBellClick}
