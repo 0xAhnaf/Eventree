@@ -1,75 +1,98 @@
+import { useState, useEffect, useRef } from "react";
+import "./StatsSection.css"; 
+
+
+function AnimatedNumber({ end, suffix }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        
+        if (entries[0].isIntersecting) {
+          let startTimestamp = null;
+          const duration = 2500; 
+
+          const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            
+            
+            const easeOut = 1 - Math.pow(1 - progress, 4);
+            setCount(Math.floor(easeOut * end));
+
+            if (progress < 1) {
+              window.requestAnimationFrame(step);
+            }
+          };
+
+          window.requestAnimationFrame(step);
+          observer.disconnect(); 
+        }
+      },
+      { threshold: 0.5 } 
+    );
+
+    if (ref.current) observer.observe(ref.current);
+
+    return () => observer.disconnect();
+  }, [end]);
+
+  return (
+    <span ref={ref}>
+      {count.toLocaleString()}
+      {suffix}
+    </span>
+  );
+}
+
+
 function StatsSection() {
+  
+  const stats = [
+    {
+      num: 9572,
+      suffix: "+",
+      title: "Happy Customers",
+    },
+    {
+      num: 874,
+      suffix: "+",
+      title: "Trusted Vendors",
+    },
+    {
+      num: 33,
+      suffix: "+",
+      title: "Event Categories",
+    },
+    {
+      num: 94,
+      suffix: "+",
+      title: "Locations",
+    },
+  ];
 
-
-const stats = [
-
-{
-number:"10,000+",
-title:"Happy Customers"
-},
-
-{
-number:"1000+",
-title:"Trusted Vendors"
-},
-
-{
-number:"25+",
-title:"Event Categories"
-},
-
-{
-number:"100+",
-title:"Locations"
+  return (
+    <section className="stats-section">
+      <div className="stats-container">
+        {stats.map((stat) => (
+          <div key={stat.title} className="stat-item">
+            
+            <h3 className="stat-number">
+              
+              <AnimatedNumber end={stat.num} suffix={stat.suffix} />
+            </h3>
+            
+            <p className="stat-title">
+              {stat.title}
+            </p>
+            
+          </div>
+        ))}
+      </div>
+    </section>
+  );
 }
-
-];
-
-
-return (
-
-<section className="bg-[#003d2c] px-6 py-16 text-white">
-
-
-<div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-4">
-
-
-{
-stats.map((stat)=>(
-
-
-<div 
-key={stat.title}
-className="text-center"
->
-
-
-<h3 className="font-serif text-4xl font-bold text-[#d6b36a]">
-{stat.number}
-</h3>
-
-
-<p className="mt-3 text-gray-200">
-{stat.title}
-</p>
-
-
-</div>
-
-
-))
-}
-
-
-</div>
-
-
-</section>
-
-)
-
-
-}
-
 
 export default StatsSection;

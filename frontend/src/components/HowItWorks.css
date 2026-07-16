@@ -1,0 +1,114 @@
+/* Section Container */
+.hiw-section {
+  background-color: #ffffff; /* bg-white */
+  padding: 5rem 1.5rem; /* py-20 px-6 */
+}
+
+.hiw-container {
+  margin: 0 auto; /* mx-auto */
+  max-width: 80rem; /* max-w-7xl */
+}
+
+/* Heading Section */
+.hiw-header {
+  margin-bottom: 3.5rem; /* mb-14 */
+  text-align: center; /* text-center */
+}
+
+.hiw-subtitle {
+  font-size: 0.875rem; /* text-sm */
+  text-transform: uppercase; /* uppercase */
+  letter-spacing: 0.3em; /* tracking-[0.3em] */
+  color: #b0873c; /* text-[#b0873c] */
+  margin: 0;
+}
+
+.hiw-title {
+  margin-top: 0.75rem; /* mt-3 */
+  font-family: serif; /* font-serif */
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700; /* font-bold */
+  color: #003d2c; /* text-[#003d2c] */
+  margin-bottom: 0;
+}
+
+.hiw-description {
+  margin: 1.25rem auto 0; /* mx-auto mt-5 */
+  max-width: 42rem; /* max-w-2xl */
+  line-height: 1.75rem; /* leading-7 */
+  color: #4b5563; /* text-gray-600 */
+}
+
+/* Steps Grid Layout */
+.hiw-grid {
+  position: relative; /* relative */
+  display: grid;
+  gap: 2rem; /* gap-8 */
+  grid-template-columns: 1fr; /* Default mobile layout */
+}
+
+/* Individual Step */
+.hiw-step {
+  position: relative; /* relative */
+  text-align: center; /* text-center */
+}
+
+/* Step Number Circle */
+.hiw-number {
+  margin: 0 auto 1.25rem; /* mx-auto mb-5 */
+  display: flex;
+  height: 4rem; /* h-16 */
+  width: 4rem; /* w-16 */
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px; /* rounded-full */
+  background-color: #003d2c; /* bg-[#003d2c] */
+  font-family: serif; /* font-serif */
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 700; /* font-bold */
+  color: #ffffff; /* text-white */
+}
+
+/* Step Content */
+.hiw-step-title {
+  font-family: serif; /* font-serif */
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 700; /* font-bold */
+  color: #003d2c; /* text-[#003d2c] */
+  margin: 0;
+}
+
+.hiw-step-desc {
+  margin-top: 0.75rem; /* mt-3 */
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.5rem; /* leading-6 */
+  color: #4b5563; /* text-gray-600 */
+}
+
+/* Connecting Line */
+.hiw-line {
+  position: absolute; /* absolute */
+  left: 65%; /* left-[65%] */
+  top: 2rem; /* top-8 */
+  display: none; /* hidden (by default on mobile) */
+  height: 2px; /* h-[2px] */
+  width: 100%; /* w-full */
+  background-color: #d6b36a; /* bg-[#d6b36a] */
+}
+
+/* --- Media Queries --- */
+
+/* Medium devices (md: 768px and up) */
+@media (min-width: 768px) {
+  .hiw-title {
+    font-size: 3rem; /* md:text-5xl */
+  }
+
+  .hiw-grid {
+    grid-template-columns: repeat(5, 1fr); /* md:grid-cols-5 */
+  }
+
+  .hiw-line {
+    display: block; /* md:block */
+  }
+}

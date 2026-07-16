@@ -1,0 +1,115 @@
+/* Section Container */
+.why-section {
+  background-color: #003d2c; /* bg-[#003d2c] */
+  padding: 5rem 1.5rem; /* py-20 px-6 */
+  color: #ffffff; /* text-white */
+}
+
+.why-container {
+  margin: 0 auto; /* mx-auto */
+  max-width: 80rem; /* max-w-7xl */
+}
+
+/* Heading Section */
+.why-header {
+  margin: 0 auto 3.5rem; /* mx-auto mb-14 */
+  max-width: 48rem; /* max-w-3xl */
+  text-align: center; /* text-center */
+}
+
+.why-subtitle {
+  font-size: 0.875rem; /* text-sm */
+  text-transform: uppercase; /* uppercase */
+  letter-spacing: 0.3em; /* tracking-[0.3em] */
+  color: #d6b36a; /* text-[#d6b36a] */
+  margin: 0;
+}
+
+.why-title {
+  margin-top: 0.75rem; /* mt-3 */
+  font-family: serif; /* font-serif */
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700; /* font-bold */
+  margin-bottom: 0;
+}
+
+.why-header-desc {
+  margin-top: 1.25rem; /* mt-5 */
+  line-height: 1.75rem; /* leading-7 */
+  color: #d1d5db; /* text-gray-300 */
+}
+
+/* Grid Layout */
+.why-grid {
+  display: grid;
+  gap: 1.5rem; /* gap-6 */
+  grid-template-columns: 1fr; /* Default mobile layout */
+}
+
+/* Individual Feature Card */
+.why-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* সব কার্ড সমান উচ্চতার রাখার জন্য */
+  border-radius: 1rem; /* rounded-2xl */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* border-white/10 */
+  background-color: rgba(255, 255, 255, 0.05); /* bg-white/5 */
+  padding: 1.75rem; /* p-7 */
+  transition: transform 0.3s ease, background-color 0.3s ease; /* transition */
+}
+
+.why-card:hover {
+  transform: translateY(-0.5rem); /* hover:-translate-y-2 */
+  background-color: rgba(255, 255, 255, 0.1); /* hover:bg-white/10 */
+}
+
+/* Card Icon */
+.why-icon {
+  margin-bottom: 1.25rem; /* mb-5 */
+  display: flex;
+  height: 3rem; /* h-12 */
+  width: 3rem; /* w-12 */
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px; /* rounded-full */
+  background-color: #d6b36a; /* bg-[#d6b36a] */
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 700; /* font-bold */
+  color: #003d2c; /* text-[#003d2c] */
+}
+
+/* Card Title */
+.why-card-title {
+  font-family: serif; /* font-serif */
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700; /* font-bold */
+  margin: 0;
+}
+
+/* Card Description */
+.why-card-desc {
+  margin-top: 1rem; /* mt-4 */
+  line-height: 1.75rem; /* leading-7 */
+  color: #d1d5db; /* text-gray-300 */
+  margin-bottom: 0;
+}
+
+/* --- Media Queries --- */
+
+/* Medium devices (md: 768px and up) */
+@media (min-width: 768px) {
+  .why-title {
+    font-size: 3rem; /* md:text-5xl */
+  }
+
+  .why-grid {
+    grid-template-columns: repeat(2, 1fr); /* md:grid-cols-2 */
+  }
+}
+
+/* Large devices (lg: 1024px and up) */
+@media (min-width: 1024px) {
+  .why-grid {
+    grid-template-columns: repeat(3, 1fr); /* lg:grid-cols-3 */
+  }
+}

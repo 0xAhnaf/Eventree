@@ -1,0 +1,103 @@
+/* Section Container */
+.problems-section {
+  background-color: #ffffff; /* bg-white */
+  padding: 5rem 1.5rem; /* py-20 px-6 */
+}
+
+.problems-container {
+  margin: 0 auto; /* mx-auto */
+  max-width: 80rem; /* max-w-7xl */
+}
+
+/* Heading Section */
+.problems-header {
+  margin-bottom: 3.5rem; /* mb-14 */
+  max-width: 48rem; /* max-w-3xl */
+}
+
+.problems-subtitle {
+  font-size: 0.875rem; /* text-sm */
+  text-transform: uppercase; /* uppercase */
+  letter-spacing: 0.3em; /* tracking-[0.3em] */
+  color: #b0873c; /* text-[#b0873c] */
+  margin: 0;
+}
+
+.problems-title {
+  margin-top: 0.75rem; /* mt-3 */
+  font-family: serif; /* font-serif */
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700; /* font-bold */
+  color: #003d2c; /* text-[#003d2c] */
+  margin-bottom: 0;
+}
+
+.problems-header-desc {
+  margin-top: 1.25rem; /* mt-5 */
+  line-height: 1.75rem; /* leading-7 */
+  color: #4b5563; /* text-gray-600 */
+}
+
+/* Grid Layout */
+.problems-grid {
+  display: grid;
+  gap: 1.5rem; /* gap-6 */
+  grid-template-columns: 1fr; /* Default mobile layout */
+}
+
+/* Individual Problem Card */
+.problem-card {
+  border-radius: 1rem; /* rounded-2xl */
+  border: 1px solid #eee3d7; /* border-[#eee3d7] */
+  background-color: #fffaf5; /* bg-[#fffaf5] */
+  padding: 2rem; /* p-8 */
+  transition: transform 0.3s ease; /* transition */
+}
+
+.problem-card:hover {
+  transform: translateY(-0.5rem); /* hover:-translate-y-2 */
+}
+
+/* Card Content Flex Wrapper */
+.problem-card-content {
+  display: flex; /* flex */
+  align-items: flex-start; /* items-start */
+  gap: 1.25rem; /* gap-5 */
+}
+
+/* Problem Number */
+.problem-number {
+  font-family: serif; /* font-serif */
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 700; /* font-bold */
+  color: #d6b36a; /* text-[#d6b36a] */
+}
+
+/* Problem Texts */
+.problem-card-title {
+  font-family: serif; /* font-serif */
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700; /* font-bold */
+  color: #003d2c; /* text-[#003d2c] */
+  margin: 0;
+}
+
+.problem-card-desc {
+  margin-top: 0.75rem; /* mt-3 */
+  line-height: 1.75rem; /* leading-7 */
+  color: #4b5563; /* text-gray-600 */
+  margin-bottom: 0;
+}
+
+/* --- Media Queries --- */
+
+/* Medium devices (md: 768px and up) */
+@media (min-width: 768px) {
+  .problems-title {
+    font-size: 3rem; /* md:text-5xl */
+  }
+
+  .problems-grid {
+    grid-template-columns: repeat(2, 1fr); /* md:grid-cols-2 */
+  }
+}
