@@ -1,26 +1,122 @@
-.client-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80vh;
-  font-family: sans-serif;
+
+   
+body{
+
+    font-family:Manrope,sans-serif;
+
+    background:#fff8f5;
+
+    color:#27180e;
 }
 
-.client-card {
-  padding: 3rem;
-  border-radius: 16px;
-  background-color: #eff6ff; /* soft blue */
-  border: 2px solid #3b82f6;
-  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1);
-  max-width: 500px;
-  text-align: center;
+.browse-page-CLP{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    max-width:1400px;
+
+    margin:auto;
+
+    padding:60px;
+
 }
 
-.badge {
-  background-color: #3b82f6;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: bold;
+.hero-CLP{
+
+    margin-bottom:50px;
+
+}
+
+.hero-CLP h1{
+
+    font-size:48px;
+
+    color:#002319;
+
+    margin-bottom:15px;
+
+    font-family:"Playfair Display",serif;
+
+}
+
+.hero-CLP p{
+
+    max-width:700px;
+
+    line-height:1.7;
+
+    color:#666;
+
+    font-size:18px;
+
+}
+
+.browse-container-CLP{
+
+    display:flex;
+
+    gap:40px;
+
+}
+
+.vendor-section-CLP{
+
+    flex:1;
+
+}
+
+.vendor-top-CLP{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
+
+.vendor-top-CLP select{
+
+    padding:10px 16px;
+
+    border:1px solid #ddd;
+
+    border-radius:8px;
+
+    background:white;
+
+}
+
+.vendor-grid-CLP{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+
+    gap:25px;
+
+}@media(max-width:992px){
+
+    .browse-container-CLP{
+
+        flex-direction:column;
+
+    }
+
+}@media(max-width:600px){
+
+    .browse-page-CLP{
+
+        padding:20px;
+
+    }
+
+    .hero-CLP h1{
+
+        font-size:36px;
+
+    }
+
 }
