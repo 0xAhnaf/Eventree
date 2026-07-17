@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
-import "./Hero.css"; 
+import { useNavigate } from "react-router-dom";
+import "./Hero.css";
 
 function Hero() {
+  const navigate = useNavigate();
+
   return (
     <section id="home" className="hero-section">
-      
       {/* Background Image */}
       <div
         className="hero-bg"
@@ -37,15 +39,20 @@ function Hero() {
         </p>
 
         <div className="hero-buttons">
-          <button className="hero-btn btn-primary">
+          <button
+            className="hero-btn btn-primary"
+            onClick={() => navigate("/browse-vendor")}
+          >
             Browse Vendors
           </button>
 
-          <button className="hero-btn btn-secondary">
+          <button
+            className="hero-btn btn-secondary"
+            onClick={() => navigate("/signup?role=vendor")}
+          >
             Become a Vendor
           </button>
         </div>
-        
       </motion.div>
     </section>
   );
