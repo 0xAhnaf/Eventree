@@ -10,6 +10,7 @@ import SocialLogin from "../../components/Auth/SocialLogin";
 import AuthFooter from "../../components/Auth/AuthFooter";
 import VendorTypeDropdown from "../../components/Auth/VendorTypeDropdown";
 
+
 import "./Signup.css";
 
 function Signup() {

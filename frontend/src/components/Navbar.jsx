@@ -71,20 +71,20 @@ function Navbar() {
         {/* Auth Buttons */}
         <div className="navbar-auth-buttons">
 
+          <Link to="/login" className="navbar-login-link">
+            <button className="btn-outline">
+              Login
+            </button> 
+          </Link>
+          
 
-          <button className="btn-outline">
-            <Link to="/login" className="navbar-login-link">
-             Login
-            </Link>
-          </button>
 
-
-
-          <button className="btn-outline register">
-            <Link to="/signup" className="navbar-register-link">
-            Register
-            </Link>
-          </button>
+          <Link to="/signup" className="navbar-register-link">
+            <button className="btn-outline register">
+              Register
+            </button>
+          </Link> 
+          
 
 
         </div>

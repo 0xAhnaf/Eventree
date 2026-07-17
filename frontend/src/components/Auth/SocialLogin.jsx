@@ -1,3 +1,4 @@
+import { FcGoogle } from "react-icons/fc";
 function SocialLogin() {
     return (
         <>
@@ -6,7 +7,7 @@ function SocialLogin() {
             </div>
 
             <button className="google-btn">
-                <span>G</span>
+                <FcGoogle className="google-icon" />
                 Sign in with Google
             </button>
         </>
