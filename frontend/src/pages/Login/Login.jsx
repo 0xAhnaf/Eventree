@@ -23,12 +23,7 @@ function Login() {
                 <h2>Login</h2>
                 <p>Welcome back! Please sign in.</p>
 
-                <RoleSwitch
-                    role={role}
-                    setRole={setRole}
-                    customerText="Customer"
-                    vendorText="Vendor"
-                />
+                
 
                 <form>
                     <AuthInput
