@@ -11,14 +11,11 @@
 
 .auth-left {
     flex: 1;
-    background: linear-gradient(135deg, #022c22 0%, #0b3d2f 100%);
     color: white;
     padding: 50px 60px;
     display: flex;
     flex-direction: column;
 }
-
-
 
 .hero {
     flex: 1;
