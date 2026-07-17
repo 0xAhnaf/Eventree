@@ -45,7 +45,7 @@ function Navbar() {
           </a>
 
 
-          <a href="/client" className="navbar-nav-link">
+          <a href="/browse-vendor" className="navbar-nav-link">
             Browse Vendors
           </a>
 

@@ -20,7 +20,7 @@ function App() {
           <Route path="/" element={<GlobalLandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/client" element={<ClientLandingPage />} />
+          <Route path="/browse-vendor" element={<ClientLandingPage />} />
           <Route path="/vendor" element={<VendorLandingPage />} />
         </Routes>
       </BrowserRouter>
