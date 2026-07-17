@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+
 import AuthLayout from "../../components/Auth/AuthLayout";
 import AuthCard from "../../components/Auth/AuthCard";
 import AuthInput from "../../components/Auth/AuthInput";
@@ -10,100 +12,98 @@ import SocialLogin from "../../components/Auth/SocialLogin";
 import AuthFooter from "../../components/Auth/AuthFooter";
 import VendorTypeDropdown from "../../components/Auth/VendorTypeDropdown";
 
-
 import "./Signup.css";
 
 function Signup() {
-    const [role, setRole] = useState("customer");
-    const [vendorType, setVendorType] = useState("");
+  const [searchParams] = useSearchParams();
 
-    return (
-        <AuthLayout
-            title="Create Amazing Events."
-            description="Plan, manage, and celebrate unforgettable moments with EVENTREE."
-        >
-            <AuthCard>
+  const initialRole =
+    searchParams.get("role") === "vendor" ? "vendor" : "customer";
 
-                <h2>Create an account</h2>
+  const [role, setRole] = useState(initialRole);
+  const [vendorType, setVendorType] = useState("");
 
-                <p className="auth-subtitle">
-                    Start your journey and organize unforgettable events.
-                </p>
+  return (
+    <AuthLayout
+      title="Create Amazing Events."
+      description="Plan, manage, and celebrate unforgettable moments with EVENTREE."
+    >
+      <AuthCard>
+        <h2>Create an account</h2>
 
-                <RoleSwitch
-                    role={role}
-                    setRole={setRole}
-                    customerText="Customer"
-                    vendorText="Vendor"
-                />
+        <p className="auth-subtitle">
+          Start your journey and organize unforgettable events.
+        </p>
 
-                <form className="auth-form">
+        <RoleSwitch
+          role={role}
+          setRole={setRole}
+          customerText="Customer"
+          vendorText="Vendor"
+        />
 
-                    <AuthInput
-                        id="name"
-                        label="Full Name"
-                        placeholder="John Doe"
-                        autoComplete="name"
-                    />
+        <form className="auth-form">
+          <AuthInput
+            id="name"
+            label="Full Name"
+            placeholder="John Doe"
+            autoComplete="name"
+          />
 
-                    <AuthInput
-                        id="email"
-                        type="email"
-                        label="Email Address"
-                        placeholder="john@example.com"
-                        autoComplete="email"
-                    />
+          <AuthInput
+            id="email"
+            type="email"
+            label="Email Address"
+            placeholder="john@example.com"
+            autoComplete="email"
+          />
 
-                    <AuthInput
-                        id="phone"
-                        type="tel"
-                        label="Phone Number"
-                        placeholder="+880 1XXXXXXXXX"
-                        autoComplete="tel"
-                    />
+          <AuthInput
+            id="phone"
+            type="tel"
+            label="Phone Number"
+            placeholder="+880 1XXXXXXXXX"
+            autoComplete="tel"
+          />
 
-                    {role === "vendor" && (
-                        <VendorTypeDropdown
-                            value={vendorType}
-                            onChange={(e) => setVendorType(e.target.value)}
-                            required
-                        />
-                    )}
+          {role === "vendor" && (
+            <VendorTypeDropdown
+              value={vendorType}
+              onChange={(e) => setVendorType(e.target.value)}
+              required
+            />
+          )}
 
-                    <div className="password-row">
+          <div className="password-row">
+            <PasswordInput
+              id="password"
+              label="Password"
+            />
 
-                        <PasswordInput
-                            id="password"
-                            label="Password"
-                        />
+            <PasswordInput
+              id="confirmPassword"
+              label="Confirm Password"
+            />
+          </div>
 
-                        <PasswordInput
-                            id="confirmPassword"
-                            label="Confirm Password"
-                        />
+          <Checkbox
+            text="I agree to the Terms of Service and Privacy Policy."
+            required
+          />
 
-                    </div>
+          <SubmitButton text="Create Account" />
+        </form>
 
-                    <Checkbox
-                        text="I agree to the Terms of Service and Privacy Policy."
-                        required
-                    />
+        <SocialLogin />
 
-                    <SubmitButton text="Create Account" />
-
-                </form>
-
-                <SocialLogin />
-
-                <AuthFooter
-                    text="Already have an account?"
-                    linkText="Login"
-                    link="/login"
-                />
-
-            </AuthCard>
-        </AuthLayout>
-    );
+        <AuthFooter
+          text="Already have an account?"
+          linkText="Login"
+          link="/login"
+        />
+      </AuthCard>
+    </AuthLayout>
+  );
 }
 
 export default Signup;

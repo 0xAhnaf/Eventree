@@ -1,10 +1,13 @@
-import "./CTASection.css"; 
+import { useNavigate } from "react-router-dom";
+import "./CTASection.css";
 
 function CTASection() {
+  const navigate = useNavigate();
+
   return (
     <section id="vendor" className="cta-section">
       <div className="cta-container">
-        
+
         <p className="cta-subtitle">
           Start Your Journey
         </p>
@@ -19,11 +22,17 @@ function CTASection() {
         </p>
 
         <div className="cta-button-group">
-          <button className="cta-btn cta-btn-primary">
+          <button
+            className="cta-btn cta-btn-primary"
+            onClick={() => navigate("/browse-vendor")}
+          >
             Browse Vendors
           </button>
 
-          <button className="cta-btn cta-btn-secondary">
+          <button
+            className="cta-btn cta-btn-secondary"
+            onClick={() => navigate("/signup?role=vendor")}
+          >
             Become a Vendor
           </button>
         </div>

@@ -1,10 +1,14 @@
-import "./JourneySection.css"; 
+import { useNavigate } from "react-router-dom";
+import { Sparkles, Star } from "lucide-react";
+import "./JourneySection.css";
 
 function JourneySection() {
+  const navigate = useNavigate();
+
   return (
     <section className="journey-section">
       <div className="journey-container">
-        
+
         {/* Heading */}
         <div className="journey-header">
           <p className="journey-subtitle">
@@ -23,11 +27,11 @@ function JourneySection() {
 
         {/* Two Cards */}
         <div className="journey-grid">
-          
+
           {/* Customer */}
           <div className="journey-card-customer">
             <div className="journey-icon-customer">
-              ✨
+              <Sparkles size={28} />
             </div>
 
             <h3 className="journey-card-title-customer">
@@ -39,7 +43,10 @@ function JourneySection() {
               and book everything you need for your special moments.
             </p>
 
-            <button className="journey-btn-customer">
+            <button
+              className="journey-btn-customer"
+              onClick={() => navigate("/browse-vendor")}
+            >
               Start Planning
             </button>
           </div>
@@ -47,7 +54,7 @@ function JourneySection() {
           {/* Vendor */}
           <div className="journey-card-vendor">
             <div className="journey-icon-vendor">
-              ⭐
+              <Star size={28} />
             </div>
 
             <h3 className="journey-card-title-vendor">
@@ -59,7 +66,10 @@ function JourneySection() {
               and connect with customers looking for professional vendors.
             </p>
 
-            <button className="journey-btn-vendor">
+            <button
+              className="journey-btn-vendor"
+              onClick={() => navigate("/signup?role=vendor")}
+            >
               Join as Vendor
             </button>
           </div>

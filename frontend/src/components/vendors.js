@@ -2,7 +2,7 @@ const vendors = [
   {
     id: 1,
     name: "Chateau de Versailles",
-    category: "Elite Venue",
+    category: "Event Venues",
     location: "Paris, FR",
     rating: 5.0,
     price: "$15,000",
@@ -15,7 +15,7 @@ const vendors = [
   {
     id: 2,
     name: "Artisan Palate",
-    category: "Bespoke Catering",
+    category: "Caterers",
     location: "New York, NY",
     rating: 4.9,
     price: "$4,200",
@@ -28,7 +28,7 @@ const vendors = [
   {
     id: 3,
     name: "Botanical Noir",
-    category: "Floral Design",
+    category: "Decorations",
     location: "London, UK",
     rating: 4.8,
     price: "$2,800",
@@ -41,7 +41,7 @@ const vendors = [
   {
     id: 4,
     name: "Vogue Visions",
-    category: "Photography",
+    category: "Photography & Videography",
     location: "Milan, IT",
     rating: 4.9,
     price: "$5,500",
@@ -54,7 +54,7 @@ const vendors = [
   {
     id: 5,
     name: "Symphony Services",
-    category: "Live Music",
+    category: "Event Management",
     location: "Vienna, AT",
     rating: 4.7,
     price: "$3,000",
@@ -67,7 +67,7 @@ const vendors = [
   {
     id: 6,
     name: "Sugar & Silk",
-    category: "Artisan Cakes",
+    category: "Caterers",
     location: "Beverly Hills, CA",
     rating: 5.0,
     price: "$1,200",
@@ -76,10 +76,11 @@ const vendors = [
     image:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCB7_ARSoJ1x5e2NXmNMKnQbFLre2mxVDWwnT2QmP4VG_rtG1WiK7nEhCjZ10VajK1CDa5rYr6bi1hj9xavw8Tq_yJVfhM9u1xQS7cmknpoHjo2pndp_BDErCvd1WZ4vUbBqHMwso63ho4OIUnLJxCs9om0OTEgjmAhQWz638YH1Y61H_wo3gduXpxI9GhhzzwsyUneCI3VlprmM9kq50AtAfY8OX0r-F_4jc6l_fmpza_oX_aiSOOCI5U3CQ44TleAVvm1Poq7s_s",
   },
+
   {
     id: 7,
-    name: "Symphony Services",
-    category: "Live Music",
+    name: "Harmony Events",
+    category: "Event Management",
     location: "Vienna, AT",
     rating: 3.6,
     price: "$2,700",
