@@ -1,0 +1,268 @@
+.vendor-portfolio-section {
+
+  width:100%;
+
+}
+
+
+
+.vendor-portfolio-section h2 {
+
+  font-size:32px;
+
+  color:#0b3d2e;
+
+  margin-bottom:12px;
+
+}
+
+
+
+.portfolio-description {
+
+  max-width:700px;
+
+  color:#555;
+
+  font-size:15px;
+
+  line-height:1.6;
+
+  margin-bottom:35px;
+
+}
+
+
+
+
+.portfolio-subtitle {
+
+  font-size:24px;
+
+  color:#0b3d2e;
+
+  margin-bottom:20px;
+
+}
+
+
+
+
+.portfolio-grid {
+
+  display:grid;
+
+  grid-template-columns:repeat(3,1fr);
+
+  gap:16px;
+
+}
+
+
+
+.portfolio-item {
+
+  height:220px;
+
+  border-radius:16px;
+
+  overflow:hidden;
+
+  position:relative;
+
+}
+
+
+
+.portfolio-item img {
+
+  width:100%;
+
+  height:100%;
+
+  object-fit:cover;
+
+  transition:.3s ease;
+
+}
+
+
+
+.portfolio-item:hover img {
+
+  transform:scale(1.05);
+
+}
+
+
+
+.photo-overlay {
+
+  position:absolute;
+
+  inset:0;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+
+  background:rgba(0,0,0,.35);
+
+  color:white;
+
+  font-size:18px;
+
+  font-weight:600;
+
+}
+
+
+
+
+
+.view-gallery-btn {
+
+
+  margin-top:25px;
+
+  padding:13px 28px;
+
+
+  border-radius:10px;
+
+  border:1px solid #0b3d2e;
+
+
+  background:white;
+
+  color:#0b3d2e;
+
+
+  font-weight:600;
+
+  cursor:pointer;
+
+}
+
+
+
+
+.view-gallery-btn:hover {
+
+  background:#0b3d2e;
+
+  color:white;
+
+}
+
+
+
+
+
+
+/* Amenities */
+
+
+.amenities-section {
+
+  margin-top:45px;
+
+}
+
+
+
+.amenities-section h3 {
+
+  font-size:24px;
+
+  color:#0b3d2e;
+
+  margin-bottom:20px;
+
+}
+
+
+
+.amenities-grid {
+
+  display:grid;
+
+  grid-template-columns:repeat(2,1fr);
+
+  gap:12px;
+
+}
+
+
+
+.amenity-card {
+
+  border:1px solid #e5e5e5;
+
+  border-radius:8px;
+
+  padding:14px;
+
+  font-size:14px;
+
+  color:#444;
+
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+}
+
+
+
+.amenity-card span {
+
+  color:#0b3d2e;
+
+  font-weight:bold;
+
+}
+
+
+
+
+@media(max-width:900px){
+
+
+  .portfolio-grid {
+
+    grid-template-columns:repeat(2,1fr);
+
+  }
+
+
+}
+
+
+
+
+@media(max-width:600px){
+
+
+  .portfolio-grid {
+
+    grid-template-columns:1fr;
+
+  }
+
+
+
+  .amenities-grid {
+
+    grid-template-columns:1fr;
+
+  }
+
+
+}

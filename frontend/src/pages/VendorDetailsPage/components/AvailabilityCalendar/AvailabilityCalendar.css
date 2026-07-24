@@ -1,0 +1,252 @@
+.availability-calendar {
+
+  width:100%;
+
+}
+
+
+
+.availability-calendar h2 {
+
+  font-size:32px;
+
+  margin-bottom:25px;
+
+  color:#0b3d2e;
+
+}
+
+
+
+.calendar-box {
+
+  width:100%;
+
+  max-width:720px;
+
+  padding:30px;
+
+  border:1px solid #e5e5e5;
+
+  border-radius:22px;
+
+  background:#ffffff;
+
+}
+
+
+
+.calendar-header {
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:30px;
+
+}
+
+
+
+.calendar-header h3 {
+
+  font-size:22px;
+
+  font-weight:600;
+
+  margin:0;
+
+}
+
+
+
+.calendar-header button {
+
+  width:42px;
+
+  height:42px;
+
+  border-radius:50%;
+
+  border:none;
+
+  background:#f3f3f3;
+
+  font-size:20px;
+
+  cursor:pointer;
+
+}
+
+
+
+.weekdays {
+
+  display:grid;
+
+  grid-template-columns:repeat(7,1fr);
+
+  text-align:center;
+
+  margin-bottom:15px;
+
+  font-weight:600;
+
+  color:#555;
+
+}
+
+
+
+.calendar-days {
+
+  display:grid;
+
+  grid-template-columns:repeat(7,1fr);
+
+  gap:12px;
+
+}
+
+
+
+.day,
+.empty-day {
+
+  height:48px;
+
+}
+
+
+
+.day {
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  border-radius:10px;
+
+  font-size:16px;
+
+  border:1px solid #e4e4e4;
+
+}
+
+
+
+.day.available {
+
+  background:white;
+
+  color:#222;
+
+}
+
+
+
+.day.booked {
+
+  background:#d8d8d8;
+
+  border-color:#d8d8d8;
+
+  color:#777;
+
+}
+
+
+
+.day.available:hover {
+
+  border-color:#0b3d2e;
+
+}
+
+
+
+.calendar-legend {
+
+  display:flex;
+
+  gap:25px;
+
+  margin-top:25px;
+
+}
+
+
+
+.calendar-legend div {
+
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  color:#555;
+
+}
+
+
+
+.available-dot,
+.booked-dot {
+
+  width:12px;
+
+  height:12px;
+
+  border-radius:50%;
+
+}
+
+
+
+.available-dot {
+
+  background:white;
+
+  border:1px solid #aaa;
+
+}
+
+
+
+.booked-dot {
+
+  background:#d8d8d8;
+
+}
+
+
+
+@media(max-width:700px){
+
+  .calendar-box{
+
+    padding:20px;
+
+  }
+
+
+  .day,
+  .empty-day{
+
+    height:40px;
+
+  }
+
+
+  .calendar-days{
+
+    gap:8px;
+
+  }
+
+}
