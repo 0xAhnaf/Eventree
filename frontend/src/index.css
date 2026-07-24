@@ -25,3 +25,41 @@ body {
 .font-serif {
   font-family: "Playfair Display", serif;
 }
+
+/* ===============================
+   EVENTREE GLOBAL FONT SYSTEM
+================================ */
+
+body {
+  font-family: "Inter", sans-serif;
+}
+
+
+/* All headings */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+  font-family: "Playfair Display", serif;
+
+}
+
+
+/* All normal elements */
+
+p,
+span,
+button,
+a,
+input,
+textarea,
+select,
+label {
+
+  font-family: "Inter", sans-serif;
+
+}
