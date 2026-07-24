@@ -8,7 +8,6 @@ import Checkbox from "../../components/Auth/Checkbox";
 import SubmitButton from "../../components/Auth/SubmitButton";
 import SocialLogin from "../../components/Auth/SocialLogin";
 import AuthFooter from "../../components/Auth/AuthFooter";
-import ForgotPasswordLink from "../../components/Auth/ForgetPass";
 
 import "./Login.css";
 
@@ -23,7 +22,6 @@ function Login() {
             <AuthCard>
                 <h2>Login</h2>
                 <p>Welcome back! Please sign in.</p>
-                
 
                 
 
@@ -39,8 +37,6 @@ function Login() {
                         id="password"
                         label="Password"
                     />
-                    
-                    <ForgotPasswordLink />
 
                     <Checkbox
                         text="Remember me"
