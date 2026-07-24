@@ -115,6 +115,7 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 18px;
+    margin-top: 18px;
 }
 
 .form-group label {
@@ -328,6 +329,26 @@
 }
 .auth-container {
     animation: fadeUp 0.8s ease;
+}
+
+.forgot-password-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.forgot-password-link {
+  font-size: 0.9rem;
+  color: #16a34a; /* Match your green theme */
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.forgot-password-link:hover {
+  color: #15803d;
+  text-decoration: underline;
 }
 
 @keyframes fadeUp {
