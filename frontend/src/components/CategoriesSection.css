@@ -84,6 +84,11 @@
   background-color: #003d2c; 
 }
 
+.category-card:hover .category-icon svg {
+  color: white;
+  stroke: white;
+}
+
 /* Card Content */
 .category-card-title {
   font-family: serif; 

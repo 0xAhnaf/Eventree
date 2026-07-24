@@ -1,0 +1,143 @@
+.vendor-details-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+
+/* ================================
+   MAIN CONTENT LAYOUT
+================================ */
+
+.vendor-details-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 60px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 40px;
+
+  align-items: start;
+  box-sizing: border-box;
+}
+
+
+/* ================================
+   LEFT CONTENT
+================================ */
+
+.vendor-left-content {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 70px;
+}
+
+
+/* ================================
+   RIGHT BOOKING SIDEBAR
+================================ */
+
+.vendor-right-sidebar {
+  position: sticky;
+
+  /*
+    VendorTabs/navbar-এর নিচে card থাকবে।
+    Card আর viewport-এর উপরে চলে যাবে না।
+  */
+  top: 85px;
+
+  width: 100%;
+  align-self: start;
+
+  /*
+    Viewport-এর available height-এর মধ্যে sidebar থাকবে।
+  */
+  max-height: calc(100vh - 105px);
+
+  overflow: hidden;
+}
+
+
+/* Every section should use full width */
+
+.vendor-details-container section {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* ================================
+   TABLET
+================================ */
+
+@media (max-width: 1024px) {
+  .vendor-details-container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 30px;
+  }
+
+  .vendor-right-sidebar {
+    position: relative;
+    top: auto;
+
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+
+    /*
+      Tablet/mobile-এ Booking Card content-এর
+      পরে দেখাবে।
+    */
+    order: 2;
+  }
+
+  .vendor-left-content {
+    order: 1;
+  }
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 768px) {
+  .vendor-details-container {
+    display: flex;
+    flex-direction: column;
+
+    padding: 20px 16px;
+    gap: 32px;
+  }
+
+  .vendor-left-content {
+    width: 100%;
+    gap: 40px;
+  }
+
+  .vendor-right-sidebar {
+    width: 100%;
+
+    position: relative;
+    top: auto;
+
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+
+/* ================================
+   SMALL MOBILE
+================================ */
+
+@media (max-width: 480px) {
+  .vendor-details-container {
+    padding: 16px 12px;
+  }
+}
