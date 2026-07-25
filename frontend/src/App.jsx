@@ -51,16 +51,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/browse-vendor/:id" element={<VendorDetailsPage />} />
-
-            {/* Client-Only Route */}
-            <Route
-              path="/browse-vendor"
-              element={
-                <ProtectedRoute allowedRoles={["client"]}>
-                  <ClientLandingPage />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/browse-vendor" element={<ClientLandingPage />} />
 
             {/* Vendor-Only Route (or allow admin to inspect if desired) */}
             <Route
