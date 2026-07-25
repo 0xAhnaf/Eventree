@@ -1,7 +1,7 @@
 import React from "react";
 import "./Reviews.css";
 
-const Reviews = () => {
+const Reviews = ({vendor}) => {
 
   const reviews = [
     {
@@ -44,7 +44,7 @@ const Reviews = () => {
 
 
         <h3>
-          4.9
+          {vendor.rating}
         </h3>
 
 

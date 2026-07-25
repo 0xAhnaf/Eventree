@@ -1,7 +1,10 @@
 import "./VendorCard.css";
-
+import { useNavigate } from "react-router-dom";
 export default function VendorCard({ vendor }) {
+  
+  const navigate = useNavigate();
   return (
+    
     <div className={`vendor-card-CLP ${vendor.featured ? "featured" : ""}`}>
 
       {vendor.featured && (
@@ -12,7 +15,7 @@ export default function VendorCard({ vendor }) {
         <img src={vendor.image} alt={vendor.name} />
 
         <div className="overlay-CLP">
-          <button>View Portfolio</button>
+          <button onClick={() => navigate(`/browse-vendor/${vendor.id}`)}>View Portfolio</button>
         </div>
       </div>
 

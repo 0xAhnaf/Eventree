@@ -1,14 +1,14 @@
 import React from "react";
 import "./VendorGallery.css";
 
-const VendorGallery = () => {
+const VendorGallery = ({vendor}) => {
   return (
     <section className="vendor-gallery">
 
       <div className="vendor-banner">
 
         <img
-          src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3"
+          src={vendor.image}
           alt="Vendor Banner"
         />
 
@@ -18,11 +18,11 @@ const VendorGallery = () => {
           <div className="vendor-title">
 
             <h1>
-              The Celestial Grand Hall
+              {vendor.name}
             </h1>
 
             <p>
-              Premium Event Venue • Dhaka, Bangladesh
+              {vendor.category} • {vendor.location}
             </p>
 
           </div>

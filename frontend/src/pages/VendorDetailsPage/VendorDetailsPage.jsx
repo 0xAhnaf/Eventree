@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import "./VendorDetailsPage.css";
 
 import Navbar from "../../components/Navbar.jsx";
@@ -15,11 +16,15 @@ import Reviews from "./components/Reviews/Reviews";
 import BookingCard from "./components/BookingCard/BookingCard";
 
 import ChatManager from "./components/ChatManager/ChatManager";
-
+import vendors from "../../components/vendors.js";
 
 const VendorDetailsPage = () => {
 
+  const { id } = useParams();
 
+  const vendor = vendors.find(
+        v => v.id === Number(id)
+  );
   const [selectedDate, setSelectedDate] = useState("");
 
 
@@ -66,11 +71,11 @@ const VendorDetailsPage = () => {
 
 
 
-      <VendorGallery />
+      <VendorGallery vendor={vendor}/>
 
 
 
-      <VendorHeader />
+      <VendorHeader vendor={vendor}/>
 
 
 
@@ -87,7 +92,7 @@ const VendorDetailsPage = () => {
 
 
 
-          <AboutVendor />
+          <AboutVendor vendor={vendor} />
 
 
 
@@ -111,7 +116,7 @@ const VendorDetailsPage = () => {
 
 
 
-          <Reviews />
+          <Reviews vendor={vendor}/>
 
 
 
@@ -132,6 +137,8 @@ const VendorDetailsPage = () => {
             selectedDate={selectedDate}
 
             onDateChange={handleDateSelect}
+
+            vendor={vendor}
 
           />
 
