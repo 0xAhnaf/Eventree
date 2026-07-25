@@ -74,23 +74,6 @@ const AdminSidebar = () => {
       </nav>
 
 
-      {/* Bottom Navigation */}
-      <div className="admin-sidebar-bottom">
-
-        
-
-
-        <div className="admin-menu-item logout">
-          <span className="admin-menu-icon">
-            <LogOut size={18} />
-          </span>
-
-          <span>
-            Logout
-          </span>
-        </div>
-
-      </div>
 
     </aside>
   );
