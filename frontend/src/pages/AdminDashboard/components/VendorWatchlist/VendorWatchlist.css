@@ -1,0 +1,215 @@
+.vendor-watchlist {
+
+  width: 100%;
+
+}
+
+
+
+.vendor-watchlist-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 25px;
+
+}
+
+
+
+.vendor-watchlist-header h3 {
+
+  margin: 0;
+
+  color: #003d2c;
+
+  font-size: 22px;
+
+}
+
+
+
+.vendor-watchlist-header p {
+
+  margin-top: 6px;
+
+  color: #6b7280;
+
+  font-size: 14px;
+
+}
+
+
+
+.vendor-watchlist-header button {
+
+  border: none;
+
+  background: #003d2c;
+
+  color: white;
+
+  padding: 9px 18px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+}
+
+
+
+/* Table */
+
+.vendor-table-wrapper {
+
+  width: 100%;
+
+  overflow-x: auto;
+
+}
+
+
+
+.vendor-table {
+
+  width: 100%;
+
+  border-collapse: collapse;
+
+  min-width: 700px;
+
+}
+
+
+
+.vendor-table th {
+
+  text-align: left;
+
+  padding: 14px;
+
+  font-size: 13px;
+
+  color: #6b7280;
+
+  border-bottom: 1px solid rgba(0,61,44,0.1);
+
+}
+
+
+
+.vendor-table td {
+
+  padding: 16px 14px;
+
+  font-size: 14px;
+
+  color: #374151;
+
+  border-bottom: 1px solid rgba(0,61,44,0.06);
+
+}
+
+
+
+.vendor-name {
+
+  font-weight: 600;
+
+  color: #003d2c !important;
+
+}
+
+
+
+/* Rating */
+
+.vendor-rating {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  color: #b7791f !important;
+
+}
+
+
+
+/* Status */
+
+.vendor-status {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 6px 12px;
+
+  border-radius: 20px;
+
+  font-size: 12px;
+
+}
+
+
+
+.vendor-status.verified {
+
+  background: rgba(22,163,74,0.12);
+
+  color: #15803d;
+
+}
+
+
+
+.vendor-status.pending {
+
+  background: rgba(245,158,11,0.12);
+
+  color: #d97706;
+
+}
+
+
+
+/* Tablet */
+
+@media(max-width:1024px){
+
+  .vendor-table {
+
+    min-width: 650px;
+
+  }
+
+}
+
+
+
+/* Mobile */
+
+@media(max-width:768px){
+
+
+  .vendor-watchlist-header {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+  }
+
+
+}
