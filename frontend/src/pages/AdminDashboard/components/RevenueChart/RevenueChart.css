@@ -1,0 +1,116 @@
+.revenue-chart-container {
+
+  width: 100%;
+
+}
+
+
+
+.revenue-chart-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 25px;
+
+}
+
+
+
+.revenue-chart-header h3 {
+
+  margin: 0;
+
+  color: #003d2c;
+
+  font-size: 22px;
+
+}
+
+
+
+.revenue-chart-header p {
+
+  margin-top: 6px;
+
+  color: #6b7280;
+
+  font-size: 14px;
+
+}
+
+
+
+.revenue-chart-header select {
+
+  padding: 8px 14px;
+
+  border-radius: 8px;
+
+  border: 1px solid rgba(0,61,44,0.15);
+
+  background: #fffaf5;
+
+  color: #003d2c;
+
+  outline: none;
+
+}
+
+
+
+/* Chart */
+
+.revenue-chart {
+
+  width: 100%;
+
+  height: 320px;
+
+}
+
+
+
+/* Tablet */
+
+@media (max-width: 768px) {
+
+
+  .revenue-chart-header {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+  }
+
+
+  .revenue-chart {
+
+    height: 280px;
+
+  }
+
+
+}
+
+
+
+/* Mobile */
+
+@media (max-width: 480px) {
+
+
+  .revenue-chart {
+
+    height: 240px;
+
+  }
+
+
+}
