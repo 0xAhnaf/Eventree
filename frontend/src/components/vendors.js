@@ -2,6 +2,9 @@ const vendors = [
   {
     id: 1,
     name: "Chateau de Versailles",
+    description:
+    "Host unforgettable celebrations in one of the world's most iconic luxury venues. Featuring grand ballrooms, stunning gardens, and timeless architecture, it's perfect for weddings, galas, and prestigious corporate events.",
+
     category: "Event Venues",
     location: "Paris, FR",
     rating: 5.0,
@@ -15,6 +18,8 @@ const vendors = [
   {
     id: 2,
     name: "Artisan Palate",
+    description:
+    "Delivering exceptional culinary experiences with handcrafted menus, premium ingredients, and elegant presentation. From intimate gatherings to large-scale celebrations, every meal is tailored to perfection.",
     category: "Caterers",
     location: "New York, NY",
     rating: 4.9,
@@ -28,6 +33,8 @@ const vendors = [
   {
     id: 3,
     name: "Botanical Noir",
+    description:
+    "Transform ordinary spaces into breathtaking event experiences with bespoke floral arrangements, luxury décor, and creative styling. Every design is crafted to reflect your unique vision and theme.",
     category: "Decorations",
     location: "London, UK",
     rating: 4.8,
@@ -41,6 +48,8 @@ const vendors = [
   {
     id: 4,
     name: "Vogue Visions",
+    description:
+    "Capture every unforgettable moment through cinematic photography and professional videography. From candid emotions to stunning aerial shots, every memory is preserved with artistic excellence.",
     category: "Photography & Videography",
     location: "Milan, IT",
     rating: 4.9,
@@ -54,6 +63,8 @@ const vendors = [
   {
     id: 5,
     name: "Symphony Services",
+    description:
+    "A full-service event planning company dedicated to creating seamless and stress-free celebrations. From vendor coordination to on-site management, every detail is handled with precision.",
     category: "Event Management",
     location: "Vienna, AT",
     rating: 4.7,
@@ -67,6 +78,8 @@ const vendors = [
   {
     id: 6,
     name: "Sugar & Silk",
+    description:
+    "Known for exquisite desserts, gourmet cuisine, and beautifully curated dining experiences. Our team creates memorable menus that delight guests and complement every special occasion.",
     category: "Caterers",
     location: "Beverly Hills, CA",
     rating: 5.0,
@@ -80,6 +93,8 @@ const vendors = [
   {
     id: 7,
     name: "Harmony Events",
+    description:
+    "Providing personalized event planning services for weddings, parties, and corporate gatherings. With creative ideas and flawless execution, every event is designed to leave a lasting impression.",
     category: "Event Management",
     location: "Vienna, AT",
     rating: 3.6,

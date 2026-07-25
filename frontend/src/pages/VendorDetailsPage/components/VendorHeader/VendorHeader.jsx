@@ -1,7 +1,7 @@
 import React from "react";
 import "./VendorHeader.css";
 
-const VendorHeader = () => {
+const VendorHeader = ({vendor}) => {
   return (
     <section className="vendor-header">
 
@@ -11,18 +11,20 @@ const VendorHeader = () => {
         <div className="vendor-info">
 
 
-          <div className="verified-badge">
+          {vendor.verified &&(
+            <div className="verified-badge">
             ✓ Verified Vendor
-          </div>
+            </div>
+          )}
 
 
           <h1>
-            Royal Moments Events
+            {vendor.name}
           </h1>
 
 
           <p className="vendor-category">
-            Wedding Photography & Event Services
+            {vendor.category}
           </p>
 
 
@@ -30,13 +32,13 @@ const VendorHeader = () => {
 
 
             <span>
-              📍 Dhaka, Bangladesh
+              📍 {vendor.location}
             </span>
 
 
             <span className="rating">
 
-              ⭐ 4.9 (120 Reviews)
+              ⭐ {vendor.rating} (120 Reviews)
 
             </span>
 

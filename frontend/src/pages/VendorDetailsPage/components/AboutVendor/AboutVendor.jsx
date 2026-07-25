@@ -1,7 +1,7 @@
 import React from "react";
 import "./AboutVendor.css";
 
-const AboutVendor = () => {
+const AboutVendor = ({vendor}) => {
   return (
     <section className="about-vendor" id="about">
 
@@ -11,11 +11,7 @@ const AboutVendor = () => {
 
 
       <p className="about-description">
-        Royal Moments Events is a professional event service provider
-        specializing in creating memorable experiences for weddings,
-        corporate events, and special celebrations. Our team focuses on
-        quality service, creative ideas, and personalized solutions for
-        every client.
+        {vendor.description}
       </p>
 
 

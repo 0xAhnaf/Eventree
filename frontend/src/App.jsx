@@ -50,7 +50,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/vendor-details" element={<VendorDetailsPage />} />
+            <Route path="/browse-vendor/:id" element={<VendorDetailsPage />} />
 
             {/* Client-Only Route */}
             <Route

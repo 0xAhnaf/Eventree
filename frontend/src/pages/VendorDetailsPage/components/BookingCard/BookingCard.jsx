@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import "./BookingCard.css";
 
 const BookingCard = ({
+  vendor={vendor},
   bookedDates = [],
   selectedDate = "",
   onDateChange,
+  
 }) => {
 
   const [dateError, setDateError] = useState("");
@@ -68,7 +70,7 @@ const BookingCard = ({
         </span>
 
         <h3>
-          ৳15,000
+          {vendor.price}
         </h3>
 
       </div>
