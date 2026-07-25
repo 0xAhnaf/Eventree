@@ -1,0 +1,144 @@
+.admin-dashboard {
+
+  min-height: 100vh;
+
+  background: #fffaf5;
+
+}
+
+
+
+/* Main Content */
+
+.admin-dashboard-content {
+
+  margin-left: 250px;
+
+  padding: 40px;
+
+  width: calc(100% - 250px);
+
+}
+
+
+
+/* Common Section */
+
+.dashboard-section {
+
+  margin-bottom: 30px;
+
+}
+
+
+
+/* Two Column Layout */
+
+.dashboard-two-column {
+
+  display: grid;
+
+  grid-template-columns: 2fr 1fr;
+
+  gap: 25px;
+
+}
+
+
+
+/* Dashboard Cards Wrapper */
+
+.dashboard-main-card,
+.dashboard-side-card {
+
+  background: white;
+
+  border-radius: 18px;
+
+  padding: 25px;
+
+  border: 1px solid rgba(0,61,44,0.08);
+
+}
+
+
+
+/* Hover effect */
+
+.dashboard-main-card:hover,
+.dashboard-side-card:hover {
+
+  box-shadow: 0 10px 30px rgba(0,61,44,0.06);
+
+  transition: 0.3s ease;
+
+}
+
+
+
+/* Tablet */
+
+@media (max-width: 1024px) {
+
+
+  .admin-dashboard-content {
+
+    padding: 30px;
+
+  }
+
+
+  .dashboard-two-column {
+
+    grid-template-columns: 1fr;
+
+  }
+
+
+}
+
+
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+
+  .admin-dashboard-content {
+
+    margin-left: 0;
+
+    width: 100%;
+
+    padding: 20px;
+
+  }
+
+
+  .dashboard-main-card,
+  .dashboard-side-card {
+
+    padding: 18px;
+
+    border-radius: 14px;
+
+  }
+
+
+}
+
+
+
+/* Small Mobile */
+
+@media (max-width: 480px) {
+
+
+  .admin-dashboard-content {
+
+    padding: 15px;
+
+  }
+
+
+}
