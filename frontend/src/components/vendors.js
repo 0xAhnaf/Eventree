@@ -8,7 +8,7 @@ const vendors = [
     category: "Event Venues",
     location: "Paris, FR",
     rating: 5.0,
-    price: "$15,000",
+    price: "৳15,000",
     featured: true,
     verified: true,
     image:
@@ -23,7 +23,7 @@ const vendors = [
     category: "Caterers",
     location: "New York, NY",
     rating: 4.9,
-    price: "$4,200",
+    price: "৳4,200",
     featured: false,
     verified: true,
     image:
@@ -38,7 +38,7 @@ const vendors = [
     category: "Decorations",
     location: "London, UK",
     rating: 4.8,
-    price: "$2,800",
+    price: "৳2,800",
     featured: false,
     verified: false,
     image:
@@ -53,7 +53,7 @@ const vendors = [
     category: "Photography & Videography",
     location: "Milan, IT",
     rating: 4.9,
-    price: "$5,500",
+    price: "৳5,500",
     featured: false,
     verified: true,
     image:
@@ -68,7 +68,7 @@ const vendors = [
     category: "Event Management",
     location: "Vienna, AT",
     rating: 4.7,
-    price: "$3,000",
+    price: "৳3,000",
     featured: false,
     verified: true,
     image:
@@ -83,7 +83,7 @@ const vendors = [
     category: "Caterers",
     location: "Beverly Hills, CA",
     rating: 5.0,
-    price: "$1,200",
+    price: "৳1,200",
     featured: true,
     verified: true,
     image:
@@ -98,7 +98,7 @@ const vendors = [
     category: "Event Management",
     location: "Vienna, AT",
     rating: 3.6,
-    price: "$2,700",
+    price: "৳2,700",
     featured: false,
     verified: true,
     image:

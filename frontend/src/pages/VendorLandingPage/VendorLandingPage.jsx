@@ -38,7 +38,7 @@ const stats = [
     icon: <Wallet size={20} />,
     iconVariant: "revenue",
     label: "Total Revenue",
-    value: "$24,850.00",
+    value: "৳24,850.00",
     trend: "+12%",
     trendDirection: "up",
   },
