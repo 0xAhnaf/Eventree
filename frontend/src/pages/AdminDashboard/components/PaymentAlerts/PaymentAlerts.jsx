@@ -9,6 +9,14 @@ import {
 import "./PaymentAlerts.css";
 
 
+const formatCurrency = (value) => {
+
+  return `৳${value.toLocaleString("en-BD")}`;
+
+};
+
+
+
 const PaymentAlerts = () => {
 
 
@@ -16,7 +24,7 @@ const PaymentAlerts = () => {
 
     {
       title: "Pending Vendor Payout",
-      amount: "£2,450",
+      amount: 2450,
       status: "Pending",
       icon: <Clock size={18} />,
       type: "pending",
@@ -25,7 +33,7 @@ const PaymentAlerts = () => {
 
     {
       title: "Refund Request",
-      amount: "£680",
+      amount: 680,
       status: "Review",
       icon: <AlertCircle size={18} />,
       type: "review",
@@ -34,7 +42,7 @@ const PaymentAlerts = () => {
 
     {
       title: "Payment Completed",
-      amount: "£1,250",
+      amount: 1250,
       status: "Completed",
       icon: <CheckCircle size={18} />,
       type: "success",
@@ -43,7 +51,7 @@ const PaymentAlerts = () => {
 
     {
       title: "Failed Transaction",
-      amount: "£320",
+      amount: 320,
       status: "Failed",
       icon: <XCircle size={18} />,
       type: "failed",
@@ -99,7 +107,7 @@ const PaymentAlerts = () => {
 
 
               <span>
-                {payment.amount}
+                {formatCurrency(payment.amount)}
               </span>
 
             </div>

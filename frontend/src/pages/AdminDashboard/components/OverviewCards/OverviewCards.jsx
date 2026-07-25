@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  IndianRupee,
+  Wallet,
   CalendarCheck,
   Building2,
   Clock3,
@@ -9,7 +9,16 @@ import {
 import "./OverviewCards.css";
 
 
-const AnimatedNumber = ({ value, prefix = "" }) => {
+
+const formatCurrency = (value) => {
+
+  return `৳${value.toLocaleString("en-BD")}`;
+
+};
+
+
+
+const AnimatedNumber = ({ value, currency = false }) => {
 
   const [count, setCount] = useState(0);
 
@@ -44,6 +53,7 @@ const AnimatedNumber = ({ value, prefix = "" }) => {
     }, 16);
 
 
+
     return () => clearInterval(timer);
 
 
@@ -54,13 +64,18 @@ const AnimatedNumber = ({ value, prefix = "" }) => {
   return (
 
     <>
-      {prefix}
-      {count.toLocaleString()}
+      {
+        currency
+          ? formatCurrency(count)
+          : count.toLocaleString("en-BD")
+      }
     </>
 
   );
 
 };
+
+
 
 
 
@@ -72,15 +87,16 @@ const OverviewCards = () => {
     {
       title: "Total Revenue",
       value: 428930,
-      prefix: "৳",
+      currency: true,
       description: "Overall platform earnings",
-      icon: <IndianRupee size={24} />,
+      icon: <Wallet size={24} />,
     },
 
 
     {
       title: "Total Bookings",
       value: 1248,
+      currency: false,
       description: "Successful event bookings",
       icon: <CalendarCheck size={24} />,
     },
@@ -89,6 +105,7 @@ const OverviewCards = () => {
     {
       title: "Active Vendors",
       value: 248,
+      currency: false,
       description: "Verified event partners",
       icon: <Building2 size={24} />,
     },
@@ -97,6 +114,7 @@ const OverviewCards = () => {
     {
       title: "Pending Approvals",
       value: 14,
+      currency: false,
       description: "Vendor requests waiting",
       icon: <Clock3 size={24} />,
     },
@@ -140,7 +158,7 @@ const OverviewCards = () => {
 
               <AnimatedNumber
                 value={card.value}
-                prefix={card.prefix}
+                currency={card.currency}
               />
 
             </h2>

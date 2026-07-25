@@ -8,6 +8,14 @@ import {
 import "./VendorWatchlist.css";
 
 
+const formatCurrency = (value) => {
+
+  return `৳${value.toLocaleString("en-BD")}`;
+
+};
+
+
+
 const VendorWatchlist = () => {
 
 
@@ -17,7 +25,7 @@ const VendorWatchlist = () => {
       name: "Elegant Moments Studio",
       category: "Wedding Planner",
       bookings: 124,
-      revenue: "£18,500",
+      revenue: 18500,
       rating: "4.9",
       status: "Verified",
     },
@@ -27,7 +35,7 @@ const VendorWatchlist = () => {
       name: "Royal Feast Catering",
       category: "Catering",
       bookings: 98,
-      revenue: "£12,800",
+      revenue: 12800,
       rating: "4.7",
       status: "Verified",
     },
@@ -37,7 +45,7 @@ const VendorWatchlist = () => {
       name: "Dream Venue Hall",
       category: "Event Venue",
       bookings: 76,
-      revenue: "£9,600",
+      revenue: 9600,
       rating: "4.5",
       status: "Pending",
     },
@@ -47,7 +55,7 @@ const VendorWatchlist = () => {
       name: "LensCraft Studio",
       category: "Photography",
       bookings: 64,
-      revenue: "£7,400",
+      revenue: 7400,
       rating: "4.8",
       status: "Verified",
     },
@@ -96,34 +104,17 @@ const VendorWatchlist = () => {
 
             <tr>
 
-              <th>
-                Vendor
-              </th>
+              <th>Vendor</th>
 
+              <th>Category</th>
 
-              <th>
-                Category
-              </th>
+              <th>Bookings</th>
 
+              <th>Revenue</th>
 
-              <th>
-                Bookings
-              </th>
+              <th>Rating</th>
 
-
-              <th>
-                Revenue
-              </th>
-
-
-              <th>
-                Rating
-              </th>
-
-
-              <th>
-                Status
-              </th>
+              <th>Status</th>
 
             </tr>
 
@@ -162,18 +153,22 @@ const VendorWatchlist = () => {
 
                 <td>
 
-                  {vendor.revenue}
+                  {formatCurrency(vendor.revenue)}
 
                 </td>
 
 
-                <td className="vendor-rating">
+                <td>
 
+                  <div className="vendor-rating">
 
-                  <Star size={15}/>
+                    <Star size={15}/>
 
-                  {vendor.rating}
+                    <span>
+                      {vendor.rating}
+                    </span>
 
+                  </div>
 
                 </td>
 
