@@ -68,7 +68,15 @@ const RevenueChart = () => {
 
   const formatCurrency = (value) => {
 
-    return `£${value / 1000}k`;
+    return `৳${value / 1000}k`;
+
+  };
+
+
+
+  const formatFullCurrency = (value) => {
+
+    return `৳${value.toLocaleString("en-BD")}`;
 
   };
 
@@ -152,7 +160,7 @@ const RevenueChart = () => {
 
             <Tooltip
               formatter={(value) => [
-                `£${value.toLocaleString()}`,
+                formatFullCurrency(value),
                 "Revenue",
               ]}
             />

@@ -112,6 +112,8 @@
 
   border-bottom: 1px solid rgba(0,61,44,0.06);
 
+  vertical-align: middle;
+
 }
 
 
@@ -137,6 +139,15 @@
   gap: 5px;
 
   color: #b7791f !important;
+
+  white-space: nowrap;
+
+}
+
+
+.vendor-rating svg {
+
+  flex-shrink: 0;
 
 }
 
