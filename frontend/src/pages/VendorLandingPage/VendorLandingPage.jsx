@@ -120,16 +120,7 @@ function VendorLandingPage() {
             ))}
           </nav>
 
-          <div className="vlp-sidebar-bottom">
-            <a href="#" className="vlp-sidebar-link">
-              <Settings size={20} />
-              Settings
-            </a>
-            <a href="#" className="vlp-sidebar-link">
-              <LogOut size={20} />
-              Logout
-            </a>
-          </div>
+          
         </aside>
 
         {/* Main Content */}
