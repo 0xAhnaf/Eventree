@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Bell } from "lucide-react";
 import logo from "../assets/eventree-logo2.png";
 import "./Navbar.css";
 
@@ -12,6 +12,8 @@ function Navbar() {
   const [open, setOpen] = useState(false);
 
   const [profileOpen, setProfileOpen] = useState(false);
+
+  const [bellShake, setBellShake] = useState(false);
 
 
   const { user, logout } = useAuth();
@@ -26,6 +28,16 @@ function Navbar() {
     return null;
 
   }
+
+
+
+  const handleBellClick = () => {
+
+    setBellShake(true);
+
+    setTimeout(() => setBellShake(false), 500);
+
+  };
 
 
 
@@ -231,6 +243,34 @@ function Navbar() {
               <div className="profile-wrapper">
 
 
+                {
+
+                  user.role === "vendor" && (
+
+                    <button
+
+                      type="button"
+
+                      className={`navbar-notification-btn ${
+                        bellShake ? "navbar-notification-shake" : ""
+                      }`}
+
+                      onClick={handleBellClick}
+
+                      aria-label="Notifications"
+
+                    >
+
+                      <Bell size={21} />
+
+                    </button>
+
+                  )
+
+                }
+
+
+
                 <button
 
                   className={`profile-avatar ${
@@ -358,34 +398,68 @@ function Navbar() {
 
 
 
-        {/* Mobile Button */}
+        {/* Mobile Actions */}
 
-        <button
-
-          className="navbar-mobile-toggle"
-
-          onClick={() =>
-            setOpen(!open)
-          }
-
-        >
+        <div className="navbar-mobile-actions">
 
           {
 
-            open
+            user?.role === "vendor" && (
 
-            ?
+              <button
 
-            <X size={28}/>
+                type="button"
 
-            :
+                className={`navbar-notification-btn ${
+                  bellShake ? "navbar-notification-shake" : ""
+                }`}
 
-            <Menu size={28}/>
+                onClick={handleBellClick}
+
+                aria-label="Notifications"
+
+              >
+
+                <Bell size={21} />
+
+              </button>
+
+            )
 
           }
 
 
-        </button>
+
+          <button
+
+            className="navbar-mobile-toggle"
+
+            onClick={() =>
+              setOpen(!open)
+            }
+
+            aria-label={open ? "Close menu" : "Open menu"}
+
+          >
+
+            {
+
+              open
+
+              ?
+
+              <X size={28}/>
+
+              :
+
+              <Menu size={28}/>
+
+            }
+
+
+          </button>
+
+        </div>
 
 
 
