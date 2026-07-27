@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import "./AvailabilityCalendar.css";
 
 const AvailabilityCalendar = ({
@@ -10,11 +11,6 @@ const AvailabilityCalendar = ({
     new Date(2026, 9, 1)
   );
 
-  /*
-    When a date is selected from the Booking Card,
-    automatically open that selected date's month
-    in this calendar.
-  */
   useEffect(() => {
     if (!selectedDate) {
       return;
@@ -40,57 +36,30 @@ const AvailabilityCalendar = ({
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  const monthName = currentDate.toLocaleString("en-US", {
+  const monthName = currentDate.toLocaleString("en-GB", {
     month: "long",
   });
 
-  const firstDay = new Date(
-    year,
-    month,
-    1
-  ).getDay();
+  const firstDay = new Date(year, month, 1).getDay();
 
-  const totalDays = new Date(
-    year,
-    month + 1,
-    0
-  ).getDate();
+  const totalDays = new Date(year, month + 1, 0).getDate();
 
   const formatDate = (day) => {
-    const formattedMonth = String(month + 1).padStart(
-      2,
-      "0"
-    );
-
-    const formattedDay = String(day).padStart(
-      2,
-      "0"
-    );
+    const formattedMonth = String(month + 1).padStart(2, "0");
+    const formattedDay = String(day).padStart(2, "0");
 
     return `${year}-${formattedMonth}-${formattedDay}`;
   };
 
   const previousMonth = () => {
-    setCurrentDate(
-      new Date(
-        year,
-        month - 1,
-        1
-      )
-    );
+    setCurrentDate(new Date(year, month - 1, 1));
   };
 
   const nextMonth = () => {
-    setCurrentDate(
-      new Date(
-        year,
-        month + 1,
-        1
-      )
-    );
+    setCurrentDate(new Date(year, month + 1, 1));
   };
 
-  const isBooked = (day) => {
+  const isUnavailable = (day) => {
     const formattedDate = formatDate(day);
 
     return bookedDates.includes(formattedDate);
@@ -110,11 +79,7 @@ const AvailabilityCalendar = ({
 
   const calendarDays = [];
 
-  for (
-    let index = 0;
-    index < firstDay;
-    index += 1
-  ) {
+  for (let index = 0; index < firstDay; index += 1) {
     calendarDays.push(
       <div
         key={`empty-${index}`}
@@ -124,19 +89,14 @@ const AvailabilityCalendar = ({
     );
   }
 
-  for (
-    let day = 1;
-    day <= totalDays;
-    day += 1
-  ) {
+  for (let day = 1; day <= totalDays; day += 1) {
     const formattedDate = formatDate(day);
-    const booked = isBooked(day);
-    const selected =
-      selectedDate === formattedDate;
+    const unavailable = isUnavailable(day);
+    const selected = selectedDate === formattedDate;
 
     let dayClassName = "day";
 
-    if (booked) {
+    if (unavailable) {
       dayClassName += " booked";
     } else if (selected) {
       dayClassName += " selected";
@@ -150,9 +110,9 @@ const AvailabilityCalendar = ({
         key={formattedDate}
         className={dayClassName}
         onClick={() => selectDate(day)}
-        disabled={booked}
+        disabled={unavailable}
         aria-label={`${formattedDate} ${
-          booked ? "booked" : "available"
+          unavailable ? "unavailable" : "available"
         }`}
       >
         {day}
@@ -165,9 +125,7 @@ const AvailabilityCalendar = ({
       className="availability-calendar"
       id="availability"
     >
-      <h2>
-        Availability
-      </h2>
+      <h2>Availability</h2>
 
       <div className="calendar-box">
         <div className="calendar-header">
@@ -202,23 +160,17 @@ const AvailabilityCalendar = ({
           <span>Sat</span>
         </div>
 
-        <div className="calendar-days">
-          {calendarDays}
-        </div>
+        <div className="calendar-days">{calendarDays}</div>
 
         <div className="calendar-legend">
           <div>
             <span className="available-dot" />
-            <span>
-              Available
-            </span>
+            <span>Available</span>
           </div>
 
           <div>
             <span className="booked-dot" />
-            <span>
-              Booked
-            </span>
+            <span>Unavailable</span>
           </div>
         </div>
       </div>

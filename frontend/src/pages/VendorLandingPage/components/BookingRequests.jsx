@@ -1,50 +1,104 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, X } from "lucide-react";
+
+import {
+  DEMO_VENDOR_ID,
+  getVendorBookings,
+  updateVendorBookingStatus,
+  VENDOR_BOOKINGS_STORAGE_KEY,
+  VENDOR_BOOKINGS_UPDATED_EVENT,
+} from "../../../utils/vendorPortalStorage.js";
+
 import "./BookingRequests.css";
 
-const defaultRequests = [
-  {
-    id: 1,
-    initials: "EM",
-    name: "Eleanor Maxwell",
-    eventType: "Floral Arrangement Workshop",
-    date: "Nov 04, 2026",
-    pkg: "Bespoke Full Service",
-  },
-  {
-    id: 2,
-    initials: "JT",
-    name: "Julian Thorne",
-    eventType: "Private Art Soirée",
-    date: "Oct 29, 2026",
-    pkg: "Evening Curated",
-  },
-  {
-    id: 3,
-    initials: "RC",
-    name: "Renata Cole",
-    eventType: "Rooftop Anniversary Dinner",
-    date: "Nov 09, 2026",
-    pkg: "Signature Intimate",
-  },
-];
+const formatDate = (dateValue) => {
+  const date = new Date(`${dateValue}T00:00:00`);
 
-function BookingRequests({ requests: initialRequests = defaultRequests }) {
-  const [requests, setRequests] = useState(initialRequests);
+  if (Number.isNaN(date.getTime())) {
+    return dateValue || "Date not provided";
+  }
 
-  const handleDecline = (id) => {
-    setRequests((prev) => prev.filter((request) => request.id !== id));
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+const getInitials = (name = "") =>
+  name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "CL";
+
+function BookingRequests() {
+  const [bookings, setBookings] = useState(() =>
+    getVendorBookings(DEMO_VENDOR_ID)
+  );
+
+  useEffect(() => {
+    const syncBookings = (event) => {
+      if (
+        event?.type === "storage" &&
+        event.key &&
+        event.key !== VENDOR_BOOKINGS_STORAGE_KEY
+      ) {
+        return;
+      }
+
+      setBookings(getVendorBookings(DEMO_VENDOR_ID));
+    };
+
+    window.addEventListener("storage", syncBookings);
+    window.addEventListener(
+      VENDOR_BOOKINGS_UPDATED_EVENT,
+      syncBookings
+    );
+
+    return () => {
+      window.removeEventListener("storage", syncBookings);
+      window.removeEventListener(
+        VENDOR_BOOKINGS_UPDATED_EVENT,
+        syncBookings
+      );
+    };
+  }, []);
+
+  const pendingRequests = useMemo(
+    () =>
+      bookings
+        .filter(
+          (booking) => booking.status === "pending"
+        )
+        .sort(
+          (firstBooking, secondBooking) =>
+            new Date(firstBooking.createdAt) -
+            new Date(secondBooking.createdAt)
+        ),
+    [bookings]
+  );
+
+  const handleDecline = (bookingId) => {
+    updateVendorBookingStatus(bookingId, "rejected");
   };
 
-  const handleAccept = (id) => {
-    setRequests((prev) => prev.filter((request) => request.id !== id));
+  const handleAccept = (bookingId) => {
+    updateVendorBookingStatus(bookingId, "accepted");
   };
 
   return (
     <div className="booking-requests-VLP">
       <div className="booking-requests-header-VLP">
-        <h4 className="booking-requests-title-VLP">New Booking Requests</h4>
-        <span className="booking-requests-badge-VLP">{requests.length} Pending</span>
+        <h4 className="booking-requests-title-VLP">
+          New Booking Requests
+        </h4>
+
+        <span className="booking-requests-badge-VLP">
+          {pendingRequests.length} Pending
+        </span>
       </div>
 
       <div className="booking-requests-table-wrap-VLP">
@@ -55,36 +109,65 @@ function BookingRequests({ requests: initialRequests = defaultRequests }) {
               <th>Event Type</th>
               <th>Date Requested</th>
               <th>Package</th>
-              <th className="booking-requests-action-col-VLP">Action</th>
+              <th className="booking-requests-action-col-VLP">
+                Action
+              </th>
             </tr>
           </thead>
+
           <tbody>
-            {requests.map((request) => (
+            {pendingRequests.map((request) => (
               <tr key={request.id}>
                 <td>
                   <div className="booking-client-VLP">
-                    <span className="booking-avatar-VLP">{request.initials}</span>
-                    <span className="booking-client-name-VLP">{request.name}</span>
+                    <span className="booking-avatar-VLP">
+                      {getInitials(request.clientName)}
+                    </span>
+
+                    <span className="booking-client-name-VLP">
+                      {request.clientName || "Client"}
+                    </span>
                   </div>
                 </td>
-                <td className="booking-cell-muted-VLP">{request.eventType}</td>
-                <td className="booking-cell-muted-VLP">{request.date}</td>
-                <td>
-                  <span className="booking-package-VLP">{request.pkg}</span>
+
+                <td className="booking-cell-muted-VLP">
+                  {request.eventType ||
+                    "Event type not provided"}
                 </td>
+
+                <td className="booking-cell-muted-VLP">
+                  {formatDate(request.eventDate)}
+                </td>
+
+                <td>
+                  <span className="booking-package-VLP">
+                    {request.packageName ||
+                      "Package not selected"}
+                  </span>
+                </td>
+
                 <td>
                   <div className="booking-actions-VLP">
                     <button
+                      type="button"
                       className="booking-action-btn-VLP booking-action-decline-VLP"
-                      onClick={() => handleDecline(request.id)}
-                      aria-label="Decline booking"
+                      onClick={() =>
+                        handleDecline(request.id)
+                      }
+                      aria-label="Reject booking"
+                      title="Reject booking"
                     >
                       <X size={18} />
                     </button>
+
                     <button
+                      type="button"
                       className="booking-action-btn-VLP booking-action-accept-VLP"
-                      onClick={() => handleAccept(request.id)}
+                      onClick={() =>
+                        handleAccept(request.id)
+                      }
                       aria-label="Accept booking"
+                      title="Accept booking"
                     >
                       <Check size={18} />
                     </button>
@@ -93,9 +176,12 @@ function BookingRequests({ requests: initialRequests = defaultRequests }) {
               </tr>
             ))}
 
-            {requests.length === 0 && (
+            {pendingRequests.length === 0 && (
               <tr>
-                <td colSpan="5" className="booking-empty-VLP">
+                <td
+                  colSpan="5"
+                  className="booking-empty-VLP"
+                >
                   No pending booking requests right now.
                 </td>
               </tr>
