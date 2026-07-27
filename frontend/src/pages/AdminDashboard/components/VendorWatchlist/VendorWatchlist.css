@@ -1,226 +1,228 @@
 .vendor-watchlist {
-
   width: 100%;
-
+  min-width: 0;
 }
-
-
 
 .vendor-watchlist-header {
-
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
+  gap: 20px;
   margin-bottom: 25px;
-
 }
 
-
+.vendor-watchlist-header > div {
+  min-width: 0;
+}
 
 .vendor-watchlist-header h3 {
-
   margin: 0;
-
   color: #003d2c;
-
   font-size: 22px;
-
 }
-
-
 
 .vendor-watchlist-header p {
-
-  margin-top: 6px;
-
+  margin: 6px 0 0;
   color: #6b7280;
-
   font-size: 14px;
-
 }
-
-
 
 .vendor-watchlist-header button {
-
+  flex-shrink: 0;
   border: none;
-
   background: #003d2c;
-
   color: white;
-
   padding: 9px 18px;
-
   border-radius: 8px;
-
   cursor: pointer;
-
+  font-family: inherit;
 }
-
-
 
 /* Table */
 
 .vendor-table-wrapper {
-
   width: 100%;
-
-  overflow-x: auto;
-
+  max-width: 100%;
+  overflow: visible;
 }
-
-
 
 .vendor-table {
-
   width: 100%;
-
   border-collapse: collapse;
-
-  min-width: 700px;
-
+  table-layout: auto;
 }
-
-
 
 .vendor-table th {
-
   text-align: left;
-
   padding: 14px;
-
   font-size: 13px;
-
   color: #6b7280;
-
-  border-bottom: 1px solid rgba(0,61,44,0.1);
-
+  border-bottom: 1px solid rgba(0, 61, 44, 0.1);
+  white-space: nowrap;
 }
-
-
 
 .vendor-table td {
-
   padding: 16px 14px;
-
   font-size: 14px;
-
   color: #374151;
-
-  border-bottom: 1px solid rgba(0,61,44,0.06);
-
+  border-bottom: 1px solid rgba(0, 61, 44, 0.06);
   vertical-align: middle;
-
 }
 
-
+.vendor-table tbody tr:last-child td {
+  border-bottom: none;
+}
 
 .vendor-name {
-
   font-weight: 600;
-
   color: #003d2c !important;
-
 }
-
-
 
 /* Rating */
 
 .vendor-rating {
-
-  display: flex;
-
+  display: inline-flex;
   align-items: center;
-
   gap: 5px;
-
   color: #b7791f !important;
-
   white-space: nowrap;
-
 }
-
 
 .vendor-rating svg {
-
   flex-shrink: 0;
-
 }
-
-
 
 /* Status */
 
 .vendor-status {
-
   display: inline-flex;
-
   align-items: center;
-
   gap: 5px;
-
   padding: 6px 12px;
-
   border-radius: 20px;
-
   font-size: 12px;
-
+  white-space: nowrap;
 }
-
-
 
 .vendor-status.verified {
-
-  background: rgba(22,163,74,0.12);
-
+  background: rgba(22, 163, 74, 0.12);
   color: #15803d;
-
 }
-
-
 
 .vendor-status.pending {
-
-  background: rgba(245,158,11,0.12);
-
+  background: rgba(245, 158, 11, 0.12);
   color: #d97706;
-
 }
 
+/* Smaller Desktop and Tablet */
 
-
-/* Tablet */
-
-@media(max-width:1024px){
-
-  .vendor-table {
-
-    min-width: 650px;
-
+@media (max-width: 1180px) {
+  .vendor-table th,
+  .vendor-table td {
+    padding-right: 10px;
+    padding-left: 10px;
   }
 
+  .vendor-table td {
+    font-size: 13px;
+  }
+
+  .vendor-status {
+    padding: 5px 9px;
+  }
 }
 
+/* Mobile card layout */
 
-
-/* Mobile */
-
-@media(max-width:768px){
-
-
+@media (max-width: 768px) {
   .vendor-watchlist-header {
-
-    flex-direction: column;
-
     align-items: flex-start;
-
-    gap: 15px;
-
+    margin-bottom: 20px;
   }
 
+  .vendor-table,
+  .vendor-table tbody,
+  .vendor-table tr,
+  .vendor-table td {
+    display: block;
+    width: 100%;
+  }
 
+  .vendor-table thead {
+    display: none;
+  }
+
+  .vendor-table tbody {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .vendor-table tr {
+    padding: 16px;
+    border: 1px solid rgba(0, 61, 44, 0.1);
+    border-radius: 12px;
+    background: #ffffff;
+    box-sizing: border-box;
+  }
+
+  .vendor-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(0, 61, 44, 0.06);
+    text-align: right;
+  }
+
+  .vendor-table td::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .vendor-table td:last-child {
+    border-bottom: none;
+  }
+
+  .vendor-table .vendor-name {
+    align-items: flex-start;
+    color: #003d2c !important;
+  }
+
+  .vendor-table .vendor-name,
+  .vendor-table .vendor-name::before {
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 600px) {
+  .vendor-table tbody {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .vendor-watchlist-header {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .vendor-watchlist-header button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .vendor-table tr {
+    padding: 14px;
+  }
+
+  .vendor-table td {
+    gap: 12px;
+  }
 }

@@ -1,116 +1,78 @@
 .revenue-chart-container {
-
   width: 100%;
-
+  min-width: 0;
 }
-
-
 
 .revenue-chart-header {
-
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
+  gap: 20px;
   margin-bottom: 25px;
-
 }
 
-
+.revenue-chart-header > div {
+  min-width: 0;
+}
 
 .revenue-chart-header h3 {
-
   margin: 0;
-
   color: #003d2c;
-
   font-size: 22px;
-
 }
-
-
 
 .revenue-chart-header p {
-
-  margin-top: 6px;
-
+  margin: 6px 0 0;
   color: #6b7280;
-
   font-size: 14px;
-
+  line-height: 1.45;
 }
-
-
 
 .revenue-chart-header select {
-
+  flex-shrink: 0;
   padding: 8px 14px;
-
   border-radius: 8px;
-
-  border: 1px solid rgba(0,61,44,0.15);
-
+  border: 1px solid rgba(0, 61, 44, 0.15);
   background: #fffaf5;
-
   color: #003d2c;
-
   outline: none;
-
+  font-family: inherit;
 }
-
-
 
 /* Chart */
 
 .revenue-chart {
-
   width: 100%;
-
+  min-width: 0;
   height: 320px;
-
 }
-
-
 
 /* Tablet */
 
 @media (max-width: 768px) {
-
-
   .revenue-chart-header {
-
-    flex-direction: column;
-
     align-items: flex-start;
-
-    gap: 15px;
-
+    margin-bottom: 20px;
   }
-
 
   .revenue-chart {
-
     height: 280px;
-
   }
-
-
 }
-
-
 
 /* Mobile */
 
-@media (max-width: 480px) {
-
-
-  .revenue-chart {
-
-    height: 240px;
-
+@media (max-width: 520px) {
+  .revenue-chart-header {
+    flex-direction: column;
+    gap: 12px;
   }
 
+  .revenue-chart-header select {
+    width: 100%;
+  }
 
+  .revenue-chart {
+    height: 245px;
+  }
 }

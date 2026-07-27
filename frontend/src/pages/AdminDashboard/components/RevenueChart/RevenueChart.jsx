@@ -128,12 +128,14 @@ const RevenueChart = () => {
 
         <ResponsiveContainer
           width="100%"
-          height={320}
+          height="100%"
+          minWidth={0}
         >
 
 
           <BarChart
             data={revenueData}
+            margin={{ top: 8, right: 8, left: -10, bottom: 0 }}
           >
 
 
@@ -147,6 +149,7 @@ const RevenueChart = () => {
             <XAxis
               dataKey="month"
               tickLine={false}
+              tick={{ fontSize: 12 }}
             />
 
 
@@ -154,6 +157,8 @@ const RevenueChart = () => {
             <YAxis
               tickFormatter={formatCurrency}
               tickLine={false}
+              width={55}
+              tick={{ fontSize: 12 }}
             />
 
 

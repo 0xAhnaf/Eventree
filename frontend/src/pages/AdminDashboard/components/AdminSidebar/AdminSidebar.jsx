@@ -6,13 +6,12 @@ import {
   CalendarDays,
   CreditCard,
   BarChart3,
-  Settings,
-  LogOut,
+  X,
 } from "lucide-react";
 
 import "./AdminSidebar.css";
 
-const AdminSidebar = () => {
+const AdminSidebar = ({ isOpen = false, onClose }) => {
   const menuItems = [
     {
       name: "Dashboard",
@@ -41,8 +40,26 @@ const AdminSidebar = () => {
     },
   ];
 
+  const handleMenuItemClick = () => {
+    if (typeof onClose === "function") {
+      onClose();
+    }
+  };
+
   return (
-    <aside className="admin-sidebar">
+    <aside
+      id="admin-sidebar-navigation"
+      className={`admin-sidebar ${isOpen ? "admin-sidebar-open" : ""}`}
+      aria-label="Admin navigation"
+    >
+      <button
+        type="button"
+        className="admin-sidebar-close"
+        aria-label="Close admin navigation"
+        onClick={onClose}
+      >
+        <X size={22} />
+      </button>
 
       {/* Logo Section */}
       <div className="admin-logo-section">
@@ -50,31 +67,23 @@ const AdminSidebar = () => {
         <p>ADMIN CONTROL</p>
       </div>
 
-
       {/* Main Navigation */}
       <nav className="admin-menu">
-
         {menuItems.map((item, index) => (
           <div
             key={index}
-            className={`admin-menu-item ${
-              item.active ? "active" : ""
-            }`}
+            className={`admin-menu-item ${item.active ? "active" : ""}`}
+            aria-current={item.active ? "page" : undefined}
+            onClick={handleMenuItemClick}
           >
             <span className="admin-menu-icon">
               {item.icon}
             </span>
 
-            <span>
-              {item.name}
-            </span>
+            <span>{item.name}</span>
           </div>
         ))}
-
       </nav>
-
-
-
     </aside>
   );
 };
