@@ -714,3 +714,20 @@
     font-size: 13px;
   }
 }
+/* ========================================================================== 
+   Business Profile Navigation Support
+========================================================================== */
+
+.vlp-sidebar-link {
+  border: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.vlp-sidebar-link:focus-visible,
+.vlp-menu-btn:focus-visible,
+.vlp-sidebar-close:focus-visible {
+  outline: 3px solid rgba(214, 179, 106, 0.45);
+  outline-offset: 2px;
+}

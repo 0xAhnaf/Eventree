@@ -5,32 +5,77 @@ import {
   CalendarDays,
   CalendarCheck,
   Mail,
-  Settings,
-  LogOut,
   CalendarRange,
   Download,
   Wallet,
   Armchair,
   Eye,
   Contact,
-  Menu, // Imported for Mobile Menu Trigger
-  X,    // Imported for Sidebar Close
+  Menu,
+  X,
 } from "lucide-react";
+
 import Navbar from "../../components/Navbar.jsx";
 import Footer from "../../components/Footer.jsx";
+
 import StatCard from "./components/StatCard.jsx";
 import RevenueChart from "./components/RevenueChart.jsx";
 import UpcomingEvents from "./components/UpcomingEvents.jsx";
 import BookingRequests from "./components/BookingRequests.jsx";
+import BusinessProfile from "./components/BusinessProfile/BusinessProfile.jsx";
+import VendorBookings from "./components/VendorBookings/VendorBookings.jsx";
+import VendorAvailability from "./components/VendorAvailability/VendorAvailability.jsx";
+
 import "./VendorLandingPage.css";
 
 const sidebarLinks = [
-  { icon: <LayoutDashboard size={20} />, label: "Analytics", active: true },
-  { icon: <User size={20} />, label: "Business Profile" },
-  { icon: <CalendarDays size={20} />, label: "Bookings" },
-  { icon: <CalendarCheck size={20} />, label: "Availability" },
-  { icon: <Mail size={20} />, label: "Messages" },
+  {
+    icon: <LayoutDashboard size={20} />,
+    label: "Analytics",
+    view: "analytics",
+  },
+  {
+    icon: <User size={20} />,
+    label: "Business Profile",
+    view: "business-profile",
+  },
+  {
+    icon: <CalendarDays size={20} />,
+    label: "Bookings",
+    view: "bookings",
+  },
+  {
+    icon: <CalendarCheck size={20} />,
+    label: "Availability",
+    view: "availability",
+  },
+  {
+    icon: <Mail size={20} />,
+    label: "Messages",
+  },
 ];
+
+const viewDetails = {
+  analytics: {
+    title: "Business Performance",
+    subtitle: "Your boutique's growth and engagement at a glance.",
+  },
+  "business-profile": {
+    title: "Business Profile",
+    subtitle:
+      "Manage the information clients will see on your public vendor page.",
+  },
+  bookings: {
+    title: "Bookings",
+    subtitle:
+      "Review upcoming event details and ratings from completed events.",
+  },
+  availability: {
+    title: "Availability Calendar",
+    subtitle:
+      "Control the dates clients can select from your public vendor page.",
+  },
+};
 
 const stats = [
   {
@@ -68,31 +113,93 @@ const stats = [
 ];
 
 function VendorLandingPage() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeView, setActiveView] = useState("analytics");
+
+  const handleSidebarLinkClick = (event, link) => {
+    event.preventDefault();
+
+    if (link.view) {
+      setActiveView(link.view);
+    }
+
+    setIsSidebarOpen(false);
+  };
+
+  const renderActiveView = () => {
+    switch (activeView) {
+      case "business-profile":
+        return <BusinessProfile />;
+
+      case "bookings":
+        return <VendorBookings />;
+
+      case "availability":
+        return <VendorAvailability />;
+
+      case "analytics":
+      default:
+        return (
+          <>
+            <div className="vlp-stats-grid">
+              {stats.map((stat) => (
+                <StatCard key={stat.label} {...stat} />
+              ))}
+            </div>
+
+            <div className="vlp-bento-grid">
+              <div className="vlp-bento-chart">
+                <RevenueChart />
+              </div>
+
+              <div className="vlp-bento-events">
+                <UpcomingEvents
+                  onViewCalendar={() => setActiveView("bookings")}
+                />
+              </div>
+
+              <div className="vlp-bento-bookings">
+                <BookingRequests />
+              </div>
+            </div>
+          </>
+        );
+    }
+  };
+
+  const currentViewDetails =
+    viewDetails[activeView] || viewDetails.analytics;
+
+  const isAnalyticsView = activeView === "analytics";
 
   return (
     <div className="vlp-page">
       <Navbar />
 
       <div className="vlp-layout">
-        {/* Mobile Backdrop Overlay */}
         {isSidebarOpen && (
-          <div 
-            className="vlp-sidebar-overlay" 
+          <div
+            className="vlp-sidebar-overlay"
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
 
-        {/* Sidebar Navigation */}
-        <aside className={`vlp-sidebar ${isSidebarOpen ? "vlp-sidebar-open" : ""}`}>
+        <aside
+          className={`vlp-sidebar ${
+            isSidebarOpen ? "vlp-sidebar-open" : ""
+          }`}
+        >
           <div className="vlp-sidebar-welcome">
             <div>
               <h2 className="vlp-sidebar-title">Welcome back</h2>
-              <p className="vlp-sidebar-subtitle">Manage your premium events</p>
+              <p className="vlp-sidebar-subtitle">
+                Manage your premium events
+              </p>
             </div>
-            {/* Close Button Only Visible on Mobile */}
-            <button 
-              className="vlp-sidebar-close" 
+
+            <button
+              type="button"
+              className="vlp-sidebar-close"
               onClick={() => setIsSidebarOpen(false)}
               aria-label="Close menu"
             >
@@ -101,77 +208,75 @@ function VendorLandingPage() {
           </div>
 
           <nav className="vlp-sidebar-nav">
-            {sidebarLinks.map((link) => (
-              <a
-                key={link.label}
-                href="#"
-                className={`vlp-sidebar-link ${link.active ? "vlp-sidebar-link-active" : ""}`}
-              >
-                {link.icon}
-                {link.label}
-              </a>
-            ))}
-          </nav>
+            {sidebarLinks.map((link) => {
+              const isActive = link.view === activeView;
 
-          
+              return (
+                <a
+                  key={link.label}
+                  href="#"
+                  className={`vlp-sidebar-link ${
+                    isActive ? "vlp-sidebar-link-active" : ""
+                  }`}
+                  aria-current={isActive ? "page" : undefined}
+                  onClick={(event) =>
+                    handleSidebarLinkClick(event, link)
+                  }
+                >
+                  {link.icon}
+                  {link.label}
+                </a>
+              );
+            })}
+          </nav>
         </aside>
 
-        {/* Main Content */}
         <main className="vlp-main">
           <div className="vlp-topbar">
-            {/* Menu Toggle Trigger for Mobile / Tablet Viewports */}
-            <button 
-              className="vlp-menu-btn" 
+            <button
+              type="button"
+              className="vlp-menu-btn"
               onClick={() => setIsSidebarOpen(true)}
               aria-label="Open menu"
             >
               <Menu size={24} />
             </button>
-
           </div>
 
           <div className="vlp-content">
             <header className="vlp-page-header">
               <div>
-                <h1 className="vlp-page-title">Business Performance</h1>
+                <h1 className="vlp-page-title">
+                  {currentViewDetails.title}
+                </h1>
+
                 <p className="vlp-page-subtitle">
-                  Your boutique's growth and engagement at a glance.
+                  {currentViewDetails.subtitle}
                 </p>
               </div>
 
-              <div className="vlp-header-actions">
-                <button className="vlp-btn vlp-btn-outline">
-                  <CalendarRange size={18} />
-                  Last 30 Days
-                </button>
-                <button className="vlp-btn vlp-btn-solid">
-                  <Download size={18} />
-                  Export Report
-                </button>
-              </div>
+              {isAnalyticsView && (
+                <div className="vlp-header-actions">
+                  <button
+                    type="button"
+                    className="vlp-btn vlp-btn-outline"
+                  >
+                    <CalendarRange size={18} />
+                    Last 30 Days
+                  </button>
+
+                  <button
+                    type="button"
+                    className="vlp-btn vlp-btn-solid"
+                  >
+                    <Download size={18} />
+                    Export Report
+                  </button>
+                </div>
+              )}
             </header>
 
-            {/* Stats Grid */}
-            <div className="vlp-stats-grid">
-              {stats.map((stat) => (
-                <StatCard key={stat.label} {...stat} />
-              ))}
-            </div>
-
-            {/* Bento Grid */}
-            <div className="vlp-bento-grid">
-              <div className="vlp-bento-chart">
-                <RevenueChart />
-              </div>
-
-              <div className="vlp-bento-events">
-                <UpcomingEvents />
-              </div>
-
-              <div className="vlp-bento-bookings">
-                <BookingRequests />
-              </div>
-            </div>
+            {renderActiveView()}
           </div>
         </main>
       </div>
