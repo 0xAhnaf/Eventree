@@ -247,6 +247,100 @@
 
 
 
+.navbar-mobile-actions {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.5rem;
+
+}
+
+
+
+.navbar-notification-btn {
+
+  width: 42px;
+
+  height: 42px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid rgba(0, 61, 44, 0.12);
+
+  border-radius: 50%;
+
+  background: #fffaf5;
+
+  color: #003d2c;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+
+}
+
+
+
+.navbar-notification-btn:hover {
+
+  background: #003d2c;
+
+  border-color: #003d2c;
+
+  color: #ffffff;
+
+  transform: translateY(-1px);
+
+}
+
+
+
+.navbar-notification-shake {
+
+  animation: navbar-notification-shake 0.5s ease;
+
+}
+
+
+
+@keyframes navbar-notification-shake {
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  20% {
+    transform: rotate(-12deg);
+  }
+
+  40% {
+    transform: rotate(12deg);
+  }
+
+  60% {
+    transform: rotate(-8deg);
+  }
+
+  80% {
+    transform: rotate(8deg);
+  }
+
+}
+
+
+
 
 
 
@@ -330,6 +424,14 @@
 
 
 
+  .navbar-mobile-actions {
+
+    display: none;
+
+  }
+
+
+
   .navbar-mobile-toggle {
 
     display: none;
@@ -355,6 +457,12 @@
 .profile-wrapper {
 
   position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.65rem;
 
 }
 

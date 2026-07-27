@@ -7,7 +7,6 @@ import {
   Mail,
   Settings,
   LogOut,
-  Bell,
   CalendarRange,
   Download,
   Wallet,
@@ -69,13 +68,7 @@ const stats = [
 ];
 
 function VendorLandingPage() {
-  const [bellShake, setBellShake] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
-
-  const handleBellClick = () => {
-    setBellShake(true);
-    setTimeout(() => setBellShake(false), 500);
-  };
 
   return (
     <div className="vlp-page">
@@ -135,13 +128,6 @@ function VendorLandingPage() {
               <Menu size={24} />
             </button>
 
-            <button
-              className={`vlp-bell-btn ${bellShake ? "vlp-bell-shake" : ""}`}
-              onClick={handleBellClick}
-              aria-label="Notifications"
-            >
-              <Bell size={22} />
-            </button>
           </div>
 
           <div className="vlp-content">

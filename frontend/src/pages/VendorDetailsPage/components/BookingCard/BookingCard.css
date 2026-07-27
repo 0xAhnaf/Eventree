@@ -1,6 +1,6 @@
 .booking-card {
   width: 100%;
-  max-height: calc(100vh - 105px);
+  max-height: none;
 
   background: #ffffff;
 
@@ -13,35 +13,7 @@
 
   box-sizing: border-box;
 
-  /*
-    Card viewport-এর চেয়ে বড় হলে page নয়,
-    card-এর ভেতরে scroll হবে।
-  */
-  overflow-y: auto;
-  overflow-x: hidden;
-
-  scrollbar-width: thin;
-  scrollbar-color: #b9b9b9 transparent;
-}
-
-
-/* Chrome / Edge scrollbar */
-
-.booking-card::-webkit-scrollbar {
-  width: 6px;
-}
-
-.booking-card::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.booking-card::-webkit-scrollbar-thumb {
-  background: #b9b9b9;
-  border-radius: 20px;
-}
-
-.booking-card::-webkit-scrollbar-thumb:hover {
-  background: #8f8f8f;
+  overflow: visible;
 }
 
 
@@ -92,6 +64,20 @@
 /* ================================
    FORM FIELDS
 ================================ */
+
+.booking-field-row {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 15px;
+
+  align-items: start;
+}
+
+.booking-field-row .booking-field {
+  min-width: 0;
+}
 
 .booking-field {
   width: 100%;
@@ -202,9 +188,6 @@
 
 @media (max-width: 1024px) {
   .booking-card {
-    max-height: none;
-    overflow: visible;
-
     margin-bottom: 0;
   }
 }
@@ -229,6 +212,10 @@
 
   .starting-price h3 {
     font-size: 28px;
+  }
+
+  .booking-field-row {
+    gap: 12px;
   }
 }
 
@@ -257,6 +244,10 @@
     font-size: 27px;
   }
 
+  .booking-field-row {
+    gap: 10px;
+  }
+
   .booking-field {
     margin-bottom: 14px;
   }
@@ -264,5 +255,7 @@
   .booking-field input,
   .booking-field select {
     height: 46px;
+    padding: 0 10px;
+    font-size: 13px;
   }
 }
