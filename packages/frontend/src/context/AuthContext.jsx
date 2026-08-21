@@ -1,36 +1,6 @@
 import { createContext, useContext, useState } from "react";
-const AuthContext = createContext(null);
 
-// Hardcoded Demo Users
-export const DEMO_USERS = [
-  {
-    id: "usr_client",
-    name: "Demo Client",
-    email: "client@eventree.com",
-    phone: "01700000001",
-    password: "password123",
-    role: "client",
-    redirectTo: "/browse-vendor",
-  },
-  {
-    id: "usr_vendor",
-    name: "Demo Vendor",
-    email: "vendor@eventree.com",
-    phone: "01700000002",
-    password: "password123",
-    role: "vendor",
-    redirectTo: "/vendor",
-  },
-  {
-    id: "usr_admin",
-    name: "Demo Admin",
-    email: "admin@eventree.com",
-    phone: "01700000003",
-    password: "password123",
-    role: "admin",
-    redirectTo: "/admin",
-  },
-];
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
@@ -38,43 +8,128 @@ export const AuthProvider = ({ children }) => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const login = (identifier, password) => {
-    const cleanIdentifier = identifier.trim().toLowerCase();
+  const login = async (identifier, password) => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          identifier,
+          password,
+        }),
+      });
 
-    // Match against either Email OR Phone number
-    const foundUser = DEMO_USERS.find(
-      (u) =>
-        (u.email.toLowerCase() === cleanIdentifier || u.phone === cleanIdentifier) &&
-        u.password === password
-    );
+      const data = await response.json();
 
-    if (foundUser) {
-      const sessionUser = {
-        id: foundUser.id,
-        name: foundUser.name,
-        email: foundUser.email,
-        phone: foundUser.phone,
-        role: foundUser.role,
-        redirectTo: foundUser.redirectTo,
-      };
-      setUser(sessionUser);
+      if (!response.ok) {
+        return {
+          success: false,
+          message:
+            data.message || "The provided credentials are incorrect.",
+        };
+      }
+
+      const sessionUser = data.user;
+
+      localStorage.setItem("eventree_token", data.token);
       localStorage.setItem("eventree_user", JSON.stringify(sessionUser));
-      return { success: true, user: sessionUser };
-    }
 
-    return {
-      success: false,
-      message: "Invalid credentials. Try using one of the demo user credentials.",
-    };
+      setUser(sessionUser);
+
+      return {
+        success: true,
+        user: sessionUser,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Could not connect to the server.",
+      };
+    }
   };
 
-  const logout = () => {
+  const register = async (formData, role) => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password,
+          password_confirmation: formData.confirmPassword,
+          role,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.errors) {
+          const firstError = Object.values(data.errors)[0]?.[0];
+
+          return {
+            success: false,
+            message: firstError || "Registration failed.",
+          };
+        }
+
+        return {
+          success: false,
+          message: data.message || "Registration failed.",
+        };
+      }
+
+      const sessionUser = data.user;
+
+      localStorage.setItem("eventree_token", data.token);
+      localStorage.setItem("eventree_user", JSON.stringify(sessionUser));
+
+      setUser(sessionUser);
+
+      return {
+        success: true,
+        user: sessionUser,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Could not connect to the server.",
+      };
+    }
+  };
+
+  const logout = async () => {
+    const token = localStorage.getItem("eventree_token");
+
+    try {
+      if (token) {
+        await fetch("http://127.0.0.1:8000/api/logout", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Logout request failed:", error);
+    }
+
     setUser(null);
     localStorage.removeItem("eventree_user");
+    localStorage.removeItem("eventree_token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 import AuthLayout from "../../components/Auth/AuthLayout";
 import AuthCard from "../../components/Auth/AuthCard";
@@ -16,12 +17,55 @@ import "./Signup.css";
 
 function Signup() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const { register } = useAuth();
 
   const initialRole =
     searchParams.get("role") === "vendor" ? "vendor" : "customer";
 
   const [role, setRole] = useState(initialRole);
   const [vendorType, setVendorType] = useState("");
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setLoading(true);
+
+    const result = await register(formData, role);
+
+    if (result.success) {
+      navigate("/", { replace: true });
+    } else {
+      setError(result.message);
+    }
+
+    setLoading(false);
+  };
 
   return (
     <AuthLayout
@@ -42,12 +86,14 @@ function Signup() {
           vendorText="Vendor"
         />
 
-        <form className="auth-form">
+        <form className="auth-form" onSubmit={handleSubmit}>
           <AuthInput
             id="name"
             label="Full Name"
             placeholder="John Doe"
             autoComplete="name"
+            value={formData.name}
+            onChange={handleChange}
           />
 
           <AuthInput
@@ -56,6 +102,8 @@ function Signup() {
             label="Email Address"
             placeholder="john@example.com"
             autoComplete="email"
+            value={formData.email}
+            onChange={handleChange}
           />
 
           <AuthInput
@@ -64,6 +112,8 @@ function Signup() {
             label="Phone Number"
             placeholder="+880 1XXXXXXXXX"
             autoComplete="tel"
+            value={formData.phone}
+            onChange={handleChange}
           />
 
           {role === "vendor" && (
@@ -78,11 +128,15 @@ function Signup() {
             <PasswordInput
               id="password"
               label="Password"
+              value={formData.password}
+              onChange={handleChange}
             />
 
             <PasswordInput
               id="confirmPassword"
               label="Confirm Password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
             />
           </div>
 
@@ -91,7 +145,12 @@ function Signup() {
             required
           />
 
-          <SubmitButton text="Create Account" />
+          {error && <p className="auth-error">{error}</p>}
+
+          <SubmitButton
+            text="Create Account"
+            loading={loading}
+          />
         </form>
 
         <SocialLogin />

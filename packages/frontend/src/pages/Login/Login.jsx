@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth, DEMO_USERS } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 import AuthLayout from "../../components/Auth/AuthLayout";
 import AuthCard from "../../components/Auth/AuthCard";
@@ -18,11 +18,12 @@ function Login() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
 
@@ -31,21 +32,38 @@ function Login() {
       return;
     }
 
-    const result = login(identifier, password);
+    setLoading(true);
+
+    const result = await login(identifier.trim(), password);
 
     if (result.success) {
-      navigate(result.user.redirectTo, { replace: true });
+      navigate("/", { replace: true });
     } else {
       setErrorMessage(result.message);
     }
-  };
 
-  // Helper to quick-fill form during presentation/demo
-  const fillDemoUser = (demoUser) => {
-    setIdentifier(demoUser.email);
-    setPassword(demoUser.password);
-    setErrorMessage("");
+    setLoading(false);
   };
+  const DEMO_USERS = [
+  {
+    role: "customer",
+    email: "client@eventree.com",
+    phone: "01700000001",
+    password: "password123",
+  },
+  {
+    role: "vendor",
+    email: "vendor@eventree.com",
+    phone: "01700000002",
+    password: "password123",
+  },
+  {
+    role: "admin",
+    email: "admin@eventree.com",
+    phone: "01700000003",
+    password: "password123",
+  },
+];
 
   return (
     <AuthLayout
@@ -53,97 +71,83 @@ function Login() {
       description="Sign in to continue managing your events with EVENTREE."
     >
       <AuthCard>
+        
         <h2>Login</h2>
         <p>Welcome back! Please sign in.</p>
-
-        {/* Demo Preset Quick-Fill Bar */}
         <div
-          style={{
-            margin: "1.25rem 0",
-            padding: "0.875rem 1rem",
-            background: "#f8fafc",
-            borderRadius: "10px",
-            border: "1px solid #e2e8f0",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              marginBottom: "0.625rem",
-            }}
-          >
-            <span style={{ fontSize: "14px" }}>⚡</span>
-            <small
-              style={{
-                fontWeight: "600",
-                color: "#475569",
-                fontSize: "12px",
-                letterSpacing: "0.025em",
-                textTransform: "uppercase",
-              }}
-            >
-              Demo Quick Fill
-            </small>
-          </div>
+  style={{
+    margin: "1.25rem 0",
+    padding: "0.875rem 1rem",
+    background: "#f8fafc",
+    borderRadius: "10px",
+    border: "1px solid #e2e8f0",
+  }}
+>
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "0.5rem",
+      marginBottom: "0.625rem",
+    }}
+  >
+    <span style={{ fontSize: "14px" }}>⚡</span>
 
-          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-            {DEMO_USERS.map((demoUser) => {
-              // Accent colors per role for visual distinction
-              const roleColors = {
-                client: { bg: "#eff6ff", border: "#bfdbfe", text: "#1d4ed8" },
-                vendor: { bg: "#f0fdf4", border: "#bbf7d0", text: "#15803d" },
-                admin: { bg: "#faf5ff", border: "#e9d5ff", text: "#6b21a8" },
-              }[demoUser.role] || {
-                bg: "#ffffff",
-                border: "#cbd5e1",
-                text: "#334155",
-              };
+    <small
+      style={{
+        fontWeight: "600",
+        color: "#475569",
+        fontSize: "12px",
+        letterSpacing: "0.025em",
+        textTransform: "uppercase",
+      }}
+    >
+      Demo Quick Fill
+    </small>
+  </div>
 
-              return (
-                <button
-                  key={demoUser.id}
-                  type="button"
-                  onClick={() => fillDemoUser(demoUser)}
-                  style={{
-                    flex: "1 1 0",
-                    minWidth: "70px",
-                    padding: "6px 10px",
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    borderRadius: "6px",
-                    border: `1px solid ${roleColors.border}`,
-                    background: roleColors.bg,
-                    color: roleColors.text,
-                    transition: "all 0.15s ease-in-out",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "4px",
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = "translateY(-1px)";
-                    e.currentTarget.style.boxShadow =
-                      "0 2px 4px rgba(0,0,0,0.05)";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "none";
-                  }}
-                >
-                  {demoUser.role.charAt(0).toUpperCase() +
-                    demoUser.role.slice(1)}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
+  <div
+    style={{
+      display: "flex",
+      gap: "0.5rem",
+      flexWrap: "wrap",
+    }}
+  >
+    {DEMO_USERS.map((demoUser) => (
+      <button
+        key={demoUser.role}
+        type="button"
+        onClick={() => {
+          setIdentifier(demoUser.email);
+          setPassword(demoUser.password);
+          setErrorMessage("");
+        }}
+        style={{
+          flex: "1 1 0",
+          minWidth: "70px",
+          padding: "6px 10px",
+          fontSize: "12px",
+          fontWeight: "600",
+          cursor: "pointer",
+          borderRadius: "6px",
+          border: "1px solid #cbd5e1",
+          background: "#ffffff",
+          color: "#334155",
+        }}
+      >
+        {demoUser.role.charAt(0).toUpperCase() +
+          demoUser.role.slice(1)}
+      </button>
+    ))}
+  </div>
+</div>
         {errorMessage && (
           <div
-            style={{ color: "#d9534f", marginBottom: "1rem", fontSize: "14px" }}
+            style={{
+              color: "#d9534f",
+              marginBottom: "1rem",
+              fontSize: "14px",
+            }}
           >
             {errorMessage}
           </div>
@@ -170,7 +174,7 @@ function Login() {
 
           <Checkbox text="Remember me" />
 
-          <SubmitButton text="Login" />
+          <SubmitButton text="Login" loading={loading} />
         </form>
 
         <SocialLogin />
