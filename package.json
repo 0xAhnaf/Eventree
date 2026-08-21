@@ -1,0 +1,12 @@
+{
+  "name": "eventree-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:frontend": "npm run dev --prefix packages/frontend",
+    "dev:backend": "php packages/backend/artisan serve",
+    "build:frontend": "npm run build --prefix packages/frontend"
+  }
+}
