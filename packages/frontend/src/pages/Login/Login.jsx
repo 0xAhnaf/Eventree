@@ -28,9 +28,21 @@ function Login() {
     setErrorMessage("");
 
     if (!identifier || !password) {
-      setErrorMessage("Please fill in all fields.");
-      return;
-    }
+  setErrorMessage("Please fill in all fields.");
+  return;
+}
+
+const phoneRegex = /^(01[3-9]\d{8}|\+8801[3-9]\d{8})$/;
+
+if (
+  identifier.startsWith("01") ||
+  identifier.startsWith("+880")
+) {
+  if (!phoneRegex.test(identifier)) {
+    setErrorMessage("Please enter a valid phone number ");
+    return;
+  }
+}
 
     setLoading(true);
 
