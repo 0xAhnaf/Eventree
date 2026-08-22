@@ -20,9 +20,14 @@ import {
 } from "lucide-react";
 
 import vendors from "../../../../components/vendors.js";
+import { useAuth } from "../../../../context/AuthContext.jsx";
+import {
+  clearVendorProfile,
+  loadVendorProfile,
+  saveVendorProfile,
+  VENDOR_CATEGORIES,
+} from "../../../../utils/vendorProfileStorage.js";
 import "./BusinessProfile.css";
-
-const profileStorageKey = "eventree_vendor_business_profile";
 
 const demoVendor = vendors[0] || {};
 
@@ -88,14 +93,6 @@ const initialProfile = {
   ],
 };
 
-const categories = [
-  "Event Venues",
-  "Caterers",
-  "Decorations",
-  "Photography & Videography",
-  "Event Management",
-];
-
 const readImageFile = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -105,39 +102,11 @@ const readImageFile = (file) =>
     reader.readAsDataURL(file);
   });
 
-const loadSavedProfile = () => {
-  try {
-    const savedProfile = localStorage.getItem(profileStorageKey);
-
-    if (!savedProfile) {
-      return initialProfile;
-    }
-
-    const parsedProfile = JSON.parse(savedProfile);
-
-    return {
-      ...initialProfile,
-      ...parsedProfile,
-      portfolio:
-        Array.isArray(parsedProfile.portfolio) && parsedProfile.portfolio.length
-          ? parsedProfile.portfolio
-          : initialProfile.portfolio,
-      amenities:
-        Array.isArray(parsedProfile.amenities) && parsedProfile.amenities.length
-          ? parsedProfile.amenities
-          : initialProfile.amenities,
-      packages:
-        Array.isArray(parsedProfile.packages) && parsedProfile.packages.length
-          ? parsedProfile.packages.slice(0, 3)
-          : initialProfile.packages,
-    };
-  } catch {
-    return initialProfile;
-  }
-};
-
 function BusinessProfile() {
-  const [profile, setProfile] = useState(loadSavedProfile);
+  const { user } = useAuth();
+  const [profile, setProfile] = useState(() =>
+    loadVendorProfile(user, initialProfile),
+  );
   const [amenityInput, setAmenityInput] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
 
@@ -324,14 +293,14 @@ function BusinessProfile() {
     setProfile(initialProfile);
     setAmenityInput("");
     setSaveMessage("Demo profile values restored.");
-    localStorage.removeItem(profileStorageKey);
+    clearVendorProfile(user);
   };
 
   const handleSave = (event) => {
     event.preventDefault();
 
     try {
-      localStorage.setItem(profileStorageKey, JSON.stringify(profile));
+      saveVendorProfile(user, profile);
       setSaveMessage(
         "Business profile saved in this browser. Backend sync can replace this later.",
       );
@@ -423,7 +392,7 @@ function BusinessProfile() {
                     updateField("category", event.target.value)
                   }
                 >
-                  {categories.map((category) => (
+                  {VENDOR_CATEGORIES.map((category) => (
                     <option key={category} value={category}>
                       {category}
                     </option>

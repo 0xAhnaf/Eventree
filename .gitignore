@@ -1,13 +1,15 @@
 # =========================================================================
 # Frontend Specific (React / Vite / Node)
 # =========================================================================
-# Ignore the dependencies folder
-frontend/node_modules/
-packages/node_modules/
 
-# Ignore production build outputs
-frontend/dist/
-frontend/build/
+# Dependencies
+node_modules/
 
-# Ignore local environment variable files (where secrets are kept)
-frontend/.env
+# Production builds
+packages/frontend/dist/
+packages/frontend/build/
+
+# Environment files
+packages/frontend/.env
+packages/frontend/.env.*
+!packages/frontend/.env.example

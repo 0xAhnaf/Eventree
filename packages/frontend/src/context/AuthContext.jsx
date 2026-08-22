@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import { markVendorOnboardingRequired } from "../utils/vendorProfileStorage.js";
 
 const AuthContext = createContext(null);
 
@@ -91,6 +92,10 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("eventree_token", data.token);
       localStorage.setItem("eventree_user", JSON.stringify(sessionUser));
 
+      if (sessionUser.role === "vendor") {
+        markVendorOnboardingRequired(sessionUser);
+      }
+
       setUser(sessionUser);
 
       return {
@@ -135,6 +140,14 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem("eventree_token", data.token);
       localStorage.setItem("eventree_user", JSON.stringify(sessionUser));
+
+      const isNewGoogleVendor =
+        sessionUser.role === "vendor" &&
+        (data.is_new_user === true || data.created === true);
+
+      if (isNewGoogleVendor) {
+        markVendorOnboardingRequired(sessionUser);
+      }
 
       setUser(sessionUser);
 
