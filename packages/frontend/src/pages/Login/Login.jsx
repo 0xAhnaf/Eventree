@@ -28,9 +28,21 @@ function Login() {
     setErrorMessage("");
 
     if (!identifier || !password) {
-      setErrorMessage("Please fill in all fields.");
-      return;
-    }
+  setErrorMessage("Please fill in all fields.");
+  return;
+}
+
+const phoneRegex = /^(01[3-9]\d{8}|\+8801[3-9]\d{8})$/;
+
+if (
+  identifier.startsWith("01") ||
+  identifier.startsWith("+880")
+) {
+  if (!phoneRegex.test(identifier)) {
+    setErrorMessage("Please enter a valid phone number ");
+    return;
+  }
+}
 
     setLoading(true);
 
@@ -44,26 +56,6 @@ function Login() {
 
     setLoading(false);
   };
-  const DEMO_USERS = [
-    {
-      role: "customer",
-      email: "client@eventree.com",
-      phone: "01700000001",
-      password: "password123",
-    },
-    {
-      role: "vendor",
-      email: "vendor@eventree.com",
-      phone: "01700000002",
-      password: "password123",
-    },
-    {
-      role: "admin",
-      email: "admin@eventree.com",
-      phone: "01700000003",
-      password: "password123",
-    },
-  ];
 
   return (
     <AuthLayout
@@ -72,81 +64,11 @@ function Login() {
     >
       <AuthCard>
         <h2>Login</h2>
+
         <p>Welcome back! Please sign in.</p>
-        <div
-          style={{
-            margin: "1.25rem 0",
-            padding: "0.875rem 1rem",
-            background: "#f8fafc",
-            borderRadius: "10px",
-            border: "1px solid #e2e8f0",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              marginBottom: "0.625rem",
-            }}
-          >
-            <span style={{ fontSize: "14px" }}>⚡</span>
 
-            <small
-              style={{
-                fontWeight: "600",
-                color: "#475569",
-                fontSize: "12px",
-                letterSpacing: "0.025em",
-                textTransform: "uppercase",
-              }}
-            >
-              Demo Quick Fill
-            </small>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              gap: "0.5rem",
-              flexWrap: "wrap",
-            }}
-          >
-            {DEMO_USERS.map((demoUser) => (
-              <button
-                key={demoUser.role}
-                type="button"
-                onClick={() => {
-                  setIdentifier(demoUser.email);
-                  setPassword(demoUser.password);
-                  setErrorMessage("");
-                }}
-                style={{
-                  flex: "1 1 0",
-                  minWidth: "70px",
-                  padding: "6px 10px",
-                  fontSize: "12px",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                  borderRadius: "6px",
-                  border: "1px solid #cbd5e1",
-                  background: "#ffffff",
-                  color: "#334155",
-                }}
-              >
-                {demoUser.role.charAt(0).toUpperCase() + demoUser.role.slice(1)}
-              </button>
-            ))}
-          </div>
-        </div>
         {errorMessage && (
-          <div
-            style={{
-              color: "#d9534f",
-              marginBottom: "1rem",
-              fontSize: "14px",
-            }}
-          >
+          <div className="login-error-toast">
             {errorMessage}
           </div>
         )}

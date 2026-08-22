@@ -1,0 +1,39 @@
+.event-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  margin-bottom: 24px;
+  padding-bottom: 8px;
+
+  border-bottom: 1px solid rgba(113, 121, 115, 0.4);
+}
+
+.event-filter {
+  padding: 7px 16px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: transparent;
+  color: #414844;
+
+  font-family: "Work Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.event-filter:hover {
+  background: #ebeef3;
+}
+
+.event-filter.active {
+  background: #1b4332;
+  color: #ffffff;
+  font-weight: 700;
+}

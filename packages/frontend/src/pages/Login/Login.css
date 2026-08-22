@@ -465,3 +465,39 @@
     transform: rotate(360deg);
   }
 }
+/* ==========================
+   ERROR TOAST
+========================== */
+
+.login-error-toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+
+  background: #dc3545;
+  color: white;
+
+  padding: 14px 24px;
+  border-radius: 8px;
+
+  font-size: 15px;
+  font-weight: 500;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+  animation: loginToastSlideDown 0.3s ease;
+}
+
+@keyframes loginToastSlideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

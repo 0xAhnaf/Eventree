@@ -1,0 +1,22 @@
+.profile-header {
+  margin-bottom: 40px;
+}
+
+.profile-header h1 {
+  margin: 0 0 8px;
+
+  font-family: serif;
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 600;
+
+  color: #012d1d;
+}
+
+.profile-header p {
+  margin: 0;
+
+  color: #414844;
+  font-size: 16px;
+  line-height: 24px;
+}

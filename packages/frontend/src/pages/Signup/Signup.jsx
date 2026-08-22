@@ -48,6 +48,12 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    const phoneRegex = /^(01[3-9]\d{8}|\+8801[3-9]\d{8})$/;
+
+if (!phoneRegex.test(formData.phone)) {
+  setError("Please enter a valid phone number ");
+  return;
+}
 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match.");
@@ -116,14 +122,6 @@ function Signup() {
             onChange={handleChange}
           />
 
-          {role === "vendor" && (
-            <VendorTypeDropdown
-              value={vendorType}
-              onChange={(e) => setVendorType(e.target.value)}
-              required
-            />
-          )}
-
           <div className="password-row">
             <PasswordInput
               id="password"
@@ -145,7 +143,11 @@ function Signup() {
             required
           />
 
-          {error && <p className="auth-error">{error}</p>}
+          {error && (
+            <div className="signup-error-toast">
+              {error}
+            </div>
+          )}
 
           <SubmitButton text="Create Account" loading={loading} />
         </form>
