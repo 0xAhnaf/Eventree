@@ -13,6 +13,8 @@ import AdminDashboard from "./pages/AdminDashboard/AdminDashboard.jsx";
 import VendorOnboarding from "./pages/VendorOnboarding/VendorOnboarding.jsx";
 import { isVendorOnboardingRequired } from "./utils/vendorProfileStorage.js";
 
+import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
+import MyEvents from "./pages/MyEvents/MyEvents.jsx";
 // Role-Based Access Control (RBAC) Guard
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user } = useAuth();
@@ -84,7 +86,8 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/browse-vendor/:id" element={<VendorDetailsPage />} />
             <Route path="/browse-vendor" element={<ClientLandingPage />} />
-
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/my-events" element={<MyEvents />} />
             {/* Vendor-Only Route (or allow admin to inspect if desired) */}
             <Route
               path="/vendor/onboarding"

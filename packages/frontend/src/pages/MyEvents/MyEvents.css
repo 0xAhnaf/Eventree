@@ -1,0 +1,63 @@
+.my-events-page {
+  min-height: 100vh;
+  background: #f7f9ff;
+  color: #181c20;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.my-events-layout {
+  flex: 1;
+
+  display: flex;
+
+  width: 100%;
+  min-height: 0;
+}
+
+/* =================================
+   SIDEBAR
+================================= */
+
+.my-events-layout .profile-sidebar {
+  width: 256px;
+  min-width: 256px;
+
+  flex-shrink: 0;
+}
+
+/* =================================
+   MAIN CONTENT
+================================= */
+
+.my-events-main {
+  flex: 1;
+
+  min-width: 0;
+
+  padding: 48px;
+
+  box-sizing: border-box;
+
+  overflow-y: auto;
+}
+
+/* =================================
+   RESPONSIVE
+================================= */
+
+@media (max-width: 768px) {
+  .my-events-layout {
+    display: block;
+  }
+
+  .my-events-layout .profile-sidebar {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .my-events-main {
+    padding: 24px 16px;
+  }
+}

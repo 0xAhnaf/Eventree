@@ -1,0 +1,56 @@
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding-top: 16px;
+}
+
+.change-password-btn,
+.edit-profile-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  padding: 10px 24px;
+
+  border-radius: 6px;
+
+  font-family: "Work Sans", Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.change-password-btn {
+  background: transparent;
+  border: 1px solid #012d1d;
+  color: #012d1d;
+}
+
+.change-password-btn:hover {
+  background: #e5e8ee;
+}
+
+.edit-profile-btn {
+  background: #012d1d;
+  border: 1px solid #012d1d;
+  color: #ffffff;
+}
+
+.edit-profile-btn:hover {
+  background: #1b4332;
+}
+
+@media (max-width: 600px) {
+  .profile-actions {
+    flex-direction: column;
+  }
+
+  .change-password-btn,
+  .edit-profile-btn {
+    width: 100%;
+  }
+}

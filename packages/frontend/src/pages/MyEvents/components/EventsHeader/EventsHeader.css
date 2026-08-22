@@ -1,0 +1,73 @@
+.events-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.events-header-content h1 {
+  margin: 0 0 4px;
+  font-family: "Libre Caslon Text", Georgia, serif;
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 600;
+  color: #181c20;
+}
+
+.events-header-content p {
+  max-width: 700px;
+  margin: 0;
+  font-family: "Work Sans", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  color: #414844;
+}
+
+.create-event-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 12px 24px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: #012d1d;
+  color: #ffffff;
+
+  font-family: "Work Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.create-event-button:hover {
+  background: #1b4332;
+}
+
+.create-event-button span {
+  font-size: 20px;
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .events-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .events-header-content h1 {
+    font-size: 28px;
+    line-height: 36px;
+  }
+
+  .create-event-button {
+    width: 100%;
+  }
+}
