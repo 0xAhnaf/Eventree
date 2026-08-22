@@ -1,0 +1,104 @@
+.profile-sidebar {
+  /* stretch to fill .profile-layout's height (default flex align-items: stretch) */
+  align-self: stretch;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  background: #ffffff;
+  border-right: 1px solid #c1c8c2;
+
+  padding: 32px 16px;
+}
+
+/* =========================================
+   TOP NAV LINKS
+   ========================================= */
+
+.sidebar-main-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 12px;
+  border-radius: 8px;
+
+  color: #1b4332;
+  text-decoration: none;
+  font-size: 14px;
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.sidebar-link:hover {
+  background: #f0f5f2;
+}
+
+.sidebar-link-active {
+  background: #e4ede8;
+  font-weight: 600;
+  color: #1b4332;
+}
+
+.sidebar-icon {
+  width: 20px;
+  display: inline-flex;
+  justify-content: center;
+}
+
+/* =========================================
+   BOTTOM SECTION (pinned to bottom via space-between)
+   ========================================= */
+
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.become-vendor {
+  padding: 10px 12px;
+  border-radius: 8px;
+
+  background: #1b4332;
+  color: #fff8f5;
+
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+
+  margin-bottom: 8px;
+}
+
+.become-vendor:hover {
+  background: #143728;
+}
+
+.sidebar-logout {
+  color: #a33;
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 768px) {
+  .profile-sidebar {
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #c1c8c2;
+  }
+}

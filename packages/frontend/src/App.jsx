@@ -11,6 +11,8 @@ import ResetPassword from "./pages/ResetPassWord/ResetPassword.jsx";
 import VendorDetailsPage from "./pages/VendorDetailsPage/VendorDetailsPage.jsx";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard.jsx";
 
+import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
+import MyEvents from "./pages/MyEvents/MyEvents.jsx";
 // Role-Based Access Control (RBAC) Guard
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user } = useAuth();
@@ -27,10 +29,10 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
       user.role === "client"
         ? "/browse-vendor"
         : user.role === "vendor"
-        ? "/vendor"
-        : user.role === "admin"
-        ? "/admin"
-        : "/";
+          ? "/vendor"
+          : user.role === "admin"
+            ? "/admin"
+            : "/";
 
     return <Navigate to={fallbackRoute} replace />;
   }
@@ -52,7 +54,8 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/browse-vendor/:id" element={<VendorDetailsPage />} />
             <Route path="/browse-vendor" element={<ClientLandingPage />} />
-
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/my-events" element={<MyEvents />} />
             {/* Vendor-Only Route (or allow admin to inspect if desired) */}
             <Route
               path="/vendor"

@@ -1,0 +1,102 @@
+.profile-page {
+  min-height: 100vh;
+  background: #fff8f5;
+  color: #27180e;
+  font-family: sans-serif;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================
+   AREA BETWEEN NAVBAR AND FOOTER
+   ========================================= */
+
+.profile-layout {
+  flex: 1;
+
+  display: flex;
+
+  width: 100%;
+
+  min-height: 0;
+}
+
+/* =========================================
+   SIDEBAR
+   ========================================= */
+
+.profile-layout .profile-sidebar {
+  width: 256px;
+  min-width: 256px;
+
+  flex-shrink: 0;
+}
+
+/* =========================================
+   MAIN PROFILE AREA
+   ========================================= */
+
+.profile-main {
+  flex: 1;
+
+  margin-left: 0;
+
+  padding: 48px;
+
+  box-sizing: border-box;
+
+  overflow-y: auto;
+}
+
+/* =========================================
+   PROFILE CONTENT
+   ========================================= */
+
+.profile-content {
+  width: 100%;
+  max-width: 900px;
+
+  margin: 0 auto;
+}
+
+/* =========================================
+   PROFILE CARD
+   ========================================= */
+
+.profile-card {
+  background: #ffffff;
+
+  border: 1px solid #c1c8c2;
+
+  border-radius: 16px;
+
+  padding: 40px;
+
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+
+  box-sizing: border-box;
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 768px) {
+  .profile-layout {
+    display: block;
+  }
+
+  .profile-layout .profile-sidebar {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .profile-main {
+    padding: 24px 16px;
+  }
+
+  .profile-card {
+    padding: 24px;
+  }
+}
