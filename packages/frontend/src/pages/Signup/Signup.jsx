@@ -116,14 +116,6 @@ function Signup() {
             onChange={handleChange}
           />
 
-          {role === "vendor" && (
-            <VendorTypeDropdown
-              value={vendorType}
-              onChange={(e) => setVendorType(e.target.value)}
-              required
-            />
-          )}
-
           <div className="password-row">
             <PasswordInput
               id="password"
@@ -145,7 +137,11 @@ function Signup() {
             required
           />
 
-          {error && <p className="auth-error">{error}</p>}
+          {error && (
+            <div className="signup-error-toast">
+              {error}
+            </div>
+          )}
 
           <SubmitButton text="Create Account" loading={loading} />
         </form>
