@@ -3,13 +3,13 @@
 ========================================== */
 
 .fp-page {
-    min-height: 100vh;
-    background: #012d22;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 32px;
-    font-family: "Inter", sans-serif;
+  min-height: 100vh;
+  background: #012d22;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+  font-family: "Inter", sans-serif;
 }
 
 /* ==========================================
@@ -17,15 +17,15 @@
 ========================================== */
 
 .fp-card {
-    width: 100%;
-    max-width: 460px;
-    background: #faf7f3;
-    border-radius: 22px;
-    padding: 48px;
-    box-shadow:
-        0 25px 60px rgba(0, 0, 0, 0.18),
-        0 8px 20px rgba(0, 0, 0, 0.08);
-    animation: fpFadeUp 0.6s ease;
+  width: 100%;
+  max-width: 460px;
+  background: #faf7f3;
+  border-radius: 22px;
+  padding: 48px;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.18),
+    0 8px 20px rgba(0, 0, 0, 0.08);
+  animation: fpFadeUp 0.6s ease;
 }
 
 /* ==========================================
@@ -33,18 +33,18 @@
 ========================================== */
 
 .fp-card h1 {
-    margin: 0;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 2.6rem;
-    color: #1e1e1e;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.6rem;
+  color: #1e1e1e;
 }
 
 .fp-subtitle {
-    margin-top: 18px;
-    margin-bottom: 36px;
-    color: #666;
-    font-size: 0.98rem;
-    line-height: 1.8;
+  margin-top: 18px;
+  margin-bottom: 36px;
+  color: #666;
+  font-size: 0.98rem;
+  line-height: 1.8;
 }
 
 /* ==========================================
@@ -52,31 +52,31 @@
 ========================================== */
 
 .fp-input-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 22px;
 }
 
 .fp-input-group label {
-    margin-bottom: 10px;
-    font-weight: 600;
-    color: #333;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #333;
 }
 
 .fp-input-group input {
-    height: 56px;
-    padding: 0 18px;
-    border: 1px solid #d6d6d6;
-    border-radius: 12px;
-    font-size: 1rem;
-    transition: all 0.25s ease;
-    background: white;
+  height: 56px;
+  padding: 0 18px;
+  border: 1px solid #d6d6d6;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.25s ease;
+  background: white;
 }
 
 .fp-input-group input:focus {
-    outline: none;
-    border-color: #0b4d39;
-    box-shadow: 0 0 0 4px rgba(11, 77, 57, 0.12);
+  outline: none;
+  border-color: #0b4d39;
+  box-shadow: 0 0 0 4px rgba(11, 77, 57, 0.12);
 }
 
 /* ==========================================
@@ -84,25 +84,25 @@
 ========================================== */
 
 .fp-button {
-    width: 100%;
-    height: 56px;
-    border: none;
-    border-radius: 12px;
-    background: #012d22;
-    color: white;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.25s;
+  width: 100%;
+  height: 56px;
+  border: none;
+  border-radius: 12px;
+  background: #012d22;
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s;
 }
 
 .fp-button:hover {
-    background: #094636;
-    transform: translateY(-2px);
+  background: #094636;
+  transform: translateY(-2px);
 }
 
 .fp-button:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
 }
 
 /* ==========================================
@@ -110,24 +110,24 @@
 ========================================== */
 
 .fp-error {
-    margin-bottom: 18px;
-    padding: 12px 14px;
-    border-radius: 10px;
-    background: #fff1f1;
-    color: #d62828;
-    border: 1px solid #f3c4c4;
-    font-size: 0.92rem;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #fff1f1;
+  color: #d62828;
+  border: 1px solid #f3c4c4;
+  font-size: 0.92rem;
 }
 
 .fp-success {
-    margin-bottom: 20px;
-    padding: 14px 16px;
-    border-radius: 10px;
-    background: #e8f8ee;
-    border: 1px solid #b8e0c8;
-    color: #0b7d55;
-    line-height: 1.6;
-    font-size: 0.92rem;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #e8f8ee;
+  border: 1px solid #b8e0c8;
+  color: #0b7d55;
+  line-height: 1.6;
+  font-size: 0.92rem;
 }
 
 /* ==========================================
@@ -135,20 +135,20 @@
 ========================================== */
 
 .fp-back-link {
-    margin-top: 28px;
-    text-align: center;
+  margin-top: 28px;
+  text-align: center;
 }
 
 .fp-back-link a {
-    color: #012d22;
-    text-decoration: none;
-    font-weight: 600;
-    transition: 0.2s;
+  color: #012d22;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.2s;
 }
 
 .fp-back-link a:hover {
-    color: #0b7d55;
-    text-decoration: underline;
+  color: #0b7d55;
+  text-decoration: underline;
 }
 
 /* ==========================================
@@ -156,23 +156,23 @@
 ========================================== */
 
 .fp-divider {
-    display: flex;
-    align-items: center;
-    margin: 28px 0;
+  display: flex;
+  align-items: center;
+  margin: 28px 0;
 }
 
 .fp-divider::before,
 .fp-divider::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: #e4e4e4;
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e4e4e4;
 }
 
 .fp-divider span {
-    margin: 0 16px;
-    color: #888;
-    font-size: 0.85rem;
+  margin: 0 16px;
+  color: #888;
+  font-size: 0.85rem;
 }
 
 /* ==========================================
@@ -180,15 +180,15 @@
 ========================================== */
 
 @keyframes fpFadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ==========================================
@@ -196,35 +196,35 @@
 ========================================== */
 
 @media (max-width: 768px) {
-    .fp-page {
-        padding: 20px;
-    }
+  .fp-page {
+    padding: 20px;
+  }
 
-    .fp-card {
-        padding: 36px 28px;
-    }
+  .fp-card {
+    padding: 36px 28px;
+  }
 
-    .fp-card h1 {
-        font-size: 2rem;
-    }
+  .fp-card h1 {
+    font-size: 2rem;
+  }
 
-    .fp-subtitle {
-        font-size: 0.92rem;
-    }
+  .fp-subtitle {
+    font-size: 0.92rem;
+  }
 }
 
 @media (max-width: 480px) {
-    .fp-card {
-        padding: 30px 22px;
-        border-radius: 18px;
-    }
+  .fp-card {
+    padding: 30px 22px;
+    border-radius: 18px;
+  }
 
-    .fp-card h1 {
-        font-size: 1.8rem;
-    }
+  .fp-card h1 {
+    font-size: 1.8rem;
+  }
 
-    .fp-input-group input,
-    .fp-button {
-        height: 52px;
-    }
+  .fp-input-group input,
+  .fp-button {
+    height: 52px;
+  }
 }

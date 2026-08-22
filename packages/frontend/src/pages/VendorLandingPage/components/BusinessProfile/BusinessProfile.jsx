@@ -155,7 +155,7 @@ function BusinessProfile() {
     ];
 
     let completedItems = requiredValues.filter((value) =>
-      String(value || "").trim()
+      String(value || "").trim(),
     ).length;
 
     if (profile.portfolio.length >= 3) {
@@ -225,7 +225,7 @@ function BusinessProfile() {
     setProfile((currentProfile) => ({
       ...currentProfile,
       portfolio: currentProfile.portfolio.filter(
-        (_, index) => index !== imageIndex
+        (_, index) => index !== imageIndex,
       ),
     }));
     setSaveMessage("");
@@ -239,7 +239,7 @@ function BusinessProfile() {
     }
 
     const alreadyExists = profile.amenities.some(
-      (amenity) => amenity.toLowerCase() === newAmenity.toLowerCase()
+      (amenity) => amenity.toLowerCase() === newAmenity.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -259,7 +259,7 @@ function BusinessProfile() {
     setProfile((currentProfile) => ({
       ...currentProfile,
       amenities: currentProfile.amenities.filter(
-        (amenity) => amenity !== amenityToRemove
+        (amenity) => amenity !== amenityToRemove,
       ),
     }));
     setSaveMessage("");
@@ -274,7 +274,7 @@ function BusinessProfile() {
               ...packageItem,
               [field]: value,
             }
-          : packageItem
+          : packageItem,
       ),
     }));
     setSaveMessage("");
@@ -314,7 +314,7 @@ function BusinessProfile() {
     setProfile((currentProfile) => ({
       ...currentProfile,
       packages: currentProfile.packages.filter(
-        (_, index) => index !== packageIndex
+        (_, index) => index !== packageIndex,
       ),
     }));
     setSaveMessage("");
@@ -333,17 +333,17 @@ function BusinessProfile() {
     try {
       localStorage.setItem(profileStorageKey, JSON.stringify(profile));
       setSaveMessage(
-        "Business profile saved in this browser. Backend sync can replace this later."
+        "Business profile saved in this browser. Backend sync can replace this later.",
       );
     } catch {
       setSaveMessage(
-        "Profile text is ready, but large image previews could not be stored in this browser."
+        "Profile text is ready, but large image previews could not be stored in this browser.",
       );
     }
   };
 
   const clientSatisfaction = calculateClientSatisfaction(
-    systemAverageReviewRating
+    systemAverageReviewRating,
   );
 
   const formattedStartingPrice = profile.startingPrice
@@ -891,11 +891,17 @@ function BusinessProfile() {
           <p>
             Current frontend data is stored locally until backend integration.
           </p>
-          {saveMessage && <span className="vbp-save-message">{saveMessage}</span>}
+          {saveMessage && (
+            <span className="vbp-save-message">{saveMessage}</span>
+          )}
         </div>
 
         <div className="vbp-save-actions">
-          <button type="button" className="vbp-reset-button" onClick={resetProfile}>
+          <button
+            type="button"
+            className="vbp-reset-button"
+            onClick={resetProfile}
+          >
             Reset changes
           </button>
 

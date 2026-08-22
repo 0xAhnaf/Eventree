@@ -1,6 +1,13 @@
 import "./StatCard.css";
 
-function StatCard({ icon, iconVariant = "revenue", label, value, trend, trendDirection = "up" }) {
+function StatCard({
+  icon,
+  iconVariant = "revenue",
+  label,
+  value,
+  trend,
+  trendDirection = "up",
+}) {
   return (
     <div className="stat-card-VLP">
       <div className="stat-card-top-VLP">

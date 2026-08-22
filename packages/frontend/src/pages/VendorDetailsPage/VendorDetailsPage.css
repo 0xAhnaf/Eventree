@@ -4,7 +4,6 @@
   background: #fff8f5;
 }
 
-
 /* ================================
    MAIN CONTENT LAYOUT
 ================================ */
@@ -23,7 +22,6 @@
   box-sizing: border-box;
 }
 
-
 /* ================================
    LEFT CONTENT
 ================================ */
@@ -35,7 +33,6 @@
   flex-direction: column;
   gap: 70px;
 }
-
 
 /* ================================
    RIGHT BOOKING SIDEBAR
@@ -61,14 +58,12 @@
   overflow: hidden;
 }
 
-
 /* Every section should use full width */
 
 .vendor-details-container section {
   width: 100%;
   box-sizing: border-box;
 }
-
 
 /* ================================
    TABLET
@@ -101,7 +96,6 @@
   }
 }
 
-
 /* ================================
    MOBILE
 ================================ */
@@ -130,7 +124,6 @@
     overflow: visible;
   }
 }
-
 
 /* ================================
    SMALL MOBILE

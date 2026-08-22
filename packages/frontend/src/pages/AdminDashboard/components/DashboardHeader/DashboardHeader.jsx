@@ -1,12 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Bell,
-  Home,
-  LogOut,
-  Menu,
-  Search,
-} from "lucide-react";
+import { Bell, Home, LogOut, Menu, Search } from "lucide-react";
 
 import { useAuth } from "../../../../context/AuthContext";
 import "./DashboardHeader.css";

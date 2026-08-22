@@ -147,13 +147,10 @@ function Signup() {
 
           {error && <p className="auth-error">{error}</p>}
 
-          <SubmitButton
-            text="Create Account"
-            loading={loading}
-          />
+          <SubmitButton text="Create Account" loading={loading} />
         </form>
 
-        <SocialLogin />
+        <SocialLogin role={role} />
 
         <AuthFooter
           text="Already have an account?"

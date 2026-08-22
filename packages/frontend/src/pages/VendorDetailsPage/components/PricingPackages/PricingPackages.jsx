@@ -2,7 +2,6 @@ import React from "react";
 import "./PricingPackages.css";
 
 const PricingPackages = () => {
-
   const packages = [
     {
       type: "General Package",
@@ -11,10 +10,9 @@ const PricingPackages = () => {
         "4 Hours Service",
         "Basic Setup",
         "Standard Support",
-        "Digital Delivery"
-      ]
+        "Digital Delivery",
+      ],
     },
-
 
     {
       type: "Premium Package",
@@ -24,80 +22,37 @@ const PricingPackages = () => {
         "Premium Setup",
         "Priority Support",
         "Extra Customization",
-        "Complete Package"
-      ]
-    }
+        "Complete Package",
+      ],
+    },
   ];
-
 
   return (
     <section className="pricing-packages" id="packages">
-
-
-      <h2>
-        Pricing Packages
-      </h2>
-
-
+      <h2>Pricing Packages</h2>
 
       <div className="packages-container">
+        {packages.map((item, index) => (
+          <div
+            className={`package-card ${index === 1 ? "premium" : ""}`}
+            key={index}
+          >
+            <h3>{item.type}</h3>
 
+            <h4>{item.price}</h4>
 
-        {
-          packages.map((item, index) => (
+            <ul>
+              {item.features.map((feature, i) => (
+                <li key={i}>✓ {feature}</li>
+              ))}
+            </ul>
 
-            <div
-              className={`package-card ${
-                index === 1 ? "premium" : ""
-              }`}
-              key={index}
-            >
-
-
-              <h3>
-                {item.type}
-              </h3>
-
-
-              <h4>
-                {item.price}
-              </h4>
-
-
-
-              <ul>
-
-                {
-                  item.features.map((feature, i) => (
-
-                    <li key={i}>
-                      ✓ {feature}
-                    </li>
-
-                  ))
-                }
-
-              </ul>
-
-
-
-              <button>
-                Select Package
-              </button>
-
-
-            </div>
-
-          ))
-        }
-
-
+            <button>Select Package</button>
+          </div>
+        ))}
       </div>
-
-
     </section>
   );
 };
-
 
 export default PricingPackages;

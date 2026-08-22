@@ -3,9 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../../../context/AuthContext";
 
-import {
-  addVendorBookingRequest,
-} from "../../../../utils/vendorPortalStorage.js";
+import { addVendorBookingRequest } from "../../../../utils/vendorPortalStorage.js";
 
 import "./BookingCard.css";
 
@@ -29,24 +27,20 @@ const BookingCard = ({
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [selectedPackage, setSelectedPackage] =
-    useState("general");
+  const [selectedPackage, setSelectedPackage] = useState("general");
 
   const [eventType, setEventType] = useState("");
   const [guests, setGuests] = useState("");
   const [dateError, setDateError] = useState("");
-  const [requestMessage, setRequestMessage] =
-    useState("");
-  const [requestError, setRequestError] =
-    useState("");
+  const [requestMessage, setRequestMessage] = useState("");
+  const [requestError, setRequestError] = useState("");
 
   const selectedPackageDetails = useMemo(
     () =>
       packageOptions.find(
-        (packageOption) =>
-          packageOption.id === selectedPackage
+        (packageOption) => packageOption.id === selectedPackage,
       ) || packageOptions[0],
-    [selectedPackage]
+    [selectedPackage],
   );
 
   const handleDateChange = (event) => {
@@ -58,9 +52,7 @@ const BookingCard = ({
     if (!newDate) {
       setDateError("");
 
-      if (
-        typeof onDateChange === "function"
-      ) {
+      if (typeof onDateChange === "function") {
         onDateChange("");
       }
 
@@ -68,18 +60,14 @@ const BookingCard = ({
     }
 
     if (bookedDates.includes(newDate)) {
-      setDateError(
-        "This date is unavailable. Please select another date."
-      );
+      setDateError("This date is unavailable. Please select another date.");
 
       return;
     }
 
     setDateError("");
 
-    if (
-      typeof onDateChange === "function"
-    ) {
+    if (typeof onDateChange === "function") {
       onDateChange(newDate);
     }
   };
@@ -94,73 +82,58 @@ const BookingCard = ({
     }
 
     if (user.role !== "client") {
-      setRequestError(
-        "Please use a client account to send a booking request."
-      );
+      setRequestError("Please use a client account to send a booking request.");
 
       return;
     }
 
     if (!selectedDate) {
-      setRequestError(
-        "Please select an available event date."
-      );
+      setRequestError("Please select an available event date.");
 
       return;
     }
 
     if (bookedDates.includes(selectedDate)) {
       setRequestError(
-        "This date is no longer available. Please select another date."
+        "This date is no longer available. Please select another date.",
       );
 
       return;
     }
 
     if (!eventType.trim()) {
-      setRequestError(
-        "Please enter the event type."
-      );
+      setRequestError("Please enter the event type.");
 
       return;
     }
 
     if (!guests || Number(guests) < 1) {
-      setRequestError(
-        "Please enter the number of guests."
-      );
+      setRequestError("Please enter the number of guests.");
 
       return;
     }
 
-    const bookingResult =
-      addVendorBookingRequest({
-        vendorId: Number(vendor.id),
-        vendorName:
-          vendor.name || "Vendor",
-        clientId: user.id,
-        clientName: user.name,
-        clientEmail: user.email,
-        eventDate: selectedDate,
-        eventType: eventType.trim(),
-        packageId:
-          selectedPackageDetails.id,
-        packageName:
-          selectedPackageDetails.name,
-        guests: Number(guests),
-      });
+    const bookingResult = addVendorBookingRequest({
+      vendorId: Number(vendor.id),
+      vendorName: vendor.name || "Vendor",
+      clientId: user.id,
+      clientName: user.name,
+      clientEmail: user.email,
+      eventDate: selectedDate,
+      eventType: eventType.trim(),
+      packageId: selectedPackageDetails.id,
+      packageName: selectedPackageDetails.name,
+      guests: Number(guests),
+    });
 
     if (!bookingResult.success) {
-      setRequestError(
-        bookingResult.message ||
-          "This date is unavailable."
-      );
+      setRequestError(bookingResult.message || "This date is unavailable.");
 
       return;
     }
 
     setRequestMessage(
-      "Booking request sent. This date is now reserved and cannot be booked again unless the vendor rejects the request."
+      "Booking request sent. This date is now reserved and cannot be booked again unless the vendor rejects the request.",
     );
 
     setEventType("");
@@ -179,9 +152,7 @@ const BookingCard = ({
 
       <div className="booking-field-row">
         <div className="booking-field">
-          <label htmlFor="booking-event-date">
-            Event Date
-          </label>
+          <label htmlFor="booking-event-date">Event Date</label>
 
           <input
             id="booking-event-date"
@@ -205,40 +176,29 @@ const BookingCard = ({
         </div>
 
         <div className="booking-field">
-          <label htmlFor="booking-package">
-            Select Package
-          </label>
+          <label htmlFor="booking-package">Select Package</label>
 
           <select
             id="booking-package"
             value={selectedPackage}
             onChange={(event) => {
-              setSelectedPackage(
-                event.target.value
-              );
+              setSelectedPackage(event.target.value);
 
               setRequestMessage("");
               setRequestError("");
             }}
           >
-            {packageOptions.map(
-              (packageOption) => (
-                <option
-                  key={packageOption.id}
-                  value={packageOption.id}
-                >
-                  {packageOption.name}
-                </option>
-              )
-            )}
+            {packageOptions.map((packageOption) => (
+              <option key={packageOption.id} value={packageOption.id}>
+                {packageOption.name}
+              </option>
+            ))}
           </select>
         </div>
       </div>
 
       <div className="booking-field">
-        <label htmlFor="booking-event-type">
-          Event Type
-        </label>
+        <label htmlFor="booking-event-type">Event Type</label>
 
         <input
           id="booking-event-type"
@@ -254,9 +214,7 @@ const BookingCard = ({
       </div>
 
       <div className="booking-field">
-        <label htmlFor="booking-guests">
-          Number of Guests
-        </label>
+        <label htmlFor="booking-guests">Number of Guests</label>
 
         <input
           id="booking-guests"

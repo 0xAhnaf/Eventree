@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import "./StatsSection.css"; 
-
+import "./StatsSection.css";
 
 function AnimatedNumber({ end, suffix }) {
   const [count, setCount] = useState(0);
@@ -9,16 +8,17 @@ function AnimatedNumber({ end, suffix }) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        
         if (entries[0].isIntersecting) {
           let startTimestamp = null;
-          const duration = 2500; 
+          const duration = 2500;
 
           const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            
-            
+            const progress = Math.min(
+              (timestamp - startTimestamp) / duration,
+              1,
+            );
+
             const easeOut = 1 - Math.pow(1 - progress, 4);
             setCount(Math.floor(easeOut * end));
 
@@ -28,10 +28,10 @@ function AnimatedNumber({ end, suffix }) {
           };
 
           window.requestAnimationFrame(step);
-          observer.disconnect(); 
+          observer.disconnect();
         }
       },
-      { threshold: 0.5 } 
+      { threshold: 0.5 },
     );
 
     if (ref.current) observer.observe(ref.current);
@@ -47,9 +47,7 @@ function AnimatedNumber({ end, suffix }) {
   );
 }
 
-
 function StatsSection() {
-  
   const stats = [
     {
       num: 9572,
@@ -78,16 +76,11 @@ function StatsSection() {
       <div className="stats-container">
         {stats.map((stat) => (
           <div key={stat.title} className="stat-item">
-            
             <h3 className="stat-number">
-              
               <AnimatedNumber end={stat.num} suffix={stat.suffix} />
             </h3>
-            
-            <p className="stat-title">
-              {stat.title}
-            </p>
-            
+
+            <p className="stat-title">{stat.title}</p>
           </div>
         ))}
       </div>

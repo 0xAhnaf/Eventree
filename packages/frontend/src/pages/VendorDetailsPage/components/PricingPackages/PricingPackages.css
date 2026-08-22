@@ -1,37 +1,24 @@
 .pricing-packages {
-
   width: 100%;
-
 }
 
-
-
 .pricing-packages h2 {
-
   font-size: 32px;
 
   margin-bottom: 30px;
 
   color: #0b3d2e;
-
 }
 
-
-
 .packages-container {
-
   display: grid;
 
   grid-template-columns: repeat(2, 1fr);
 
   gap: 25px;
-
 }
 
-
-
 .package-card {
-
   padding: 35px;
 
   border-radius: 20px;
@@ -39,65 +26,41 @@
   border: 1px solid #e5e5e5;
 
   background: white;
-
 }
-
-
 
 .package-card.premium {
-
   border: 2px solid #0b3d2e;
-
 }
 
-
-
 .package-card h3 {
-
   font-size: 22px;
 
   margin-bottom: 15px;
-
 }
 
-
-
 .package-card h4 {
-
   font-size: 34px;
 
   color: #0b3d2e;
 
   margin-bottom: 25px;
-
 }
 
-
-
 .package-card ul {
-
   list-style: none;
 
   padding: 0;
 
   margin-bottom: 30px;
-
 }
 
-
-
 .package-card li {
-
   margin-bottom: 12px;
 
   color: #555;
-
 }
 
-
-
 .package-card button {
-
   width: 100%;
 
   padding: 14px;
@@ -113,25 +76,14 @@
   cursor: pointer;
 
   font-weight: 600;
-
 }
-
-
 
 .package-card button:hover {
-
   opacity: 0.9;
-
 }
 
-
-
-@media(max-width:900px){
-
+@media (max-width: 900px) {
   .packages-container {
-
     grid-template-columns: 1fr;
-
   }
-
 }
