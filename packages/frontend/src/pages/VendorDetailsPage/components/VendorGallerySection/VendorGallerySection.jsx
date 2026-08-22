@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./VendorGallerySection.css";
 
 const VendorGallerySection = () => {
@@ -18,13 +18,9 @@ const VendorGallerySection = () => {
 
   const amenities = [
     "High Speed Fiber WiFi",
-
     "Full AV Integration & Sound System",
-
     "Commercial Grade Catering Kitchen",
-
     "Full ADA Compliance & Accessibility",
-
     "Valet & On Site Parking",
 
     "Climate Controlled Spaces",

@@ -107,7 +107,7 @@ const VendorDetailsPage = () => {
         <div className="vendor-left-content">
           <AboutVendor vendor={vendor} />
 
-          <VendorGallerySection />
+          <VendorGallerySection images={vendor.photos} />
 
           <PricingPackages />
 
