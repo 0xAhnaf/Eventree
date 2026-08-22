@@ -6,11 +6,12 @@ function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     setSuccess(false);
+    setError("");
 
     if (!email.trim()) {
       setError("Please enter your email address.");
@@ -18,14 +19,37 @@ function ForgotPassword() {
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
     if (!emailRegex.test(email)) {
       setError("Please enter a valid email address.");
       return;
     }
 
-    setError("");
-    setSuccess(true);
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Unable to send reset link.");
+        setLoading(false);
+        return;
+      }
+
+      setSuccess(true);
+    } catch (err) {
+      setError("Could not connect to the server.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,7 +65,6 @@ function ForgotPassword() {
         <form onSubmit={handleSubmit}>
           <div className="fp-input-group">
             <label htmlFor="email">Email Address</label>
-
             <input
               id="email"
               type="email"
@@ -59,8 +82,8 @@ function ForgotPassword() {
             </div>
           )}
 
-          <button type="submit" className="fp-button">
-            Send Reset Link
+          <button type="submit" className="fp-button" disabled={loading}>
+            {loading ? "Sending..." : "Send Reset Link"}
           </button>
         </form>
 
