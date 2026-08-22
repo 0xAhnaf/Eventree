@@ -81,8 +81,10 @@ const BookingCard = ({
       return;
     }
 
-    if (user.role !== "client") {
-      setRequestError("Please use a client account to send a booking request.");
+    if (user.role !== "customer") {
+      setRequestError(
+        "Please use a customer account to send a booking request.",
+      );
 
       return;
     }
@@ -116,9 +118,9 @@ const BookingCard = ({
     const bookingResult = addVendorBookingRequest({
       vendorId: Number(vendor.id),
       vendorName: vendor.name || "Vendor",
-      clientId: user.id,
-      clientName: user.name,
-      clientEmail: user.email,
+      customerId: user.id,
+      customerName: user.name,
+      customerEmail: user.email,
       eventDate: selectedDate,
       eventType: eventType.trim(),
       packageId: selectedPackageDetails.id,
