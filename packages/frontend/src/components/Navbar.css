@@ -103,7 +103,9 @@
 }
 
 .navbar-nav-link:hover {
-  color: #003d2c;
+  color: #d6b36a;
+
+  font-weight: 600;
 
   transform: translateY(-2px);
 }
@@ -283,12 +285,26 @@
 /* Responsive */
 
 @media (min-width: 1024px) {
+  .navbar-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+
+  .navbar-logo-link {
+    justify-self: start;
+  }
+
   .navbar-desktop-menu {
     display: flex;
+    grid-column: 2;
+    justify-self: center;
+    flex: none;
   }
 
   .navbar-auth-buttons {
     display: flex;
+    grid-column: 3;
+    justify-self: end;
   }
 
   .navbar-mobile-actions {
