@@ -15,7 +15,8 @@ import "./AdminDashboard.css";
 const pageDetails = {
   "/admin": {
     title: "Dashboard Overview",
-    subtitle: "Welcome back, Admin. Here's what's happening with EVENTREE today.",
+    subtitle:
+      "Welcome back, Admin. Here's what's happening with EVENTREE today.",
   },
   "/admin/users": {
     title: "Users",
@@ -27,11 +28,13 @@ const pageDetails = {
   },
   "/admin/bookings": {
     title: "Bookings",
-    subtitle: "Monitor booking requests and event activity across the platform.",
+    subtitle:
+      "Monitor booking requests and event activity across the platform.",
   },
   "/admin/payments": {
     title: "Payments",
-    subtitle: "Review payouts, refunds, completed payments, and failed transactions.",
+    subtitle:
+      "Review payouts, refunds, completed payments, and failed transactions.",
   },
   "/admin/reports": {
     title: "Reports & Analytics",
@@ -186,10 +189,7 @@ const AdminDashboard = () => {
   return (
     <div className="admin-dashboard">
       {/* Fixed desktop sidebar / mobile drawer */}
-      <AdminSidebar
-        isOpen={isSidebarOpen}
-        onClose={closeSidebar}
-      />
+      <AdminSidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
 
       {isSidebarOpen && (
         <button

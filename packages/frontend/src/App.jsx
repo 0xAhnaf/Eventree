@@ -27,10 +27,10 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
       user.role === "client"
         ? "/browse-vendor"
         : user.role === "vendor"
-        ? "/vendor"
-        : user.role === "admin"
-        ? "/admin"
-        : "/";
+          ? "/vendor"
+          : user.role === "admin"
+            ? "/admin"
+            : "/";
 
     return <Navigate to={fallbackRoute} replace />;
   }

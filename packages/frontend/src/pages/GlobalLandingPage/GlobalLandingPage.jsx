@@ -12,120 +12,81 @@ import WhyChooseUs from "../../components/WhyChooseUs";
 import CTASection from "../../components/CTASection";
 import Footer from "../../components/Footer";
 
-
-
 function FadeSection({ children }) {
-
   return (
-
     <motion.div
-
       initial={{
         opacity: 0,
-        y: 30
+        y: 30,
       }}
 
       whileInView={{
         opacity: 1,
-        y: 0
+        y: 0,
       }}
 
       viewport={{
         once: true,
-        amount: 0.2
+        amount: 0.2,
       }}
 
       transition={{
         duration: 1.2,
-        ease: "easeOut"
+        ease: "easeOut",
       }}
-
     >
-
       {children}
-
     </motion.div>
-
-  )
-
+  );
 }
 
-
-
 function LandingPage() {
-
   return (
-
     <>
-
       <Navbar />
-
 
       <FadeSection>
         <Hero />
       </FadeSection>
 
-
-
       <FadeSection>
         <JourneySection />
       </FadeSection>
-
-
 
       {/* Platform Statistics */}
       <FadeSection>
         <StatsSection />
       </FadeSection>
 
-
-
       <FadeSection>
         <ProblemsSection />
       </FadeSection>
-
-
 
       <FadeSection>
         <SolutionsSection />
       </FadeSection>
 
-
-
       <FadeSection>
         <CategoriesSection />
       </FadeSection>
-
-
 
       <FadeSection>
         <HowItWorks />
       </FadeSection>
 
-
-
       <FadeSection>
         <WhyChooseUs />
       </FadeSection>
-
-
 
       <FadeSection>
         <CTASection />
       </FadeSection>
 
-
-
       <FadeSection>
         <Footer />
       </FadeSection>
-
-
     </>
-
-  )
-
+  );
 }
-
 
 export default LandingPage;

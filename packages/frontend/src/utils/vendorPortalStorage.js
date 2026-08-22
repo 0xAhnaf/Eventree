@@ -3,8 +3,7 @@ export const DEMO_VENDOR_ID = 1;
 export const VENDOR_BOOKINGS_STORAGE_KEY = "eventree_vendor_bookings";
 export const VENDOR_AVAILABILITY_STORAGE_KEY = "eventree_vendor_availability";
 
-export const VENDOR_BOOKINGS_UPDATED_EVENT =
-  "eventree:vendor-bookings-updated";
+export const VENDOR_BOOKINGS_UPDATED_EVENT = "eventree:vendor-bookings-updated";
 
 export const VENDOR_AVAILABILITY_UPDATED_EVENT =
   "eventree:vendor-availability-updated";
@@ -81,12 +80,7 @@ const defaultBookings = [
 ];
 
 const defaultAvailability = {
-  [DEMO_VENDOR_ID]: [
-    "2026-10-05",
-    "2026-10-19",
-    "2026-10-25",
-    "2026-11-16",
-  ],
+  [DEMO_VENDOR_ID]: ["2026-10-05", "2026-10-19", "2026-10-25", "2026-11-16"],
 };
 
 const bookingStatusesThatReserveDate = new Set([
@@ -96,13 +90,12 @@ const bookingStatusesThatReserveDate = new Set([
 ]);
 
 const normaliseBookingStatus = (status) =>
-  String(status || "").trim().toLowerCase();
+  String(status || "")
+    .trim()
+    .toLowerCase();
 
 const getBookingActivityTime = (booking) => {
-  const timestamp =
-    booking.statusUpdatedAt ||
-    booking.createdAt ||
-    "";
+  const timestamp = booking.statusUpdatedAt || booking.createdAt || "";
 
   const parsedTime = new Date(timestamp).getTime();
 
@@ -112,44 +105,32 @@ const getBookingActivityTime = (booking) => {
 const doesBookingGroupReserveDate = (bookings = []) => {
   const normalisedBookings = bookings.map((booking) => ({
     ...booking,
-    normalisedStatus: normaliseBookingStatus(
-      booking.status
-    ),
+    normalisedStatus: normaliseBookingStatus(booking.status),
   }));
 
-  const hasAcceptedBooking =
-    normalisedBookings.some((booking) =>
-      ["accepted", "confirmed"].includes(
-        booking.normalisedStatus
-      )
-    );
+  const hasAcceptedBooking = normalisedBookings.some((booking) =>
+    ["accepted", "confirmed"].includes(booking.normalisedStatus),
+  );
 
   if (hasAcceptedBooking) {
     return true;
   }
 
-  const latestPendingOrRejectedBooking =
-    normalisedBookings
-      .filter((booking) =>
-        ["pending", "rejected"].includes(
-          booking.normalisedStatus
-        )
-      )
-      .sort(
-        (firstBooking, secondBooking) =>
-          getBookingActivityTime(secondBooking) -
-          getBookingActivityTime(firstBooking)
-      )[0];
+  const latestPendingOrRejectedBooking = normalisedBookings
+    .filter((booking) =>
+      ["pending", "rejected"].includes(booking.normalisedStatus),
+    )
+    .sort(
+      (firstBooking, secondBooking) =>
+        getBookingActivityTime(secondBooking) -
+        getBookingActivityTime(firstBooking),
+    )[0];
 
-  return (
-    latestPendingOrRejectedBooking?.normalisedStatus ===
-    "pending"
-  );
+  return latestPendingOrRejectedBooking?.normalisedStatus === "pending";
 };
 
 const canUseBrowserStorage = () =>
-  typeof window !== "undefined" &&
-  typeof window.localStorage !== "undefined";
+  typeof window !== "undefined" && typeof window.localStorage !== "undefined";
 
 const readJson = (storageKey, fallbackValue) => {
   if (!canUseBrowserStorage()) {
@@ -194,16 +175,13 @@ const normaliseDateList = (dates) =>
   Array.from(
     new Set(
       (Array.isArray(dates) ? dates : []).filter(
-        (date) => typeof date === "string" && date.trim()
-      )
-    )
+        (date) => typeof date === "string" && date.trim(),
+      ),
+    ),
   ).sort();
 
 export const getAllVendorBookings = () => {
-  const storedBookings = readJson(
-    VENDOR_BOOKINGS_STORAGE_KEY,
-    null
-  );
+  const storedBookings = readJson(VENDOR_BOOKINGS_STORAGE_KEY, null);
 
   if (Array.isArray(storedBookings)) {
     return storedBookings;
@@ -214,12 +192,9 @@ export const getAllVendorBookings = () => {
   return defaultBookings;
 };
 
-export const getVendorBookings = (
-  vendorId = DEMO_VENDOR_ID
-) =>
+export const getVendorBookings = (vendorId = DEMO_VENDOR_ID) =>
   getAllVendorBookings().filter(
-    (booking) =>
-      Number(booking.vendorId) === Number(vendorId)
+    (booking) => Number(booking.vendorId) === Number(vendorId),
   );
 
 export const addVendorBookingRequest = (bookingRequest) => {
@@ -227,13 +202,11 @@ export const addVendorBookingRequest = (bookingRequest) => {
 
   const sameDateBookings = currentBookings.filter(
     (booking) =>
-      Number(booking.vendorId) ===
-        Number(bookingRequest.vendorId) &&
-      booking.eventDate === bookingRequest.eventDate
+      Number(booking.vendorId) === Number(bookingRequest.vendorId) &&
+      booking.eventDate === bookingRequest.eventDate,
   );
 
-  const alreadyReserved =
-    doesBookingGroupReserveDate(sameDateBookings);
+  const alreadyReserved = doesBookingGroupReserveDate(sameDateBookings);
 
   if (alreadyReserved) {
     return {
@@ -244,9 +217,7 @@ export const addVendorBookingRequest = (bookingRequest) => {
   }
 
   const newBooking = {
-    id: `booking-${Date.now()}-${Math.random()
-      .toString(36)
-      .slice(2, 8)}`,
+    id: `booking-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     status: "pending",
     rating: null,
     createdAt: new Date().toISOString(),
@@ -264,10 +235,7 @@ export const addVendorBookingRequest = (bookingRequest) => {
   };
 };
 
-export const updateVendorBookingStatus = (
-  bookingId,
-  nextStatus
-) => {
+export const updateVendorBookingStatus = (bookingId, nextStatus) => {
   const allowedStatuses = new Set([
     "pending",
     "accepted",
@@ -285,7 +253,7 @@ export const updateVendorBookingStatus = (
   const currentBookings = getAllVendorBookings();
 
   const bookingExists = currentBookings.some(
-    (booking) => booking.id === bookingId
+    (booking) => booking.id === bookingId,
   );
 
   if (!bookingExists) {
@@ -296,23 +264,19 @@ export const updateVendorBookingStatus = (
   }
 
   const targetBooking = currentBookings.find(
-    (booking) => booking.id === bookingId
+    (booking) => booking.id === bookingId,
   );
 
   const statusUpdatedAt = new Date().toISOString();
 
   const nextBookings = currentBookings.map((booking) => {
-    const isTargetBooking =
-      booking.id === bookingId;
+    const isTargetBooking = booking.id === bookingId;
 
     const isSameVendorAndDate =
-      Number(booking.vendorId) ===
-        Number(targetBooking.vendorId) &&
+      Number(booking.vendorId) === Number(targetBooking.vendorId) &&
       booking.eventDate === targetBooking.eventDate;
 
-    const currentStatus = normaliseBookingStatus(
-      booking.status
-    );
+    const currentStatus = normaliseBookingStatus(booking.status);
 
     if (isTargetBooking) {
       return {
@@ -342,17 +306,12 @@ export const updateVendorBookingStatus = (
 
   return {
     success: true,
-    booking: nextBookings.find(
-      (booking) => booking.id === bookingId
-    ),
+    booking: nextBookings.find((booking) => booking.id === bookingId),
   };
 };
 
 export const getAvailabilityMap = () => {
-  const storedAvailability = readJson(
-    VENDOR_AVAILABILITY_STORAGE_KEY,
-    null
-  );
+  const storedAvailability = readJson(VENDOR_AVAILABILITY_STORAGE_KEY, null);
 
   if (
     storedAvailability &&
@@ -362,27 +321,20 @@ export const getAvailabilityMap = () => {
     return storedAvailability;
   }
 
-  writeJson(
-    VENDOR_AVAILABILITY_STORAGE_KEY,
-    defaultAvailability
-  );
+  writeJson(VENDOR_AVAILABILITY_STORAGE_KEY, defaultAvailability);
 
   return defaultAvailability;
 };
 
-export const getVendorBlockedDates = (
-  vendorId = DEMO_VENDOR_ID
-) => {
+export const getVendorBlockedDates = (vendorId = DEMO_VENDOR_ID) => {
   const availabilityMap = getAvailabilityMap();
 
-  return normaliseDateList(
-    availabilityMap[vendorId] || []
-  );
+  return normaliseDateList(availabilityMap[vendorId] || []);
 };
 
 export const saveVendorBlockedDates = (
   vendorId = DEMO_VENDOR_ID,
-  blockedDates = []
+  blockedDates = [],
 ) => {
   const availabilityMap = getAvailabilityMap();
 
@@ -391,53 +343,39 @@ export const saveVendorBlockedDates = (
     [vendorId]: normaliseDateList(blockedDates),
   };
 
-  writeJson(
-    VENDOR_AVAILABILITY_STORAGE_KEY,
-    nextAvailabilityMap
-  );
+  writeJson(VENDOR_AVAILABILITY_STORAGE_KEY, nextAvailabilityMap);
 
-  dispatchPortalEvent(
-    VENDOR_AVAILABILITY_UPDATED_EVENT
-  );
+  dispatchPortalEvent(VENDOR_AVAILABILITY_UPDATED_EVENT);
 
   return nextAvailabilityMap[vendorId];
 };
 
-export const getVendorConfirmedBookingDates = (
-  vendorId = DEMO_VENDOR_ID
-) => {
-  const bookingsByDate =
-    getVendorBookings(vendorId).reduce(
-      (groupedBookings, booking) => {
-        if (!booking.eventDate) {
-          return groupedBookings;
-        }
-
-        if (!groupedBookings[booking.eventDate]) {
-          groupedBookings[booking.eventDate] = [];
-        }
-
-        groupedBookings[booking.eventDate].push(
-          booking
-        );
-
+export const getVendorConfirmedBookingDates = (vendorId = DEMO_VENDOR_ID) => {
+  const bookingsByDate = getVendorBookings(vendorId).reduce(
+    (groupedBookings, booking) => {
+      if (!booking.eventDate) {
         return groupedBookings;
-      },
-      {}
-    );
+      }
+
+      if (!groupedBookings[booking.eventDate]) {
+        groupedBookings[booking.eventDate] = [];
+      }
+
+      groupedBookings[booking.eventDate].push(booking);
+
+      return groupedBookings;
+    },
+    {},
+  );
 
   return normaliseDateList(
     Object.entries(bookingsByDate)
-      .filter(([, bookings]) =>
-        doesBookingGroupReserveDate(bookings)
-      )
-      .map(([eventDate]) => eventDate)
+      .filter(([, bookings]) => doesBookingGroupReserveDate(bookings))
+      .map(([eventDate]) => eventDate),
   );
 };
 
-export const getVendorUnavailableDates = (
-  vendorId = DEMO_VENDOR_ID
-) =>
+export const getVendorUnavailableDates = (vendorId = DEMO_VENDOR_ID) =>
   normaliseDateList([
     ...getVendorBlockedDates(vendorId),
     ...getVendorConfirmedBookingDates(vendorId),

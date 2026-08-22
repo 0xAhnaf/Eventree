@@ -62,11 +62,10 @@ const getStatusIcon = (status) => {
 };
 
 function VendorBookings() {
-  const [activeTab, setActiveTab] =
-    useState("upcoming");
+  const [activeTab, setActiveTab] = useState("upcoming");
 
   const [bookings, setBookings] = useState(() =>
-    getVendorBookings(DEMO_VENDOR_ID)
+    getVendorBookings(DEMO_VENDOR_ID),
   );
 
   useEffect(() => {
@@ -74,89 +73,61 @@ function VendorBookings() {
       if (
         event?.type === "storage" &&
         event.key &&
-        event.key !==
-          VENDOR_BOOKINGS_STORAGE_KEY
+        event.key !== VENDOR_BOOKINGS_STORAGE_KEY
       ) {
         return;
       }
 
-      setBookings(
-        getVendorBookings(DEMO_VENDOR_ID)
-      );
+      setBookings(getVendorBookings(DEMO_VENDOR_ID));
     };
 
     window.addEventListener("storage", syncBookings);
-    window.addEventListener(
-      VENDOR_BOOKINGS_UPDATED_EVENT,
-      syncBookings
-    );
+    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
 
     return () => {
-      window.removeEventListener(
-        "storage",
-        syncBookings
-      );
+      window.removeEventListener("storage", syncBookings);
 
-      window.removeEventListener(
-        VENDOR_BOOKINGS_UPDATED_EVENT,
-        syncBookings
-      );
+      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
     };
   }, []);
 
   const upcomingBookings = useMemo(
     () =>
       bookings
-        .filter(
-          (booking) =>
-            booking.status !== "completed"
-        )
+        .filter((booking) => booking.status !== "completed")
         .sort(
           (firstBooking, secondBooking) =>
             new Date(firstBooking.eventDate) -
-            new Date(secondBooking.eventDate)
+            new Date(secondBooking.eventDate),
         ),
-    [bookings]
+    [bookings],
   );
 
   const acceptedUpcomingBookings = useMemo(
     () =>
       upcomingBookings.filter((booking) =>
-        ["accepted", "confirmed"].includes(
-          booking.status
-        )
+        ["accepted", "confirmed"].includes(booking.status),
       ),
-    [upcomingBookings]
+    [upcomingBookings],
   );
 
   const completedBookings = useMemo(
     () =>
       bookings
-        .filter(
-          (booking) =>
-            booking.status === "completed"
-        )
+        .filter((booking) => booking.status === "completed")
         .sort(
           (firstBooking, secondBooking) =>
             new Date(secondBooking.eventDate) -
-            new Date(firstBooking.eventDate)
+            new Date(firstBooking.eventDate),
         ),
-    [bookings]
+    [bookings],
   );
 
   const displayedBookings =
-    activeTab === "upcoming"
-      ? upcomingBookings
-      : completedBookings;
+    activeTab === "upcoming" ? upcomingBookings : completedBookings;
 
-  const handleBookingDecision = (
-    bookingId,
-    nextStatus
-  ) => {
-    updateVendorBookingStatus(
-      bookingId,
-      nextStatus
-    );
+  const handleBookingDecision = (bookingId, nextStatus) => {
+    updateVendorBookingStatus(bookingId, nextStatus);
   };
 
   return (
@@ -169,9 +140,7 @@ function VendorBookings() {
 
           <div>
             <span>Accepted upcoming events</span>
-            <strong>
-              {acceptedUpcomingBookings.length}
-            </strong>
+            <strong>{acceptedUpcomingBookings.length}</strong>
           </div>
         </article>
 
@@ -193,9 +162,8 @@ function VendorBookings() {
             <h2>Event bookings</h2>
 
             <p>
-              Accept or reject booking requests,
-              review accepted events, and see client
-              ratings after completion.
+              Accept or reject booking requests, review accepted events, and see
+              client ratings after completion.
             </p>
           </div>
 
@@ -207,17 +175,9 @@ function VendorBookings() {
             <button
               type="button"
               role="tab"
-              aria-selected={
-                activeTab === "upcoming"
-              }
-              className={
-                activeTab === "upcoming"
-                  ? "active"
-                  : ""
-              }
-              onClick={() =>
-                setActiveTab("upcoming")
-              }
+              aria-selected={activeTab === "upcoming"}
+              className={activeTab === "upcoming" ? "active" : ""}
+              onClick={() => setActiveTab("upcoming")}
             >
               Upcoming
               <span>{upcomingBookings.length}</span>
@@ -226,17 +186,9 @@ function VendorBookings() {
             <button
               type="button"
               role="tab"
-              aria-selected={
-                activeTab === "completed"
-              }
-              className={
-                activeTab === "completed"
-                  ? "active"
-                  : ""
-              }
-              onClick={() =>
-                setActiveTab("completed")
-              }
+              aria-selected={activeTab === "completed"}
+              className={activeTab === "completed" ? "active" : ""}
+              onClick={() => setActiveTab("completed")}
             >
               Completed
               <span>{completedBookings.length}</span>
@@ -247,10 +199,7 @@ function VendorBookings() {
         {displayedBookings.length ? (
           <div className="vbk-list">
             {displayedBookings.map((booking) => (
-              <article
-                className="vbk-booking-card"
-                key={booking.id}
-              >
+              <article className="vbk-booking-card" key={booking.id}>
                 <div className="vbk-booking-top">
                   <div className="vbk-date-block">
                     <CalendarDays size={19} />
@@ -258,37 +207,21 @@ function VendorBookings() {
                     <div>
                       <span>Event date</span>
 
-                      <strong>
-                        {formatEventDate(
-                          booking.eventDate
-                        )}
-                      </strong>
+                      <strong>{formatEventDate(booking.eventDate)}</strong>
                     </div>
                   </div>
 
-                  <span
-                    className={`vbk-status vbk-status-${booking.status}`}
-                  >
-                    {getStatusIcon(
-                      booking.status
-                    )}
+                  <span className={`vbk-status vbk-status-${booking.status}`}>
+                    {getStatusIcon(booking.status)}
 
-                    {statusLabels[
-                      booking.status
-                    ] || booking.status}
+                    {statusLabels[booking.status] || booking.status}
                   </span>
                 </div>
 
                 <div className="vbk-booking-title">
-                  <h3>
-                    {booking.eventType ||
-                      "Event type not provided"}
-                  </h3>
+                  <h3>{booking.eventType || "Event type not provided"}</h3>
 
-                  <p>
-                    {booking.packageName ||
-                      "Package not selected"}
-                  </p>
+                  <p>{booking.packageName || "Package not selected"}</p>
                 </div>
 
                 <div className="vbk-detail-grid">
@@ -298,10 +231,7 @@ function VendorBookings() {
                     <div>
                       <span>Client</span>
 
-                      <strong>
-                        {booking.clientName ||
-                          "Client"}
-                      </strong>
+                      <strong>{booking.clientName || "Client"}</strong>
                     </div>
                   </div>
 
@@ -311,10 +241,7 @@ function VendorBookings() {
                     <div>
                       <span>Email</span>
 
-                      <strong>
-                        {booking.clientEmail ||
-                          "Not provided"}
-                      </strong>
+                      <strong>{booking.clientEmail || "Not provided"}</strong>
                     </div>
                   </div>
 
@@ -324,10 +251,7 @@ function VendorBookings() {
                     <div>
                       <span>Guests</span>
 
-                      <strong>
-                        {booking.guests ||
-                          "Not provided"}
-                      </strong>
+                      <strong>{booking.guests || "Not provided"}</strong>
                     </div>
                   </div>
 
@@ -337,10 +261,7 @@ function VendorBookings() {
                     <div>
                       <span>Package</span>
 
-                      <strong>
-                        {booking.packageName ||
-                          "Not selected"}
-                      </strong>
+                      <strong>{booking.packageName || "Not selected"}</strong>
                     </div>
                   </div>
                 </div>
@@ -351,10 +272,7 @@ function VendorBookings() {
                       type="button"
                       className="vbk-reject-button"
                       onClick={() =>
-                        handleBookingDecision(
-                          booking.id,
-                          "rejected"
-                        )
+                        handleBookingDecision(booking.id, "rejected")
                       }
                     >
                       <X size={16} />
@@ -365,10 +283,7 @@ function VendorBookings() {
                       type="button"
                       className="vbk-accept-button"
                       onClick={() =>
-                        handleBookingDecision(
-                          booking.id,
-                          "accepted"
-                        )
+                        handleBookingDecision(booking.id, "accepted")
                       }
                     >
                       <Check size={16} />
@@ -377,24 +292,16 @@ function VendorBookings() {
                   </div>
                 )}
 
-                {booking.status ===
-                  "completed" && (
+                {booking.status === "completed" && (
                   <div className="vbk-rating-row">
                     <div className="vbk-rating-copy">
                       <span>Client rating</span>
 
                       {booking.rating ? (
                         <div className="vbk-rating-value">
-                          <Star
-                            size={18}
-                            fill="currentColor"
-                          />
+                          <Star size={18} fill="currentColor" />
 
-                          <strong>
-                            {Number(
-                              booking.rating
-                            ).toFixed(1)}
-                          </strong>
+                          <strong>{Number(booking.rating).toFixed(1)}</strong>
 
                           <span>/ 5</span>
                         </div>
@@ -406,9 +313,7 @@ function VendorBookings() {
                     </div>
 
                     {booking.review && (
-                      <p className="vbk-review-text">
-                        “{booking.review}”
-                      </p>
+                      <p className="vbk-review-text">“{booking.review}”</p>
                     )}
                   </div>
                 )}
@@ -419,14 +324,9 @@ function VendorBookings() {
           <div className="vbk-empty-state">
             <CalendarDays size={30} />
 
-            <h3>
-              No {activeTab} events yet
-            </h3>
+            <h3>No {activeTab} events yet</h3>
 
-            <p>
-              Event information will appear here
-              when bookings are added.
-            </p>
+            <p>Event information will appear here when bookings are added.</p>
           </div>
         )}
       </div>

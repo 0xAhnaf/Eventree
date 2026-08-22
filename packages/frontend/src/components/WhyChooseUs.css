@@ -55,7 +55,9 @@
   border: 1px solid rgba(255, 255, 255, 0.1); /* border-white/10 */
   background-color: rgba(255, 255, 255, 0.05); /* bg-white/5 */
   padding: 1.75rem; /* p-7 */
-  transition: transform 0.3s ease, background-color 0.3s ease; /* transition */
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease; /* transition */
 }
 
 .why-card:hover {

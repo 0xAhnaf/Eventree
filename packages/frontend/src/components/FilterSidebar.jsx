@@ -13,8 +13,7 @@ export default function FilterSidebar({
   onCategoryChange,
   onAllServices,
 }) {
-  const allServicesSelected =
-    selectedCategories.length === 0;
+  const allServicesSelected = selectedCategories.length === 0;
 
   return (
     <aside className="filter-sidebar-CLP">
@@ -23,9 +22,7 @@ export default function FilterSidebar({
 
         {/* Category */}
         <div className="filter-group-CLP">
-          <label className="filter-title">
-            Category
-          </label>
+          <label className="filter-title">Category</label>
 
           <label>
             <input
@@ -41,12 +38,8 @@ export default function FilterSidebar({
               <input
                 type="checkbox"
                 value={category}
-                checked={selectedCategories.includes(
-                  category
-                )}
-                onChange={() =>
-                  onCategoryChange(category)
-                }
+                checked={selectedCategories.includes(category)}
+                onChange={() => onCategoryChange(category)}
               />
 
               {category}
@@ -58,16 +51,9 @@ export default function FilterSidebar({
 
         {/* Price */}
         <div className="filter-group-CLP">
-          <label className="filter-title-CLP">
-            Price Range
-          </label>
+          <label className="filter-title-CLP">Price Range</label>
 
-          <input
-            type="range"
-            min="500"
-            max="50000"
-            defaultValue="25000"
-          />
+          <input type="range" min="500" max="50000" defaultValue="25000" />
 
           <div className="price-values-CLP">
             <span>$500</span>
@@ -79,9 +65,7 @@ export default function FilterSidebar({
 
         {/* Rating */}
         <div className="filter-group-CLP">
-          <label className="filter-title-CLP">
-            Minimum Rating
-          </label>
+          <label className="filter-title-CLP">Minimum Rating</label>
 
           <div className="rating-buttons-CLP">
             <button type="button">4.5+</button>
@@ -94,17 +78,12 @@ export default function FilterSidebar({
 
         {/* Availability */}
         <div className="filter-group-CLP">
-          <label className="filter-title-CLP">
-            Availability
-          </label>
+          <label className="filter-title-CLP">Availability</label>
 
           <input type="date" />
         </div>
 
-        <button
-          type="button"
-          className="apply-btn-CLP"
-        >
+        <button type="button" className="apply-btn-CLP">
           Apply Filters
         </button>
       </div>

@@ -34,7 +34,6 @@ function ResetPassword() {
 
     setSuccess(true);
 
-    
     setTimeout(() => {
       navigate("/login");
     }, 2500);
@@ -70,11 +69,7 @@ function ResetPassword() {
             />
           </div>
 
-          {error && (
-            <p className="rp-error">
-              {error}
-            </p>
-          )}
+          {error && <p className="rp-error">{error}</p>}
 
           {success && (
             <div className="rp-success">
@@ -88,9 +83,7 @@ function ResetPassword() {
         </form>
 
         <div className="rp-back-link">
-          <Link to="/login">
-            ← Back to Login
-          </Link>
+          <Link to="/login">← Back to Login</Link>
         </div>
       </div>
     </div>

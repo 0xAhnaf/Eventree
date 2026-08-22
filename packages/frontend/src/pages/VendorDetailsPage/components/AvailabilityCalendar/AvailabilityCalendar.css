@@ -1,252 +1,170 @@
 .availability-calendar {
-
-  width:100%;
-
+  width: 100%;
 }
-
-
 
 .availability-calendar h2 {
+  font-size: 32px;
 
-  font-size:32px;
+  margin-bottom: 25px;
 
-  margin-bottom:25px;
-
-  color:#0b3d2e;
-
+  color: #0b3d2e;
 }
-
-
 
 .calendar-box {
+  width: 100%;
 
-  width:100%;
+  max-width: 720px;
 
-  max-width:720px;
+  padding: 30px;
 
-  padding:30px;
+  border: 1px solid #e5e5e5;
 
-  border:1px solid #e5e5e5;
+  border-radius: 22px;
 
-  border-radius:22px;
-
-  background:#ffffff;
-
+  background: #ffffff;
 }
-
-
 
 .calendar-header {
+  display: flex;
 
-  display:flex;
+  justify-content: space-between;
 
-  justify-content:space-between;
+  align-items: center;
 
-  align-items:center;
-
-  margin-bottom:30px;
-
+  margin-bottom: 30px;
 }
-
-
 
 .calendar-header h3 {
+  font-size: 22px;
 
-  font-size:22px;
+  font-weight: 600;
 
-  font-weight:600;
-
-  margin:0;
-
+  margin: 0;
 }
-
-
 
 .calendar-header button {
+  width: 42px;
 
-  width:42px;
+  height: 42px;
 
-  height:42px;
+  border-radius: 50%;
 
-  border-radius:50%;
+  border: none;
 
-  border:none;
+  background: #f3f3f3;
 
-  background:#f3f3f3;
+  font-size: 20px;
 
-  font-size:20px;
-
-  cursor:pointer;
-
+  cursor: pointer;
 }
-
-
 
 .weekdays {
+  display: grid;
 
-  display:grid;
+  grid-template-columns: repeat(7, 1fr);
 
-  grid-template-columns:repeat(7,1fr);
+  text-align: center;
 
-  text-align:center;
+  margin-bottom: 15px;
 
-  margin-bottom:15px;
+  font-weight: 600;
 
-  font-weight:600;
-
-  color:#555;
-
+  color: #555;
 }
-
-
 
 .calendar-days {
+  display: grid;
 
-  display:grid;
+  grid-template-columns: repeat(7, 1fr);
 
-  grid-template-columns:repeat(7,1fr);
-
-  gap:12px;
-
+  gap: 12px;
 }
-
-
 
 .day,
 .empty-day {
-
-  height:48px;
-
+  height: 48px;
 }
-
-
 
 .day {
+  display: flex;
 
-  display:flex;
+  justify-content: center;
 
-  justify-content:center;
+  align-items: center;
 
-  align-items:center;
+  border-radius: 10px;
 
-  border-radius:10px;
+  font-size: 16px;
 
-  font-size:16px;
-
-  border:1px solid #e4e4e4;
-
+  border: 1px solid #e4e4e4;
 }
-
-
 
 .day.available {
+  background: white;
 
-  background:white;
-
-  color:#222;
-
+  color: #222;
 }
-
-
 
 .day.booked {
+  background: #d8d8d8;
 
-  background:#d8d8d8;
+  border-color: #d8d8d8;
 
-  border-color:#d8d8d8;
-
-  color:#777;
-
+  color: #777;
 }
-
-
 
 .day.available:hover {
-
-  border-color:#0b3d2e;
-
+  border-color: #0b3d2e;
 }
-
-
 
 .calendar-legend {
+  display: flex;
 
-  display:flex;
+  gap: 25px;
 
-  gap:25px;
-
-  margin-top:25px;
-
+  margin-top: 25px;
 }
-
-
 
 .calendar-legend div {
+  display: flex;
 
-  display:flex;
+  align-items: center;
 
-  align-items:center;
+  gap: 8px;
 
-  gap:8px;
-
-  color:#555;
-
+  color: #555;
 }
-
-
 
 .available-dot,
 .booked-dot {
+  width: 12px;
 
-  width:12px;
+  height: 12px;
 
-  height:12px;
-
-  border-radius:50%;
-
+  border-radius: 50%;
 }
-
-
 
 .available-dot {
+  background: white;
 
-  background:white;
-
-  border:1px solid #aaa;
-
+  border: 1px solid #aaa;
 }
-
-
 
 .booked-dot {
-
-  background:#d8d8d8;
-
+  background: #d8d8d8;
 }
 
-
-
-@media(max-width:700px){
-
-  .calendar-box{
-
-    padding:20px;
-
+@media (max-width: 700px) {
+  .calendar-box {
+    padding: 20px;
   }
-
 
   .day,
-  .empty-day{
-
-    height:40px;
-
+  .empty-day {
+    height: 40px;
   }
 
-
-  .calendar-days{
-
-    gap:8px;
-
+  .calendar-days {
+    gap: 8px;
   }
-
 }

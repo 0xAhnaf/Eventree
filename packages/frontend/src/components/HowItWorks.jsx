@@ -37,20 +37,15 @@ function HowItWorks() {
   return (
     <section id="how-it-works" className="hiw-section">
       <div className="hiw-container">
-        
         {/* Heading */}
         <div className="hiw-header">
-          <p className="hiw-subtitle">
-            Simple Process
-          </p>
+          <p className="hiw-subtitle">Simple Process</p>
 
-          <h2 className="hiw-title">
-            How EVENTREE Works
-          </h2>
+          <h2 className="hiw-title">How EVENTREE Works</h2>
 
           <p className="hiw-description">
-            From discovering vendors to connecting with professionals,
-            EVENTREE makes event planning simple and organised.
+            From discovering vendors to connecting with professionals, EVENTREE
+            makes event planning simple and organised.
           </p>
         </div>
 
@@ -58,29 +53,18 @@ function HowItWorks() {
         <div className="hiw-grid">
           {steps.map((step, index) => (
             <div key={step.number} className="hiw-step">
-              
               {/* Number */}
-              <div className="hiw-number">
-                {step.number}
-              </div>
+              <div className="hiw-number">{step.number}</div>
 
-              <h3 className="hiw-step-title">
-                {step.title}
-              </h3>
+              <h3 className="hiw-step-title">{step.title}</h3>
 
-              <p className="hiw-step-desc">
-                {step.description}
-              </p>
+              <p className="hiw-step-desc">{step.description}</p>
 
               {/* Line */}
-              {index !== steps.length - 1 && (
-                <div className="hiw-line"></div>
-              )}
-              
+              {index !== steps.length - 1 && <div className="hiw-line"></div>}
             </div>
           ))}
         </div>
-        
       </div>
     </section>
   );

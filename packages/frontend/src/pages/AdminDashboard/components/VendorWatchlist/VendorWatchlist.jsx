@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  Star,
-  CheckCircle,
-  Clock,
-} from "lucide-react";
+import { Star, CheckCircle, Clock } from "lucide-react";
 
 import "./VendorWatchlist.css";
 
@@ -78,17 +74,11 @@ const VendorWatchlist = () => {
                   {vendor.name}
                 </td>
 
-                <td data-label="Category">
-                  {vendor.category}
-                </td>
+                <td data-label="Category">{vendor.category}</td>
 
-                <td data-label="Bookings">
-                  {vendor.bookings}
-                </td>
+                <td data-label="Bookings">{vendor.bookings}</td>
 
-                <td data-label="Revenue">
-                  {formatCurrency(vendor.revenue)}
-                </td>
+                <td data-label="Revenue">{formatCurrency(vendor.revenue)}</td>
 
                 <td data-label="Rating">
                   <div className="vendor-rating">
@@ -100,9 +90,7 @@ const VendorWatchlist = () => {
                 <td data-label="Status">
                   <span
                     className={`vendor-status ${
-                      vendor.status === "Verified"
-                        ? "verified"
-                        : "pending"
+                      vendor.status === "Verified" ? "verified" : "pending"
                     }`}
                   >
                     {vendor.status === "Verified" ? (

@@ -51,11 +51,7 @@ function ForgotPassword() {
             />
           </div>
 
-          {error && (
-            <p className="fp-error">
-              {error}
-            </p>
-          )}
+          {error && <p className="fp-error">{error}</p>}
 
           {success && (
             <div className="fp-success">
@@ -69,9 +65,7 @@ function ForgotPassword() {
         </form>
 
         <div className="fp-back-link">
-          <Link to="/login">
-            ← Back to Login
-          </Link>
+          <Link to="/login">← Back to Login</Link>
         </div>
       </div>
     </div>
