@@ -167,8 +167,7 @@ function VendorLandingPage() {
     }
   };
 
-  const currentViewDetails =
-    viewDetails[activeView] || viewDetails.analytics;
+  const currentViewDetails = viewDetails[activeView] || viewDetails.analytics;
 
   const isAnalyticsView = activeView === "analytics";
 
@@ -185,16 +184,12 @@ function VendorLandingPage() {
         )}
 
         <aside
-          className={`vlp-sidebar ${
-            isSidebarOpen ? "vlp-sidebar-open" : ""
-          }`}
+          className={`vlp-sidebar ${isSidebarOpen ? "vlp-sidebar-open" : ""}`}
         >
           <div className="vlp-sidebar-welcome">
             <div>
               <h2 className="vlp-sidebar-title">Welcome back</h2>
-              <p className="vlp-sidebar-subtitle">
-                Manage your premium events
-              </p>
+              <p className="vlp-sidebar-subtitle">Manage your premium events</p>
             </div>
 
             <button
@@ -219,9 +214,7 @@ function VendorLandingPage() {
                     isActive ? "vlp-sidebar-link-active" : ""
                   }`}
                   aria-current={isActive ? "page" : undefined}
-                  onClick={(event) =>
-                    handleSidebarLinkClick(event, link)
-                  }
+                  onClick={(event) => handleSidebarLinkClick(event, link)}
                 >
                   {link.icon}
                   {link.label}
@@ -246,9 +239,7 @@ function VendorLandingPage() {
           <div className="vlp-content">
             <header className="vlp-page-header">
               <div>
-                <h1 className="vlp-page-title">
-                  {currentViewDetails.title}
-                </h1>
+                <h1 className="vlp-page-title">{currentViewDetails.title}</h1>
 
                 <p className="vlp-page-subtitle">
                   {currentViewDetails.subtitle}
@@ -257,18 +248,12 @@ function VendorLandingPage() {
 
               {isAnalyticsView && (
                 <div className="vlp-header-actions">
-                  <button
-                    type="button"
-                    className="vlp-btn vlp-btn-outline"
-                  >
+                  <button type="button" className="vlp-btn vlp-btn-outline">
                     <CalendarRange size={18} />
                     Last 30 Days
                   </button>
 
-                  <button
-                    type="button"
-                    className="vlp-btn vlp-btn-solid"
-                  >
+                  <button type="button" className="vlp-btn vlp-btn-solid">
                     <Download size={18} />
                     Export Report
                   </button>

@@ -5,12 +5,9 @@ function Footer() {
   return (
     <footer className="footer-section">
       <div className="footer-container">
-
         {/* Brand */}
         <div>
-          <h2 className="footer-brand-title">
-            EVENTREE
-          </h2>
+          <h2 className="footer-brand-title">EVENTREE</h2>
 
           <p className="footer-brand-desc">
             A smart event vendor marketplace connecting customers with
@@ -21,12 +18,9 @@ function Footer() {
 
         {/* Quick Links */}
         <div>
-          <h3 className="footer-col-title">
-            Quick Links
-          </h3>
+          <h3 className="footer-col-title">Quick Links</h3>
 
           <ul className="footer-list">
-
             <li>
               <a href="/#home" className="footer-link">
                 Home
@@ -50,18 +44,14 @@ function Footer() {
                 How It Works
               </a>
             </li>
-
           </ul>
         </div>
 
         {/* For Users */}
         <div>
-          <h3 className="footer-col-title">
-            For Users
-          </h3>
+          <h3 className="footer-col-title">For Users</h3>
 
           <ul className="footer-list">
-
             <li>
               <Link to="/login" className="footer-link">
                 Customer Login
@@ -85,23 +75,16 @@ function Footer() {
                 Favorites
               </a>
             </li>
-
           </ul>
         </div>
 
         {/* For Vendors */}
         <div>
-          <h3 className="footer-col-title">
-            For Vendors
-          </h3>
+          <h3 className="footer-col-title">For Vendors</h3>
 
           <ul className="footer-list">
-
             <li>
-              <Link
-                to="/signup?role=vendor"
-                className="footer-link"
-              >
+              <Link to="/signup?role=vendor" className="footer-link">
                 Become a Vendor
               </Link>
             </li>
@@ -123,17 +106,12 @@ function Footer() {
                 Contact Support
               </a>
             </li>
-
           </ul>
         </div>
-
       </div>
 
       {/* Bottom */}
-      <div className="footer-bottom">
-        © 2026 EVENTREE. All rights reserved.
-      </div>
-
+      <div className="footer-bottom">© 2026 EVENTREE. All rights reserved.</div>
     </footer>
   );
 }

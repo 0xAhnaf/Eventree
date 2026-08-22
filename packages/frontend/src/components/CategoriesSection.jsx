@@ -1,10 +1,4 @@
-import {
-  Utensils,
-  Landmark,
-  Flower2,
-  Camera,
-  Mic2,
-} from "lucide-react";
+import { Utensils, Landmark, Flower2, Camera, Mic2 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 import "./CategoriesSection.css";
@@ -51,28 +45,23 @@ function CategoriesSection() {
   ];
 
   const handleCategoryClick = (category) => {
-    navigate(
-      `/browse-vendor?category=${encodeURIComponent(category)}`
-    );
+    navigate(`/browse-vendor?category=${encodeURIComponent(category)}`);
   };
 
   return (
     <section id="categories" className="categories-section">
       <div className="categories-container">
-
         {/* Heading */}
         <div className="categories-header">
-          <p className="categories-subtitle">
-            Explore Services
-          </p>
+          <p className="categories-subtitle">Explore Services</p>
 
           <h2 className="categories-title">
             Find The Right Vendor For Your Event
           </h2>
 
           <p className="categories-description">
-            From food and venues to decoration and photography, EVENTREE connects
-            you with professional event specialists.
+            From food and venues to decoration and photography, EVENTREE
+            connects you with professional event specialists.
           </p>
         </div>
 
@@ -87,20 +76,14 @@ function CategoriesSection() {
                   <Icon size={28} />
                 </div>
 
-                <h3 className="category-card-title">
-                  {category.title}
-                </h3>
+                <h3 className="category-card-title">{category.title}</h3>
 
-                <p className="category-card-desc">
-                  {category.description}
-                </p>
+                <p className="category-card-desc">{category.description}</p>
 
                 <button
                   type="button"
                   className="category-btn"
-                  onClick={() =>
-                    handleCategoryClick(category.categoryValue)
-                  }
+                  onClick={() => handleCategoryClick(category.categoryValue)}
                 >
                   Explore →
                 </button>
@@ -108,7 +91,6 @@ function CategoriesSection() {
             );
           })}
         </div>
-
       </div>
     </section>
   );

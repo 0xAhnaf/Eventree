@@ -1,8 +1,8 @@
 .auth-page {
-    display: flex;
-    min-height: 100vh;
-    background: #faf7f3;
-    font-family: "Inter", sans-serif;
+  display: flex;
+  min-height: 100vh;
+  background: #faf7f3;
+  font-family: "Inter", sans-serif;
 }
 
 /* ==========================
@@ -10,41 +10,39 @@
 ========================== */
 
 .auth-left {
-    flex: 1;
-    background: linear-gradient(135deg, #022c22 0%, #0b3d2f 100%);
-    color: white;
-    padding: 50px 60px;
-    display: flex;
-    flex-direction: column;
+  flex: 1;
+  background: linear-gradient(135deg, #022c22 0%, #0b3d2f 100%);
+  color: white;
+  padding: 50px 60px;
+  display: flex;
+  flex-direction: column;
 }
 
-
-
 .hero {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .hero h1 {
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 4rem;
-    line-height: 1.05;
-    margin-bottom: 30px;
-    max-width: 480px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 4rem;
+  line-height: 1.05;
+  margin-bottom: 30px;
+  max-width: 480px;
 }
 
 .hero p {
-    max-width: 420px;
-    color: rgba(255,255,255,.82);
-    font-size: 1.1rem;
-    line-height: 1.8;
+  max-width: 420px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 1.1rem;
+  line-height: 1.8;
 }
 
 .copyright {
-    color: rgba(255,255,255,.55);
-    font-size: .8rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.8rem;
 }
 
 /* ==========================
@@ -52,29 +50,29 @@
 ========================== */
 
 .auth-right {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #faf7f3;
-    padding: 50px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #faf7f3;
+  padding: 50px;
 }
 
 .auth-container {
-    width: 100%;
-    max-width: 430px;
+  width: 100%;
+  max-width: 430px;
 }
 
 .auth-container h2 {
-    font-family: Georgia, serif;
-    font-size: 2.6rem;
-    color: #2a2118;
-    margin-bottom: 10px;
+  font-family: Georgia, serif;
+  font-size: 2.6rem;
+  color: #2a2118;
+  margin-bottom: 10px;
 }
 
 .auth-container > p {
-    color: #85786b;
-    margin-bottom: 35px;
+  color: #85786b;
+  margin-bottom: 35px;
 }
 
 /* ==========================
@@ -82,29 +80,29 @@
 ========================== */
 
 .role-switch {
-    display: flex;
-    background: #f2e8de;
-    border-radius: 14px;
-    padding: 4px;
-    margin-bottom: 28px;
+  display: flex;
+  background: #f2e8de;
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 28px;
 }
 
 .role-switch button {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 12px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: .25s;
-    font-weight: 600;
-    color: #6f6258;
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.25s;
+  font-weight: 600;
+  color: #6f6258;
 }
 
 .role-switch button.active {
-    background: white;
-    color: #083729;
-    box-shadow: 0 3px 12px rgba(0,0,0,.08);
+  background: white;
+  color: #083729;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* ==========================
@@ -112,33 +110,33 @@
 ========================== */
 
 .form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 18px;
-    margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+  margin-top: 18px;
 }
 
 .form-group label {
-    margin-bottom: 8px;
-    color: #40352d;
-    font-size: .95rem;
-    font-weight: 600;
+  margin-bottom: 8px;
+  color: #40352d;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .form-group input {
-    height: 52px;
-    border: 1px solid #ddd4cb;
-    border-radius: 10px;
-    padding: 0 16px;
-    font-size: .95rem;
-    background: white;
-    transition: .25s;
+  height: 52px;
+  border: 1px solid #ddd4cb;
+  border-radius: 10px;
+  padding: 0 16px;
+  font-size: 0.95rem;
+  background: white;
+  transition: 0.25s;
 }
 
 .form-group input:focus {
-    outline: none;
-    border-color: #0b4d39;
-    box-shadow: 0 0 0 3px rgba(11,77,57,.08);
+  outline: none;
+  border-color: #0b4d39;
+  box-shadow: 0 0 0 3px rgba(11, 77, 57, 0.08);
 }
 
 /* ==========================
@@ -146,23 +144,23 @@
 ========================== */
 
 .password-input {
-    position: relative;
+  position: relative;
 }
 
 .password-input input {
-    width: 100%;
+  width: 100%;
 }
 
 .password-input button {
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    color: #0b4d39;
-    font-weight: 600;
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #0b4d39;
+  font-weight: 600;
 }
 
 /* ==========================
@@ -170,17 +168,17 @@
 ========================== */
 
 .checkbox {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 20px 0;
-    font-size: .9rem;
-    color: #5f5349;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+  font-size: 0.9rem;
+  color: #5f5349;
 }
 
 .checkbox input {
-    width: 16px;
-    height: 16px;
+  width: 16px;
+  height: 16px;
 }
 
 /* ==========================
@@ -188,20 +186,20 @@
 ========================== */
 
 .submit-btn {
-    width: 100%;
-    height: 56px;
-    border: none;
-    border-radius: 10px;
-    background: #012d22;
-    color: white;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: .25s;
+  width: 100%;
+  height: 56px;
+  border: none;
+  border-radius: 10px;
+  background: #012d22;
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s;
 }
 
 .submit-btn:hover {
-    background: #094636;
+  background: #094636;
 }
 
 /* ==========================
@@ -209,23 +207,23 @@
 ========================== */
 
 .auth-divider {
-    display: flex;
-    align-items: center;
-    margin: 30px 0;
-    color: #9a8f85;
-    font-size: .8rem;
+  display: flex;
+  align-items: center;
+  margin: 30px 0;
+  color: #9a8f85;
+  font-size: 0.8rem;
 }
 
 .auth-divider::before,
 .auth-divider::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: #e2d8ce;
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e2d8ce;
 }
 
 .auth-divider span {
-    margin: 0 15px;
+  margin: 0 15px;
 }
 
 /* ==========================
@@ -233,27 +231,27 @@
 ========================== */
 
 .google-btn {
-    width: 100%;
-    height: 52px;
-    border: 1px solid #ddd4cb;
-    background: white;
-    border-radius: 10px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    transition: .25s;
+  width: 100%;
+  height: 52px;
+  border: 1px solid #ddd4cb;
+  background: white;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  transition: 0.25s;
 }
 
 .google-btn:hover {
-    background: #f7f4f1;
+  background: #f7f4f1;
 }
 
 .google-btn span {
-    color: #db4437;
-    font-weight: 700;
-    font-size: 1.2rem;
+  color: #db4437;
+  font-weight: 700;
+  font-size: 1.2rem;
 }
 
 /* ==========================
@@ -261,19 +259,19 @@
 ========================== */
 
 .auth-container p:last-child {
-    margin-top: 35px;
-    text-align: center;
-    color: #776b60;
+  margin-top: 35px;
+  text-align: center;
+  color: #776b60;
 }
 
 .auth-container a {
-    color: #012d22;
-    text-decoration: none;
-    font-weight: 700;
+  color: #012d22;
+  text-decoration: none;
+  font-weight: 700;
 }
 
 .auth-container a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* ==========================
@@ -281,54 +279,53 @@
 ========================== */
 
 @media (max-width: 900px) {
+  .auth-page {
+    flex-direction: column;
+  }
 
-    .auth-page {
-        flex-direction: column;
-    }
+  .auth-left {
+    min-height: 45vh;
+    text-align: center;
+    padding: 40px;
+  }
 
-    .auth-left {
-        min-height: 45vh;
-        text-align: center;
-        padding: 40px;
-    }
+  .hero h1 {
+    max-width: none;
+    font-size: 3rem;
+  }
 
-    .hero h1 {
-        max-width: none;
-        font-size: 3rem;
-    }
+  .hero p {
+    max-width: none;
+  }
 
-    .hero p {
-        max-width: none;
-    }
-
-    .auth-right {
-        padding: 40px 25px;
-    }
+  .auth-right {
+    padding: 40px 25px;
+  }
 }
 
 /* ==========================
    LOGO
 ========================== */
 .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    color: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: white;
 }
 
 .logo img {
-    width: 48px;
-    height: 48px;
+  width: 48px;
+  height: 48px;
 }
 
 .logo span {
-    font-family: "Playfair Display", serif;
-    font-size: 2rem;
-    font-weight: 700;
+  font-family: "Playfair Display", serif;
+  font-size: 2rem;
+  font-weight: 700;
 }
 .auth-container {
-    animation: fadeUp 0.8s ease;
+  animation: fadeUp 0.8s ease;
 }
 
 .forgot-password-container {
@@ -352,111 +349,106 @@
 }
 
 @keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(25px);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {
+  .auth-page {
+    display: block;
+  }
 
+  .auth-left {
+    min-height: auto;
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Hide the hero section */
+  .hero {
+    display: none;
+  }
+
+  /* Hide the copyright */
+  .copyright {
+    display: none;
+  }
+
+  .auth-right {
+    width: 100%;
+    padding: 32px 24px;
+  }
+
+  .auth-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .logo {
+    margin: 0;
+  }
+
+  .logo img {
+    width: 15px;
+    height: auto;
+  }
+  @media (max-width: 768px) {
     .auth-page {
-        display: block;
+      display: block;
     }
 
     .auth-left {
-        min-height: auto;
-        padding: 24px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      min-height: auto;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     /* Hide the hero section */
     .hero {
-        display: none;
+      display: none;
     }
 
     /* Hide the copyright */
     .copyright {
-        display: none;
+      display: none;
     }
 
     .auth-right {
-        width: 100%;
-        padding: 32px 24px;
+      width: 100%;
+      padding: 32px 24px;
     }
 
     .auth-container {
-        max-width: 100%;
-        margin: 0;
-        padding: 0;
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
     }
 
     .logo {
-        margin: 0;
+      margin: 0;
     }
 
     .logo img {
-        width: 15px;
-        height: auto;
-    }
-    @media (max-width: 768px) {
-
-    .auth-page {
-        display: block;
-    }
-
-    .auth-left {
-        min-height: auto;
-        padding: 24px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    /* Hide the hero section */
-    .hero {
-        display: none;
-    }
-
-    /* Hide the copyright */
-    .copyright {
-        display: none;
-    }
-
-    .auth-right {
-        width: 100%;
-        padding: 32px 24px;
-    }
-
-    .auth-container {
-        max-width: 100%;
-        margin: 0;
-        padding: 0;
-    }
-
-    .logo {
-        margin: 0;
-    }
-
-
-     .logo img {
-        width: 36px;
-        height: 36px;
+      width: 36px;
+      height: 36px;
     }
 
     .logo span {
-        font-size: 1.5rem;
+      font-size: 1.5rem;
     }
-
-}
-
+  }
 }
 .loading-spinner {
   width: 20px;
@@ -471,5 +463,41 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+/* ==========================
+   ERROR TOAST
+========================== */
+
+.login-error-toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+
+  background: #dc3545;
+  color: white;
+
+  padding: 14px 24px;
+  border-radius: 8px;
+
+  font-size: 15px;
+  font-weight: 500;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+  animation: loginToastSlideDown 0.3s ease;
+}
+
+@keyframes loginToastSlideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
   }
 }

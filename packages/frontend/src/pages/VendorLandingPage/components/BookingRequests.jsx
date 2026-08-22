@@ -36,7 +36,7 @@ const getInitials = (name = "") =>
 
 function BookingRequests() {
   const [bookings, setBookings] = useState(() =>
-    getVendorBookings(DEMO_VENDOR_ID)
+    getVendorBookings(DEMO_VENDOR_ID),
   );
 
   useEffect(() => {
@@ -53,32 +53,24 @@ function BookingRequests() {
     };
 
     window.addEventListener("storage", syncBookings);
-    window.addEventListener(
-      VENDOR_BOOKINGS_UPDATED_EVENT,
-      syncBookings
-    );
+    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
 
     return () => {
       window.removeEventListener("storage", syncBookings);
-      window.removeEventListener(
-        VENDOR_BOOKINGS_UPDATED_EVENT,
-        syncBookings
-      );
+      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
     };
   }, []);
 
   const pendingRequests = useMemo(
     () =>
       bookings
-        .filter(
-          (booking) => booking.status === "pending"
-        )
+        .filter((booking) => booking.status === "pending")
         .sort(
           (firstBooking, secondBooking) =>
             new Date(firstBooking.createdAt) -
-            new Date(secondBooking.createdAt)
+            new Date(secondBooking.createdAt),
         ),
-    [bookings]
+    [bookings],
   );
 
   const handleDecline = (bookingId) => {
@@ -92,9 +84,7 @@ function BookingRequests() {
   return (
     <div className="booking-requests-VLP">
       <div className="booking-requests-header-VLP">
-        <h4 className="booking-requests-title-VLP">
-          New Booking Requests
-        </h4>
+        <h4 className="booking-requests-title-VLP">New Booking Requests</h4>
 
         <span className="booking-requests-badge-VLP">
           {pendingRequests.length} Pending
@@ -109,9 +99,7 @@ function BookingRequests() {
               <th>Event Type</th>
               <th>Date Requested</th>
               <th>Package</th>
-              <th className="booking-requests-action-col-VLP">
-                Action
-              </th>
+              <th className="booking-requests-action-col-VLP">Action</th>
             </tr>
           </thead>
 
@@ -131,8 +119,7 @@ function BookingRequests() {
                 </td>
 
                 <td className="booking-cell-muted-VLP">
-                  {request.eventType ||
-                    "Event type not provided"}
+                  {request.eventType || "Event type not provided"}
                 </td>
 
                 <td className="booking-cell-muted-VLP">
@@ -141,8 +128,7 @@ function BookingRequests() {
 
                 <td>
                   <span className="booking-package-VLP">
-                    {request.packageName ||
-                      "Package not selected"}
+                    {request.packageName || "Package not selected"}
                   </span>
                 </td>
 
@@ -151,9 +137,7 @@ function BookingRequests() {
                     <button
                       type="button"
                       className="booking-action-btn-VLP booking-action-decline-VLP"
-                      onClick={() =>
-                        handleDecline(request.id)
-                      }
+                      onClick={() => handleDecline(request.id)}
                       aria-label="Reject booking"
                       title="Reject booking"
                     >
@@ -163,9 +147,7 @@ function BookingRequests() {
                     <button
                       type="button"
                       className="booking-action-btn-VLP booking-action-accept-VLP"
-                      onClick={() =>
-                        handleAccept(request.id)
-                      }
+                      onClick={() => handleAccept(request.id)}
                       aria-label="Accept booking"
                       title="Accept booking"
                     >
@@ -178,10 +160,7 @@ function BookingRequests() {
 
             {pendingRequests.length === 0 && (
               <tr>
-                <td
-                  colSpan="5"
-                  className="booking-empty-VLP"
-                >
+                <td colSpan="5" className="booking-empty-VLP">
                   No pending booking requests right now.
                 </td>
               </tr>

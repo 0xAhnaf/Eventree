@@ -1,4 +1,4 @@
-import "./SolutionsSection.css"; 
+import "./SolutionsSection.css";
 
 function SolutionsSection() {
   const solutions = [
@@ -43,21 +43,15 @@ function SolutionsSection() {
   return (
     <section className="solutions-section">
       <div className="solutions-container">
-        
         {/* Heading */}
         <div className="solutions-header">
-          <p className="solutions-subtitle">
-            Our Solution
-          </p>
+          <p className="solutions-subtitle">Our Solution</p>
 
-          <h2 className="solutions-title">
-            A Smarter Way To Plan Events
-          </h2>
+          <h2 className="solutions-title">A Smarter Way To Plan Events</h2>
 
           <p className="solutions-header-desc">
-            EVENTREE simplifies the entire event planning journey by
-            connecting customers with professional vendors through one
-            seamless platform.
+            EVENTREE simplifies the entire event planning journey by connecting
+            customers with professional vendors through one seamless platform.
           </p>
         </div>
 
@@ -65,23 +59,14 @@ function SolutionsSection() {
         <div className="solutions-grid">
           {solutions.map((solution) => (
             <div key={solution.number} className="solution-card">
-              
-              <div className="solution-number">
-                {solution.number}
-              </div>
+              <div className="solution-number">{solution.number}</div>
 
-              <h3 className="solution-card-title">
-                {solution.title}
-              </h3>
+              <h3 className="solution-card-title">{solution.title}</h3>
 
-              <p className="solution-card-desc">
-                {solution.description}
-              </p>
-              
+              <p className="solution-card-desc">{solution.description}</p>
             </div>
           ))}
         </div>
-        
       </div>
     </section>
   );

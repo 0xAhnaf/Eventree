@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 
-
 function ForgotPasswordLink() {
   return (
     <div className="forgot-password-container">

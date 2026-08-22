@@ -10,6 +10,8 @@ import ForgotPassword from "./pages/ForgotPassPage/ForgotPassPage.jsx";
 import ResetPassword from "./pages/ResetPassWord/ResetPassword.jsx";
 import VendorDetailsPage from "./pages/VendorDetailsPage/VendorDetailsPage.jsx";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard.jsx";
+import VendorOnboarding from "./pages/VendorOnboarding/VendorOnboarding.jsx";
+import { isVendorOnboardingRequired } from "./utils/vendorProfileStorage.js";
 
 import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 import MyEvents from "./pages/MyEvents/MyEvents.jsx";
@@ -40,6 +42,36 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   return children;
 };
 
+const HomeRoute = () => {
+  const { user } = useAuth();
+
+  if (isVendorOnboardingRequired(user)) {
+    return <Navigate to="/vendor/onboarding" replace />;
+  }
+
+  return <GlobalLandingPage />;
+};
+
+const VendorOnboardingGuard = ({ children }) => {
+  const { user } = useAuth();
+
+  if (isVendorOnboardingRequired(user)) {
+    return <Navigate to="/vendor/onboarding" replace />;
+  }
+
+  return children;
+};
+
+const VendorOnboardingRoute = () => {
+  const { user } = useAuth();
+
+  if (!isVendorOnboardingRequired(user)) {
+    return <Navigate to="/vendor" replace />;
+  }
+
+  return <VendorOnboarding />;
+};
+
 function App() {
   return (
     <AuthProvider>
@@ -47,7 +79,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             {/* Public Routes */}
-            <Route path="/" element={<GlobalLandingPage />} />
+            <Route path="/" element={<HomeRoute />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -58,10 +90,21 @@ function App() {
             <Route path="/my-events" element={<MyEvents />} />
             {/* Vendor-Only Route (or allow admin to inspect if desired) */}
             <Route
+              path="/vendor/onboarding"
+              element={
+                <ProtectedRoute allowedRoles={["vendor"]}>
+                  <VendorOnboardingRoute />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
               path="/vendor"
               element={
                 <ProtectedRoute allowedRoles={["vendor"]}>
-                  <VendorLandingPage />
+                  <VendorOnboardingGuard>
+                    <VendorLandingPage />
+                  </VendorOnboardingGuard>
                 </ProtectedRoute>
               }
             />

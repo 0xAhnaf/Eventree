@@ -26,9 +26,7 @@ function Hero() {
         transition={{ duration: 0.8 }}
         className="hero-content"
       >
-        <p className="hero-subtitle">
-          Smart Event Marketplace
-        </p>
+        <p className="hero-subtitle">Smart Event Marketplace</p>
 
         <h1 className="hero-title">
           Plan Your Perfect Event With Trusted Vendors

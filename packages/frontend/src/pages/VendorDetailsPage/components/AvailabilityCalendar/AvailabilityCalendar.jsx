@@ -7,18 +7,14 @@ const AvailabilityCalendar = ({
   selectedDate = "",
   onDateSelect,
 }) => {
-  const [currentDate, setCurrentDate] = useState(
-    new Date(2026, 9, 1)
-  );
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 9, 1));
 
   useEffect(() => {
     if (!selectedDate) {
       return;
     }
 
-    const selectedDateObject = new Date(
-      `${selectedDate}T00:00:00`
-    );
+    const selectedDateObject = new Date(`${selectedDate}T00:00:00`);
 
     if (Number.isNaN(selectedDateObject.getTime())) {
       return;
@@ -28,8 +24,8 @@ const AvailabilityCalendar = ({
       new Date(
         selectedDateObject.getFullYear(),
         selectedDateObject.getMonth(),
-        1
-      )
+        1,
+      ),
     );
   }, [selectedDate]);
 
@@ -81,11 +77,7 @@ const AvailabilityCalendar = ({
 
   for (let index = 0; index < firstDay; index += 1) {
     calendarDays.push(
-      <div
-        key={`empty-${index}`}
-        className="empty-day"
-        aria-hidden="true"
-      />
+      <div key={`empty-${index}`} className="empty-day" aria-hidden="true" />,
     );
   }
 
@@ -116,15 +108,12 @@ const AvailabilityCalendar = ({
         }`}
       >
         {day}
-      </button>
+      </button>,
     );
   }
 
   return (
-    <section
-      className="availability-calendar"
-      id="availability"
-    >
+    <section className="availability-calendar" id="availability">
       <h2>Availability</h2>
 
       <div className="calendar-box">
@@ -141,11 +130,7 @@ const AvailabilityCalendar = ({
             {monthName} {year}
           </h3>
 
-          <button
-            type="button"
-            onClick={nextMonth}
-            aria-label="Next month"
-          >
+          <button type="button" onClick={nextMonth} aria-label="Next month">
             →
           </button>
         </div>

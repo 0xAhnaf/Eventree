@@ -24,7 +24,7 @@ import "./VendorAvailability.css";
 const formatDateValue = (year, month, day) =>
   `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(
     2,
-    "0"
+    "0",
   )}`;
 
 const formatReadableDate = (dateValue) =>
@@ -37,11 +37,7 @@ const formatReadableDate = (dateValue) =>
 const todayStart = () => {
   const today = new Date();
 
-  return new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  );
+  return new Date(today.getFullYear(), today.getMonth(), today.getDate());
 };
 
 function VendorAvailability() {
@@ -52,13 +48,13 @@ function VendorAvailability() {
   });
 
   const [savedBlockedDates, setSavedBlockedDates] = useState(() =>
-    getVendorBlockedDates(DEMO_VENDOR_ID)
+    getVendorBlockedDates(DEMO_VENDOR_ID),
   );
 
   const [blockedDates, setBlockedDates] = useState(savedBlockedDates);
 
   const [confirmedBookingDates, setConfirmedBookingDates] = useState(() =>
-    getVendorConfirmedBookingDates(DEMO_VENDOR_ID)
+    getVendorConfirmedBookingDates(DEMO_VENDOR_ID),
   );
 
   const [saveMessage, setSaveMessage] = useState("");
@@ -88,33 +84,25 @@ function VendorAvailability() {
         return;
       }
 
-      setConfirmedBookingDates(
-        getVendorConfirmedBookingDates(DEMO_VENDOR_ID)
-      );
+      setConfirmedBookingDates(getVendorConfirmedBookingDates(DEMO_VENDOR_ID));
     };
 
     window.addEventListener("storage", syncAvailability);
     window.addEventListener(
       VENDOR_AVAILABILITY_UPDATED_EVENT,
-      syncAvailability
+      syncAvailability,
     );
     window.addEventListener("storage", syncBookings);
-    window.addEventListener(
-      VENDOR_BOOKINGS_UPDATED_EVENT,
-      syncBookings
-    );
+    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
 
     return () => {
       window.removeEventListener("storage", syncAvailability);
       window.removeEventListener(
         VENDOR_AVAILABILITY_UPDATED_EVENT,
-        syncAvailability
+        syncAvailability,
       );
       window.removeEventListener("storage", syncBookings);
-      window.removeEventListener(
-        VENDOR_BOOKINGS_UPDATED_EVENT,
-        syncBookings
-      );
+      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
     };
   }, []);
 
@@ -131,17 +119,17 @@ function VendorAvailability() {
   const monthBlockedDates = useMemo(
     () =>
       blockedDates.filter((date) =>
-        date.startsWith(`${year}-${String(month + 1).padStart(2, "0")}`)
+        date.startsWith(`${year}-${String(month + 1).padStart(2, "0")}`),
       ),
-    [blockedDates, month, year]
+    [blockedDates, month, year],
   );
 
   const monthConfirmedDates = useMemo(
     () =>
       confirmedBookingDates.filter((date) =>
-        date.startsWith(`${year}-${String(month + 1).padStart(2, "0")}`)
+        date.startsWith(`${year}-${String(month + 1).padStart(2, "0")}`),
       ),
-    [confirmedBookingDates, month, year]
+    [confirmedBookingDates, month, year],
   );
 
   const toggleBlockedDate = (dateValue) => {
@@ -158,22 +146,19 @@ function VendorAvailability() {
     setBlockedDates((currentDates) =>
       currentDates.includes(dateValue)
         ? currentDates.filter((date) => date !== dateValue)
-        : [...currentDates, dateValue].sort()
+        : [...currentDates, dateValue].sort(),
     );
 
     setSaveMessage("");
   };
 
   const handleSave = () => {
-    const savedDates = saveVendorBlockedDates(
-      DEMO_VENDOR_ID,
-      blockedDates
-    );
+    const savedDates = saveVendorBlockedDates(DEMO_VENDOR_ID, blockedDates);
 
     setSavedBlockedDates(savedDates);
     setBlockedDates(savedDates);
     setSaveMessage(
-      "Availability saved. The public Vendor Details calendar is now updated in this browser."
+      "Availability saved. The public Vendor Details calendar is now updated in this browser.",
     );
   };
 
@@ -190,7 +175,7 @@ function VendorAvailability() {
         className="vav-calendar-empty"
         key={`empty-${index}`}
         aria-hidden="true"
-      />
+      />,
     );
   }
 
@@ -224,14 +209,14 @@ function VendorAvailability() {
           isConfirmed
             ? "booked"
             : isBlocked
-            ? "blocked"
-            : isPast
-            ? "past date"
-            : "available"
+              ? "blocked"
+              : isPast
+                ? "past date"
+                : "available"
         }`}
       >
         {day}
-      </button>
+      </button>,
     );
   }
 
@@ -266,9 +251,7 @@ function VendorAvailability() {
           <div className="vav-calendar-header">
             <button
               type="button"
-              onClick={() =>
-                setCurrentMonth(new Date(year, month - 1, 1))
-              }
+              onClick={() => setCurrentMonth(new Date(year, month - 1, 1))}
               aria-label="Previous month"
             >
               <ChevronLeft size={20} />
@@ -281,16 +264,12 @@ function VendorAvailability() {
                   year: "numeric",
                 })}
               </h2>
-              <p>
-                Click an available date to block or reopen it for clients.
-              </p>
+              <p>Click an available date to block or reopen it for clients.</p>
             </div>
 
             <button
               type="button"
-              onClick={() =>
-                setCurrentMonth(new Date(year, month + 1, 1))
-              }
+              onClick={() => setCurrentMonth(new Date(year, month + 1, 1))}
               aria-label="Next month"
             >
               <ChevronRight size={20} />
@@ -331,8 +310,8 @@ function VendorAvailability() {
           <div>
             <h2>Unavailable dates</h2>
             <p>
-              Booked dates are locked. Vendor-blocked dates can be reopened
-              from the calendar.
+              Booked dates are locked. Vendor-blocked dates can be reopened from
+              the calendar.
             </p>
           </div>
 
@@ -340,8 +319,7 @@ function VendorAvailability() {
             {[...monthConfirmedDates, ...monthBlockedDates]
               .sort()
               .map((dateValue) => {
-                const isConfirmed =
-                  confirmedBookingDates.includes(dateValue);
+                const isConfirmed = confirmedBookingDates.includes(dateValue);
 
                 return (
                   <div className="vav-date-item" key={dateValue}>

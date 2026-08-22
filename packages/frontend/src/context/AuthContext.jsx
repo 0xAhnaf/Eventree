@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import { markVendorOnboardingRequired } from "../utils/vendorProfileStorage.js";
 
 const AuthContext = createContext(null);
 
@@ -27,8 +28,7 @@ export const AuthProvider = ({ children }) => {
       if (!response.ok) {
         return {
           success: false,
-          message:
-            data.message || "The provided credentials are incorrect.",
+          message: data.message || "The provided credentials are incorrect.",
         };
       }
 
@@ -92,6 +92,63 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("eventree_token", data.token);
       localStorage.setItem("eventree_user", JSON.stringify(sessionUser));
 
+      if (sessionUser.role === "vendor") {
+        markVendorOnboardingRequired(sessionUser);
+      }
+
+      setUser(sessionUser);
+
+      return {
+        success: true,
+        user: sessionUser,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Could not connect to the server.",
+      };
+    }
+  };
+
+  const loginWithGoogle = async (googleAccessToken, role) => {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/auth/google/callback",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            access_token: googleAccessToken,
+            role,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: data.message || "Google authentication failed.",
+        };
+      }
+
+      const sessionUser = data.user;
+
+      localStorage.setItem("eventree_token", data.token);
+      localStorage.setItem("eventree_user", JSON.stringify(sessionUser));
+
+      const isNewGoogleVendor =
+        sessionUser.role === "vendor" &&
+        (data.is_new_user === true || data.created === true);
+
+      if (isNewGoogleVendor) {
+        markVendorOnboardingRequired(sessionUser);
+      }
+
       setUser(sessionUser);
 
       return {
@@ -129,7 +186,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ user, login, register, loginWithGoogle, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

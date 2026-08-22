@@ -1,89 +1,74 @@
-.pagination-CLP{
+.pagination-CLP {
+  display: flex;
 
-    display:flex;
+  justify-content: center;
 
-    justify-content:center;
+  align-items: center;
 
-    align-items:center;
+  gap: 12px;
 
-    gap:12px;
+  margin-top: 60px;
 
-    margin-top:60px;
-
-    flex-wrap:wrap;
-
+  flex-wrap: wrap;
 }
 
-.page-btn-CLP{
+.page-btn-CLP {
+  width: 42px;
 
-    width:42px;
+  height: 42px;
 
-    height:42px;
+  border: 1px solid #d9d9d9;
 
-    border:1px solid #d9d9d9;
+  background: #fff;
 
-    background:#fff;
+  border-radius: 10px;
 
-    border-radius:10px;
+  cursor: pointer;
 
-    cursor:pointer;
+  font-size: 15px;
 
-    font-size:15px;
+  font-weight: 600;
 
-    font-weight:600;
+  color: #444;
 
-    color:#444;
-
-    transition:0.3s;
-
+  transition: 0.3s;
 }
 
-.page-btn-CLP:hover{
+.page-btn-CLP:hover {
+  background: #002319;
 
-    background:#002319;
+  color: #fff;
 
-    color:#fff;
-
-    border-color:#002319;
-
+  border-color: #002319;
 }
 
-.page-btn-CLP.active-CLP{
+.page-btn-CLP.active-CLP {
+  background: #002319;
 
-    background:#002319;
+  color: #fff;
 
-    color:#fff;
-
-    border-color:#002319;
-
+  border-color: #002319;
 }
 
-.dots-CLP{
+.dots-CLP {
+  font-size: 18px;
 
-    font-size:18px;
+  color: #777;
 
-    color:#777;
+  padding: 0 6px;
+}
+@media (max-width: 768px) {
+  .pagination-CLP {
+    gap: 8px;
 
-    padding:0 6px;
+    margin-top: 40px;
+  }
 
-}@media (max-width:768px){
+  .page-btn-CLP {
+    width: 38px;
 
-    .pagination-CLP{
+    height: 38px;
 
-        gap:8px;
-
-        margin-top:40px;
-
-    }
-
-    .page-btn-CLP{
-
-        width:38px;
-
-        height:38px;
-
-        font-size:14px;
-
-    }
-
+    font-size: 14px;
+  }
 }

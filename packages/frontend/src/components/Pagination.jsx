@@ -23,9 +23,7 @@ export default function Pagination({
       {pages.map((page) => (
         <button
           key={page}
-          className={`page-btn-CLP ${
-            currentPage === page ? "active-CLP" : ""
-          }`}
+          className={`page-btn-CLP ${currentPage === page ? "active-CLP" : ""}`}
           onClick={() => setCurrentPage(page)}
         >
           {page}

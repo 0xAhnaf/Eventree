@@ -1,10 +1,6 @@
 import "../../pages/SignUp/SignUp.css";
 
-function VendorTypeDropdown({
-  value,
-  onChange,
-  required = false,
-}) {
+function VendorTypeDropdown({ value, onChange, required = false }) {
   return (
     <div className="vendor-dropdown">
       <label htmlFor="vendorType">Vendor Type</label>

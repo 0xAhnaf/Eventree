@@ -50,7 +50,7 @@ export default function ClientLandingPage() {
 
     if (selectedCategories.includes(category)) {
       updatedCategories = selectedCategories.filter(
-        (selectedCategory) => selectedCategory !== category
+        (selectedCategory) => selectedCategory !== category,
       );
     } else {
       updatedCategories = [...selectedCategories, category];
@@ -76,18 +76,15 @@ export default function ClientLandingPage() {
       selectedCategories.some(
         (category) =>
           vendor.category?.trim().toLowerCase() ===
-          category.trim().toLowerCase()
-      )
+          category.trim().toLowerCase(),
+      ),
     );
   }, [selectedCategories]);
 
   const lastIndex = currentPage * vendorsPerPage;
   const firstIndex = lastIndex - vendorsPerPage;
 
-  const currentVendors = filteredVendors.slice(
-    firstIndex,
-    lastIndex
-  );
+  const currentVendors = filteredVendors.slice(firstIndex, lastIndex);
 
   return (
     <>
@@ -98,8 +95,8 @@ export default function ClientLandingPage() {
           <h1>Premium Vendors</h1>
 
           <p>
-            Discover the finest curators for your most prestigious
-            events, from floral designers to elite caterers.
+            Discover the finest curators for your most prestigious events, from
+            floral designers to elite caterers.
           </p>
         </section>
 
@@ -113,39 +110,27 @@ export default function ClientLandingPage() {
           <main className="vendor-section-CLP">
             <div className="vendor-top-CLP">
               <p>
-                Showing{" "}
-                <strong>{filteredVendors.length}</strong>{" "}
+                Showing <strong>{filteredVendors.length}</strong>{" "}
                 {selectedCategories.length === 0
                   ? "luxury vendors"
                   : "selected category vendors"}
               </p>
 
               <select defaultValue="recommended">
-                <option value="recommended">
-                  Recommended
-                </option>
+                <option value="recommended">Recommended</option>
 
-                <option value="top-rated">
-                  Top Rated
-                </option>
+                <option value="top-rated">Top Rated</option>
 
-                <option value="price-low-high">
-                  Price Low → High
-                </option>
+                <option value="price-low-high">Price Low → High</option>
 
-                <option value="price-high-low">
-                  Price High → Low
-                </option>
+                <option value="price-high-low">Price High → Low</option>
               </select>
             </div>
 
             {selectedCategories.length > 0 && (
               <div className="selected-categories-CLP">
                 <p>
-                  Categories:{" "}
-                  <strong>
-                    {selectedCategories.join(", ")}
-                  </strong>
+                  Categories: <strong>{selectedCategories.join(", ")}</strong>
                 </p>
               </div>
             )}
@@ -153,17 +138,12 @@ export default function ClientLandingPage() {
             {currentVendors.length > 0 ? (
               <div className="vendor-grid-CLP">
                 {currentVendors.map((vendor) => (
-                  <VendorCard
-                    key={vendor.id}
-                    vendor={vendor}
-                  />
+                  <VendorCard key={vendor.id} vendor={vendor} />
                 ))}
               </div>
             ) : (
               <div className="vendor-empty-CLP">
-                <p>
-                  No vendors found in the selected categories.
-                </p>
+                <p>No vendors found in the selected categories.</p>
               </div>
             )}
 

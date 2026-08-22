@@ -1,14 +1,6 @@
-function SubmitButton({
-  text,
-  loading = false,
-  disabled = false,
-}) {
+function SubmitButton({ text, loading = false, disabled = false }) {
   return (
-    <button
-      type="submit"
-      className="submit-btn"
-      disabled={disabled || loading}
-    >
+    <button type="submit" className="submit-btn" disabled={disabled || loading}>
       {loading ? <span className="loading-spinner"></span> : text}
     </button>
   );

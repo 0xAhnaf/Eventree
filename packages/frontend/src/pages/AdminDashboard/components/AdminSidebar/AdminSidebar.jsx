@@ -76,9 +76,7 @@ const AdminSidebar = ({ isOpen = false, onClose }) => {
             aria-current={item.active ? "page" : undefined}
             onClick={handleMenuItemClick}
           >
-            <span className="admin-menu-icon">
-              {item.icon}
-            </span>
+            <span className="admin-menu-icon">{item.icon}</span>
 
             <span>{item.name}</span>
           </div>

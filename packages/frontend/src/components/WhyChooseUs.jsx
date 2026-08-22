@@ -52,20 +52,15 @@ function WhyChooseUs() {
   return (
     <section className="why-section">
       <div className="why-container">
-
         {/* Heading */}
         <div className="why-header">
-          <p className="why-subtitle">
-            Why EVENTREE?
-          </p>
+          <p className="why-subtitle">Why EVENTREE?</p>
 
-          <h2 className="why-title">
-            Making Event Planning Simple & Reliable
-          </h2>
+          <h2 className="why-title">Making Event Planning Simple & Reliable</h2>
 
           <p className="why-header-desc">
-            EVENTREE brings customers and professional vendors together
-            through a smarter and more organised event planning experience.
+            EVENTREE brings customers and professional vendors together through
+            a smarter and more organised event planning experience.
           </p>
         </div>
 
@@ -76,24 +71,17 @@ function WhyChooseUs() {
 
             return (
               <div key={feature.title} className="why-card">
-
                 <div className="why-icon">
                   <Icon size={24} />
                 </div>
 
-                <h3 className="why-card-title">
-                  {feature.title}
-                </h3>
+                <h3 className="why-card-title">{feature.title}</h3>
 
-                <p className="why-card-desc">
-                  {feature.description}
-                </p>
-
+                <p className="why-card-desc">{feature.description}</p>
               </div>
             );
           })}
         </div>
-
       </div>
     </section>
   );

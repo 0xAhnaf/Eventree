@@ -1,4 +1,4 @@
-import "./ProblemsSection.css"; 
+import "./ProblemsSection.css";
 
 function ProblemsSection() {
   const problems = [
@@ -31,12 +31,9 @@ function ProblemsSection() {
   return (
     <section className="problems-section">
       <div className="problems-container">
-        
         {/* Heading */}
         <div className="problems-header">
-          <p className="problems-subtitle">
-            The Challenge
-          </p>
+          <p className="problems-subtitle">The Challenge</p>
 
           <h2 className="problems-title">
             Event Planning Should Not Feel Complicated
@@ -53,29 +50,18 @@ function ProblemsSection() {
         <div className="problems-grid">
           {problems.map((problem) => (
             <div key={problem.number} className="problem-card">
-              
               <div className="problem-card-content">
-                
-                <div className="problem-number">
-                  {problem.number}
-                </div>
+                <div className="problem-number">{problem.number}</div>
 
                 <div>
-                  <h3 className="problem-card-title">
-                    {problem.title}
-                  </h3>
+                  <h3 className="problem-card-title">{problem.title}</h3>
 
-                  <p className="problem-card-desc">
-                    {problem.description}
-                  </p>
+                  <p className="problem-card-desc">{problem.description}</p>
                 </div>
-                
               </div>
-
             </div>
           ))}
         </div>
-
       </div>
     </section>
   );
