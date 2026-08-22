@@ -30,14 +30,12 @@ import {
 const VendorDetailsPage = () => {
   const { id } = useParams();
 
-  const vendor = vendors.find(
-    (vendorItem) => vendorItem.id === Number(id)
-  );
+  const vendor = vendors.find((vendorItem) => vendorItem.id === Number(id));
 
   const [selectedDate, setSelectedDate] = useState("");
 
   const [bookedDates, setBookedDates] = useState(() =>
-    getVendorUnavailableDates(Number(id))
+    getVendorUnavailableDates(Number(id)),
   );
 
   useEffect(() => {
@@ -58,7 +56,7 @@ const VendorDetailsPage = () => {
       setSelectedDate((currentSelectedDate) =>
         nextUnavailableDates.includes(currentSelectedDate)
           ? ""
-          : currentSelectedDate
+          : currentSelectedDate,
       );
     };
 
@@ -67,22 +65,22 @@ const VendorDetailsPage = () => {
     window.addEventListener("storage", syncUnavailableDates);
     window.addEventListener(
       VENDOR_AVAILABILITY_UPDATED_EVENT,
-      syncUnavailableDates
+      syncUnavailableDates,
     );
     window.addEventListener(
       VENDOR_BOOKINGS_UPDATED_EVENT,
-      syncUnavailableDates
+      syncUnavailableDates,
     );
 
     return () => {
       window.removeEventListener("storage", syncUnavailableDates);
       window.removeEventListener(
         VENDOR_AVAILABILITY_UPDATED_EVENT,
-        syncUnavailableDates
+        syncUnavailableDates,
       );
       window.removeEventListener(
         VENDOR_BOOKINGS_UPDATED_EVENT,
-        syncUnavailableDates
+        syncUnavailableDates,
       );
     };
   }, [id]);
@@ -109,7 +107,7 @@ const VendorDetailsPage = () => {
         <div className="vendor-left-content">
           <AboutVendor vendor={vendor} />
 
-          <VendorGallerySection />
+          <VendorGallerySection images={vendor.photos} />
 
           <PricingPackages />
 

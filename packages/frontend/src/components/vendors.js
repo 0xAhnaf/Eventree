@@ -20,6 +20,9 @@ const vendors = [
       "https://images.unsplash.com/photo-1519225421980-715cb0215aed",
       "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3",
       "https://images.unsplash.com/photo-1478146896981-b80fe463b330",
+      "https://images.unsplash.com/photo-1507504031003-b417219a0fde",
+      "https://images.unsplash.com/photo-1519225421980-715cb0215aed",
+      "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3",
     ],
   },
 
@@ -44,6 +47,8 @@ const vendors = [
       "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c",
       "https://images.unsplash.com/photo-1414235077428-338989a2e8c0",
       "https://images.unsplash.com/photo-1547592180-85f173990554",
+      "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f",
+      "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c",
     ],
   },
 
@@ -68,6 +73,9 @@ const vendors = [
       "https://images.unsplash.com/photo-1519225421980-715cb0215aed",
       "https://images.unsplash.com/photo-1522673607200-164d1b6ce486",
       "https://images.unsplash.com/photo-1507504031003-b417219a0fde",
+      "https://images.unsplash.com/photo-1523438885200-e635ba2c371e",
+      "https://images.unsplash.com/photo-1519225421980-715cb0215aed",
+      "https://images.unsplash.com/photo-1522673607200-164d1b6ce486",
     ],
   },
 
@@ -92,6 +100,8 @@ const vendors = [
       "https://images.unsplash.com/photo-1519225421980-715cb0215aed",
       "https://images.unsplash.com/photo-1606800052052-a08af7148866",
       "https://images.unsplash.com/photo-1544078751-58fee2d8a03b",
+      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc",
+      "https://images.unsplash.com/photo-1519225421980-715cb0215aed",
     ],
   },
 
@@ -116,6 +126,9 @@ const vendors = [
       "https://images.unsplash.com/photo-1505236858219-8359eb29e329",
       "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf",
       "https://images.unsplash.com/photo-1506157786151-b8491531f063",
+      "https://images.unsplash.com/photo-1492684223066-81342ee5ff30",
+      "https://images.unsplash.com/photo-1505236858219-8359eb29e329",
+      "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf",
     ],
   },
 
@@ -140,6 +153,9 @@ const vendors = [
       "https://images.unsplash.com/photo-1558326567-98ae2405596b",
       "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e",
       "https://images.unsplash.com/photo-1486427944299-d1955d23e34d",
+      "https://images.unsplash.com/photo-1578985545062-69928b1d9587",
+      "https://images.unsplash.com/photo-1558326567-98ae2405596b",
+      "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e",
     ],
   },
 
