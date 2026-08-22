@@ -3,6 +3,7 @@
 # =========================================================================
 # Ignore the dependencies folder
 frontend/node_modules/
+packages/node_modules/
 
 # Ignore production build outputs
 frontend/dist/

@@ -1,268 +1,324 @@
 .vendor-portfolio-section {
-
-  width:100%;
-
+  width: 100%;
 }
-
-
 
 .vendor-portfolio-section h2 {
-
-  font-size:32px;
-
-  color:#0b3d2e;
-
-  margin-bottom:12px;
-
+  font-size: 32px;
+  color: #0b3d2e;
+  margin-bottom: 12px;
 }
-
-
 
 .portfolio-description {
-
-  max-width:700px;
-
-  color:#555;
-
-  font-size:15px;
-
-  line-height:1.6;
-
-  margin-bottom:35px;
-
+  max-width: 700px;
+  color: #555;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 35px;
 }
-
-
-
 
 .portfolio-subtitle {
-
-  font-size:24px;
-
-  color:#0b3d2e;
-
-  margin-bottom:20px;
-
+  font-size: 24px;
+  color: #0b3d2e;
+  margin-bottom: 20px;
 }
-
-
-
 
 .portfolio-grid {
-
-  display:grid;
-
-  grid-template-columns:repeat(3,1fr);
-
-  gap:16px;
-
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
-
-
 
 .portfolio-item {
-
-  height:220px;
-
-  border-radius:16px;
-
-  overflow:hidden;
-
-  position:relative;
-
+  height: 220px;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
 }
-
-
 
 .portfolio-item img {
-
-  width:100%;
-
-  height:100%;
-
-  object-fit:cover;
-
-  transition:.3s ease;
-
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.3s ease;
 }
-
-
 
 .portfolio-item:hover img {
-
-  transform:scale(1.05);
-
+  transform: scale(1.05);
 }
-
-
 
 .photo-overlay {
+  position: absolute;
+  inset: 0;
 
-  position:absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  inset:0;
+  background: rgba(0, 0, 0, 0.35);
 
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-
-  background:rgba(0,0,0,.35);
-
-  color:white;
-
-  font-size:18px;
-
-  font-weight:600;
-
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
 }
 
-
-
-
+/* ========================= */
+/* View Gallery Button */
+/* ========================= */
 
 .view-gallery-btn {
+  margin-top: 25px;
+  padding: 13px 28px;
 
+  border-radius: 10px;
+  border: 1px solid #0b3d2e;
 
-  margin-top:25px;
+  background: white;
+  color: #0b3d2e;
 
-  padding:13px 28px;
+  font-weight: 600;
+  cursor: pointer;
 
-
-  border-radius:10px;
-
-  border:1px solid #0b3d2e;
-
-
-  background:white;
-
-  color:#0b3d2e;
-
-
-  font-weight:600;
-
-  cursor:pointer;
-
+  transition: 0.3s ease;
 }
-
-
-
 
 .view-gallery-btn:hover {
-
-  background:#0b3d2e;
-
-  color:white;
-
+  background: #0b3d2e;
+  color: white;
 }
 
+/* ========================= */
+/* Gallery Modal */
+/* ========================= */
 
+.gallery-modal {
+  position: fixed;
+  inset: 0;
 
+  z-index: 1000;
 
+  background: rgba(0, 0, 0, 0.75);
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
+  padding: 30px;
+}
+
+/* Modal Container */
+
+.gallery-modal-content {
+  width: 100%;
+  max-width: 1200px;
+
+  max-height: 90vh;
+
+  background: white;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================= */
+/* Modal Header */
+/* ========================= */
+
+.gallery-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 20px 25px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  flex-shrink: 0;
+}
+
+.gallery-modal-header h3 {
+  margin: 0;
+
+  font-size: 24px;
+
+  color: #0b3d2e;
+}
+
+/* Close Button */
+
+.gallery-close-btn {
+  width: 40px;
+  height: 40px;
+
+  border: none;
+
+  background: transparent;
+
+  color: #333;
+
+  font-size: 32px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  transition: 0.2s ease;
+}
+
+.gallery-close-btn:hover {
+  background: #f3f4f6;
+}
+
+/* ========================= */
+/* All Gallery Images */
+/* ========================= */
+
+.gallery-modal-grid {
+  padding: 25px;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 15px;
+
+  overflow-y: auto;
+}
+
+/* Individual Modal Image */
+
+.gallery-modal-item {
+  width: 100%;
+  height: 220px;
+
+  overflow: hidden;
+
+  border-radius: 12px;
+}
+
+.gallery-modal-item img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+
+  cursor: pointer;
+
+  transition: transform 0.3s ease;
+}
+
+.gallery-modal-item:hover img {
+  transform: scale(1.05);
+}
+
+/* ========================= */
 /* Amenities */
-
+/* ========================= */
 
 .amenities-section {
-
-  margin-top:45px;
-
+  margin-top: 45px;
 }
-
-
 
 .amenities-section h3 {
-
-  font-size:24px;
-
-  color:#0b3d2e;
-
-  margin-bottom:20px;
-
+  font-size: 24px;
+  color: #0b3d2e;
+  margin-bottom: 20px;
 }
-
-
 
 .amenities-grid {
-
-  display:grid;
-
-  grid-template-columns:repeat(2,1fr);
-
-  gap:12px;
-
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 }
-
-
 
 .amenity-card {
+  border: 1px solid #e5e5e5;
 
-  border:1px solid #e5e5e5;
+  border-radius: 8px;
 
-  border-radius:8px;
+  padding: 14px;
 
-  padding:14px;
+  font-size: 14px;
 
-  font-size:14px;
+  color: #444;
 
-  color:#444;
+  display: flex;
+  align-items: center;
 
-
-  display:flex;
-
-  align-items:center;
-
-  gap:10px;
-
+  gap: 10px;
 }
-
-
 
 .amenity-card span {
+  color: #0b3d2e;
 
-  color:#0b3d2e;
-
-  font-weight:bold;
-
+  font-weight: bold;
 }
 
+/* ========================= */
+/* Tablet */
+/* ========================= */
 
-
-
-@media(max-width:900px){
-
-
+@media (max-width: 900px) {
   .portfolio-grid {
-
-    grid-template-columns:repeat(2,1fr);
-
+    grid-template-columns: repeat(2, 1fr);
   }
 
-
+  .gallery-modal-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
+/* ========================= */
+/* Mobile */
+/* ========================= */
 
-
-
-@media(max-width:600px){
-
-
+@media (max-width: 600px) {
   .portfolio-grid {
-
-    grid-template-columns:1fr;
-
+    grid-template-columns: 1fr;
   }
-
-
 
   .amenities-grid {
-
-    grid-template-columns:1fr;
-
+    grid-template-columns: 1fr;
   }
 
+  .gallery-modal {
+    padding: 15px;
+  }
 
+  .gallery-modal-content {
+    max-height: 95vh;
+
+    border-radius: 15px;
+  }
+
+  .gallery-modal-header {
+    padding: 16px 18px;
+  }
+
+  .gallery-modal-header h3 {
+    font-size: 20px;
+  }
+
+  .gallery-modal-grid {
+    grid-template-columns: 1fr;
+
+    padding: 15px;
+
+    gap: 12px;
+  }
+
+  .gallery-modal-item {
+    height: 220px;
+  }
 }
