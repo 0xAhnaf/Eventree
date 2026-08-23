@@ -1,19 +1,21 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import "./ResetPassword.css";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  const email = searchParams.get("email");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     setError("");
     setSuccess(false);
 
@@ -32,11 +34,44 @@ function ResetPassword() {
       return;
     }
 
-    setSuccess(true);
+    if (!token || !email) {
+      setError("This reset link is invalid or has expired. Please request a new one.");
+      return;
+    }
 
-    setTimeout(() => {
-      navigate("/login");
-    }, 2500);
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          token,
+          email,
+          password,
+          password_confirmation: confirmPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Invalid or expired token.");
+        setLoading(false);
+        return;
+      }
+
+      setSuccess(true);
+      setTimeout(() => {
+        navigate("/login");
+      }, 2500);
+    } catch (err) {
+      setError("Could not connect to the server.");
+      setLoading(false);
+    }
   };
 
   return (
@@ -77,8 +112,8 @@ function ResetPassword() {
             </div>
           )}
 
-          <button className="rp-button" type="submit">
-            Reset Password
+          <button className="rp-button" type="submit" disabled={loading}>
+            {loading ? "Resetting..." : "Reset Password"}
           </button>
         </form>
 

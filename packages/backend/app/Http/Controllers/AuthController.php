@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
+use App\Mail\WelcomeEmail;
+use Illuminate\Support\Facades\Mail;
+
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -29,6 +32,9 @@ class AuthController extends Controller
 
     $token = $user->createToken('auth_token')->plainTextToken;
 
+    Mail::to($user->email)->queue(new WelcomeEmail($user));
+    $user->sendEmailVerificationNotification();
+    
     return response()->json([
         'message' => 'Registration successful',
         'user' => $user,
