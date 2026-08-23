@@ -12,6 +12,9 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
+use App\Models\User;
+use Illuminate\Auth\Events\Verified;
+
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::post('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
@@ -22,11 +25,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
-
-    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-
-    return response()->json(['message' => 'Email verified successfully!']);})->middleware('signed')->name('verification.verify');
 
     Route::post('/email/verification-notification', function (Request $request) {
         $request->user()->sendEmailVerificationNotification();
@@ -64,6 +62,23 @@ Route::post('/reset-password', function (Request $request) {
         ? response()->json(['message' => 'Password has been reset successfully.'])
         : response()->json(['error' => 'Invalid or expired token.'], 400);
 });
+
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+    $user = User::find($id);
+
+    if (! $user || ! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+        return redirect(config('app.frontend_url') . '/verify-email?status=invalid');
+    }
+
+    if ($user->hasVerifiedEmail()) {
+        return redirect(config('app.frontend_url') . '/verify-email?status=already');
+    }
+
+    $user->markEmailAsVerified();
+    event(new Verified($user));
+
+    return redirect(config('app.frontend_url') . '/verify-email?status=success');
+})->middleware('signed')->name('verification.verify');
 
 Route::get('/v1/test-email', function () {
     Mail::to('test@example.com')->queue(new TestGatewayEmail());

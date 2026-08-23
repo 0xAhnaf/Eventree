@@ -15,6 +15,8 @@ import { isVendorOnboardingRequired } from "./utils/vendorProfileStorage.js";
 
 import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 import MyEvents from "./pages/MyEvents/MyEvents.jsx";
+import EmailVerified from "./pages/EmailVerified/EmailVerified.jsx";
+
 // Role-Based Access Control (RBAC) Guard
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user } = useAuth();
@@ -84,6 +86,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/verify-email" element={<EmailVerified />} />
             <Route path="/browse-vendor/:id" element={<VendorDetailsPage />} />
             <Route path="/browse-vendor" element={<ClientLandingPage />} />
             <Route path="/profile" element={<ProfilePage />} />
