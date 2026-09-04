@@ -1,0 +1,125 @@
+.vob-add-row {
+  display: flex;
+  gap: 12px;
+}
+
+.vob-add-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--vob-border);
+  border-radius: 8px;
+}
+
+.vob-add-row button {
+  background: var(--vob-dark);
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.vob-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vob-chip {
+  background: var(--vob-card-bg);
+  border: 1px solid var(--vob-border);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vob-chip button {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--vob-subtle);
+  margin-left: 4px;
+}
+
+.vob-empty-message {
+  font-size: 0.85rem;
+  color: var(--vob-subtle);
+  margin: 0;
+}
+
+.vob-package-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vob-add-package-button {
+  background: var(--vob-green-light);
+  color: var(--vob-green);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.vob-package-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.vob-package-card {
+  background: var(--vob-card-bg);
+  border: 1px solid var(--vob-border);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vob-package-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.vob-package-header button {
+  background: none;
+  border: none;
+  color: var(--vob-danger);
+  cursor: pointer;
+}
+
+.vob-empty-package {
+  text-align: center;
+  padding: 32px;
+  border: 1px dashed var(--vob-border);
+  border-radius: 10px;
+  color: var(--vob-subtle);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 860px) {
+  .vob-package-grid {
+    grid-template-columns: 1fr;
+  }
+}

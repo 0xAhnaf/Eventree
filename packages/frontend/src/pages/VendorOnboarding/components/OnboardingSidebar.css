@@ -1,0 +1,132 @@
+.vob-sidebar {
+  position: sticky;
+  top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.vob-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--vob-gold);
+  letter-spacing: 1px;
+}
+
+.vob-sidebar h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.vob-sidebar p {
+  margin: 0;
+  color: var(--vob-slate);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.vob-progress-summary {
+  background: var(--vob-card-bg);
+  border: 1px solid var(--vob-border);
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vob-progress-summary div:first-child {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.vob-progress-track {
+  height: 8px;
+  background: var(--vob-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.vob-progress-track span {
+  display: block;
+  height: 100%;
+  background: var(--vob-green);
+  transition: width 0.3s ease;
+}
+
+.vob-step-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vob-step-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: var(--vob-transition);
+}
+
+.vob-step-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--vob-border);
+  background: var(--vob-card-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--vob-slate);
+}
+
+.vob-step-list li div {
+  flex: 1;
+}
+
+.vob-step-list li strong {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--vob-dark);
+}
+
+.vob-step-list li p {
+  font-size: 0.75rem;
+  color: var(--vob-subtle);
+  margin: 0;
+}
+
+.vob-step-active {
+  background: var(--vob-card-bg);
+  border-color: var(--vob-border) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.vob-step-active .vob-step-number {
+  background: var(--vob-green);
+  color: #fff;
+  border-color: var(--vob-green);
+}
+
+.vob-step-complete .vob-step-number {
+  background: var(--vob-green-light);
+  color: var(--vob-green);
+  border-color: var(--vob-green);
+}
+
+@media (max-width: 860px) {
+  .vob-sidebar {
+    display: none;
+  }
+}

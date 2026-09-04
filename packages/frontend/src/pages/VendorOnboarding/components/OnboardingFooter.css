@@ -1,0 +1,53 @@
+.vob-form-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 1px solid var(--vob-border);
+  margin-top: 10px;
+}
+
+.vob-back-button {
+  background: transparent;
+  border: 1px solid var(--vob-border);
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: var(--vob-slate);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vob-forward-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.vob-skip-button {
+  background: transparent;
+  border: none;
+  padding: 10px 16px;
+  font-weight: 600;
+  color: var(--vob-subtle);
+  cursor: pointer;
+}
+
+.vob-continue-button {
+  background: var(--vob-green);
+  color: #fff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--vob-transition);
+}
+
+.vob-continue-button:hover {
+  background: var(--vob-green-hover);
+}
