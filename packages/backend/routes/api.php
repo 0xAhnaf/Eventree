@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Password;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 
+use App\Http\Controllers\VendorProfileController;
+use App\Http\Controllers\VendorDetailsController;
+
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::post('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
@@ -31,6 +34,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
         return response()->json(['message' => 'Verification link sent!']);
     })->middleware('throttle:6,1');
+
+    
+    Route::post('/vendor-profile', [VendorProfileController::class, 'store']);
+     Route::get('/vendor-profile', [VendorProfileController::class, 'show']);
+    Route::post('/vendor-details', [VendorDetailsController::class, 'store']);
 });
 
 Route::post('/forgot-password', function (Request $request) {
