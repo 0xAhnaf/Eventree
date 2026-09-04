@@ -124,6 +124,12 @@
   color: white;
 }
 
+.rating-buttons-CLP button.rating-active-CLP {
+  background: #002319;
+
+  color: white;
+}
+
 .apply-btn-CLP {
   width: 100%;
 
