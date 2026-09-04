@@ -1,0 +1,71 @@
+services:
+  # 1. MySQL Database Container
+  db:
+    image: mysql:8.0
+    container_name: eventree_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: eventree
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # 2. Laravel Backend API
+  backend:
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile
+    container_name: eventree_backend
+    command: php artisan serve --host=0.0.0.0 --port=8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./packages/backend:/var/www/html
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: eventree
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      QUEUE_CONNECTION: database
+    depends_on:
+      - db
+
+  # 3. Laravel Background Queue Worker
+  queue:
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile
+    container_name: eventree_queue
+    command: php artisan queue:work
+    volumes:
+      - ./packages/backend:/var/www/html
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: eventree
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      QUEUE_CONNECTION: database
+    depends_on:
+      - backend
+      - db
+
+  # 4. Vite React Frontend App
+  frontend:
+    build:
+      context: ./packages/frontend
+      dockerfile: Dockerfile
+    container_name: eventree_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./packages/frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
