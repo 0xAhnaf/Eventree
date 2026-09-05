@@ -1,7 +1,12 @@
 import { Building2 } from "lucide-react";
-import { VENDOR_CATEGORIES } from "../../../utils/vendorProfileStorage.js";
 
-function BusinessStep({ profile, errors, updateField }) {
+function BusinessStep({
+  profile,
+  errors,
+  updateField,
+  categories = [],
+  categoriesError,
+}) {
   const renderFieldError = (fieldName) =>
     errors[fieldName] ? (
       <span className="vob-field-error">{errors[fieldName]}</span>
@@ -44,17 +49,26 @@ function BusinessStep({ profile, errors, updateField }) {
           </span>
           <select
             className={errors.category ? "vob-input-invalid" : ""}
-            value={profile.category}
-            onChange={(e) => updateField("category", e.target.value)}
+            value={profile.categoryId || ""}
+            onChange={(e) => {
+              const selected = categories.find(
+                (cat) => String(cat.id) === e.target.value,
+              );
+              updateField("categoryId", e.target.value);
+              updateField("category", selected ? selected.name : "");
+            }}
           >
             <option value="">Select a vendor category</option>
-            {VENDOR_CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
               </option>
             ))}
           </select>
           {renderFieldError("category")}
+          {categoriesError && (
+            <span className="vob-field-error">{categoriesError}</span>
+          )}
         </label>
 
         <label className="vob-field vob-field-full">

@@ -1256,3 +1256,9 @@
     transition-duration: 0.01ms !important;
   }
 }
+.vob-spin {
+  animation: vob-spin 0.8s linear infinite;
+}
+@keyframes vob-spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,16 +1,24 @@
-import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 
 function OnboardingFooter({
   currentStep,
   lastStepIndex,
   goBack,
   validateAndContinue,
+  isSubmitting,
 }) {
+  const isFinalStep = currentStep === lastStepIndex;
+
   return (
     <div className="vob-form-footer">
       <div>
         {currentStep > 0 && (
-          <button type="button" className="vob-back-button" onClick={goBack}>
+          <button
+            type="button"
+            className="vob-back-button"
+            onClick={goBack}
+            disabled={isSubmitting}
+          >
             <ArrowLeft size={18} />
             Back
           </button>
@@ -23,21 +31,31 @@ function OnboardingFooter({
             type="button"
             className="vob-skip-button"
             onClick={validateAndContinue}
+            disabled={isSubmitting}
           >
             Skip for now
           </button>
         )}
 
-        <button type="submit" className="vob-continue-button">
-          {currentStep === lastStepIndex
-            ? "Finish setup"
-            : currentStep >= 2
-              ? "Save and continue"
-              : "Continue"}
-          {currentStep === lastStepIndex ? (
-            <CheckCircle2 size={18} />
+        <button
+          type="submit"
+          className="vob-continue-button"
+          disabled={isFinalStep && isSubmitting}
+        >
+          {isFinalStep && isSubmitting ? (
+            <>
+              Saving...
+              <Loader2 size={18} className="vob-spin" />
+            </>
           ) : (
-            <ArrowRight size={18} />
+            <>
+              {isFinalStep
+                ? "Finish setup"
+                : currentStep >= 2
+                  ? "Save and continue"
+                  : "Continue"}
+              {isFinalStep ? <CheckCircle2 size={18} /> : <ArrowRight size={18} />}
+            </>
           )}
         </button>
       </div>

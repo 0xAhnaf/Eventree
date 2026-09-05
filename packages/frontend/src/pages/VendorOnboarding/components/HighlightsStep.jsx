@@ -11,6 +11,7 @@ function HighlightsStep({
   profile,
   updateField,
   handleCoverUpload,
+  removeCoverImage,
   handlePortfolioUpload,
   removePortfolioImage,
   imageMessage,
@@ -86,10 +87,7 @@ function HighlightsStep({
           {profile.coverImage ? (
             <div className="vob-cover-preview">
               <img src={profile.coverImage} alt="Business cover preview" />
-              <button
-                type="button"
-                onClick={() => updateField("coverImage", "")}
-              >
+              <button type="button" onClick={removeCoverImage}>
                 <Trash2 size={16} />
                 Remove
               </button>

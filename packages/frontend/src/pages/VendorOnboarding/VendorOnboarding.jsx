@@ -46,6 +46,21 @@ const onboardingSteps = [
 
 const lastStepIndex = onboardingSteps.length - 1;
 
+const backendFieldToFrontend = {
+  business_name: "businessName",
+  category_id: "category",
+  description: "description",
+  city: "location",
+  full_address: "fullAddress",
+  business_email: "email",
+  phone: "phone",
+  website: "website",
+  manager_name: "managerName",
+  years_of_experience: "yearsExperience",
+  events_completed: "eventsCompleted",
+  starting_price: "startingPrice",
+};
+
 const readImageFile = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -69,7 +84,7 @@ const getStepErrors = (stepIndex, profile) => {
   if (stepIndex === 0) {
     if (!profile.businessName.trim())
       errors.businessName = "Business name is required.";
-    if (!profile.category.trim())
+    if (!profile.categoryId)
       errors.category = "Vendor category is required.";
     if (!profile.description.trim())
       errors.description = "Business description is required.";
@@ -118,18 +133,47 @@ function VendorOnboarding() {
   const [pageMessage, setPageMessage] = useState("");
   const [imageMessage, setImageMessage] = useState("");
 
+  const [coverImageFile, setCoverImageFile] = useState(null);
+  const [portfolioImageFiles, setPortfolioImageFiles] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [categories, setCategories] = useState([]);
+  const [categoriesError, setCategoriesError] = useState("");
+
   useEffect(() => {
-    const draftTimer = window.setTimeout(() => {
-      try {
-        saveVendorOnboardingDraft(user, profile, currentStep);
-      } catch {
-        setPageMessage(
-          "Your changes are visible, but this browser could not save the latest draft.",
-        );
-      }
-    }, 250);
-    return () => window.clearTimeout(draftTimer);
-  }, [currentStep, profile, user]);
+    let isMounted = true;
+    fetch("http://127.0.0.1:8000/api/vendor-categories")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load categories.");
+        return res.json();
+      })
+      .then((data) => {
+        if (isMounted) setCategories(data);
+      })
+      .catch(() => {
+        if (isMounted)
+          setCategoriesError(
+            "Could not load vendor categories. Please refresh.",
+          );
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+ useEffect(() => {
+  const draftTimer = window.setTimeout(() => {
+    try {
+      const draftProfile = { ...profile, coverImage: "", portfolio: [] };
+      saveVendorOnboardingDraft(user, draftProfile, currentStep);
+    } catch {
+      setPageMessage(
+        "Your changes are visible, but this browser could not save the latest draft.",
+      );
+    }
+  }, 250);
+  return () => window.clearTimeout(draftTimer);
+}, [currentStep, profile, user]);
 
   if (!user || user.role !== "vendor") return <Navigate to="/login" replace />;
   if (!isVendorOnboardingRequired(user))
@@ -165,7 +209,7 @@ function VendorOnboarding() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const finishOnboarding = () => {
+  const finishOnboarding = async () => {
     const bErrors = getStepErrors(0, profile);
     const cErrors = getStepErrors(1, profile);
 
@@ -184,13 +228,160 @@ function VendorOnboarding() {
       return;
     }
 
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    setPageMessage("");
+
     try {
-      completeVendorOnboarding(user, profile);
-      navigate("/vendor", { replace: true });
+      const token = localStorage.getItem("eventree_token");
+      const formData = new FormData();
+
+      formData.append("business_name", profile.businessName);
+      formData.append("category_id", profile.categoryId);
+      formData.append("description", profile.description);
+      formData.append("city", profile.location);
+      formData.append("full_address", profile.fullAddress);
+      formData.append("business_email", profile.email);
+      formData.append("phone", profile.phone);
+      formData.append("website", profile.website);
+      formData.append("manager_name", profile.managerName);
+
+      if (profile.yearsExperience !== "")
+        formData.append("years_of_experience", profile.yearsExperience);
+      if (profile.eventsCompleted !== "")
+        formData.append("events_completed", profile.eventsCompleted);
+      if (profile.startingPrice !== "")
+        formData.append("starting_price", profile.startingPrice);
+
+      if (coverImageFile) formData.append("cover_image", coverImageFile);
+      portfolioImageFiles.forEach((file) => {
+        formData.append("portfolio_images[]", file);
+      });
+
+      const response = await fetch("http://127.0.0.1:8000/api/vendor-profile", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      if (response.status === 201) {
+  const data = await response.json();
+  const images = Array.isArray(data.vendor_profile?.images)
+    ? data.vendor_profile.images
+    : [];
+
+  const coverImageUrl =
+    images.find((img) => img.image_type === "cover")?.image_url || "";
+  const portfolioUrls = images
+    .filter((img) => img.image_type === "portfolio")
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+    .map((img) => img.image_url);
+
+  const validAmenities = profile.amenities.filter((a) => a.trim());
+  const validPackages = profile.packages
+    .filter(
+      (pkg) =>
+        pkg.name.trim() &&
+        pkg.price !== "" &&
+        !Number.isNaN(Number(pkg.price)),
+    )
+    .map((pkg) => ({
+      package_name: pkg.name.trim(),
+      description: pkg.features.length ? pkg.features.join("\n") : null,
+      price: Number(pkg.price),
+    }));
+
+  if (validAmenities.length || validPackages.length) {
+    try {
+      const detailsResponse = await fetch(
+        "http://127.0.0.1:8000/api/vendor-details",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            amenities: validAmenities,
+            packages: validPackages,
+          }),
+        },
+      );
+
+      if (!detailsResponse.ok) {
+        console.error(
+          "Vendor amenities/packages could not be saved:",
+          await detailsResponse.text(),
+        );
+      }
+    } catch (detailsError) {
+      console.error("Vendor details request failed:", detailsError);
+    }
+  }
+
+  const savedProfile = {
+    ...profile,
+    coverImage: coverImageUrl,
+    portfolio: portfolioUrls,
+  };
+
+  completeVendorOnboarding(user, savedProfile);
+  navigate("/vendor", { replace: true });
+  return;
+}
+
+      if (response.status === 422) {
+        const data = await response.json();
+        const backendErrors = data.errors || {};
+        const mappedErrors = {};
+        let firstErrorStep = null;
+
+        Object.entries(backendErrors).forEach(([backendField, messages]) => {
+          const baseField = backendField.replace(/\.\d+$/, "").replace("[]", "");
+
+          if (baseField === "cover_image" || baseField === "portfolio_images") {
+            setImageMessage(messages[0]);
+            firstErrorStep = firstErrorStep ?? 2;
+            return;
+          }
+
+          const frontendField = backendFieldToFrontend[baseField] || baseField;
+          mappedErrors[frontendField] = messages[0];
+
+          if (
+            ["businessName", "category", "description"].includes(frontendField)
+          ) {
+            firstErrorStep = firstErrorStep ?? 0;
+          } else {
+            firstErrorStep = firstErrorStep ?? 1;
+          }
+        });
+
+        setErrors(mappedErrors);
+        setPageMessage(
+          data.message || "Please fix the highlighted fields and try again.",
+        );
+        if (firstErrorStep !== null) setCurrentStep(firstErrorStep);
+        return;
+      }
+
+      if (response.status === 401) {
+        setPageMessage("Your session has expired. Please sign in again.");
+        await logout();
+        navigate("/login", { replace: true });
+        return;
+      }
+
+      setPageMessage(
+        "Something went wrong while saving your profile. Please try again.",
+      );
     } catch {
       setPageMessage(
-        "The profile could not be saved in this browser. Please try again.",
+        "Could not connect to the server. Please check your connection and try again.",
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -214,11 +405,17 @@ function VendorOnboarding() {
     try {
       const preview = await readImageFile(file);
       updateField("coverImage", preview);
+      setCoverImageFile(file);
       setImageMessage("");
     } catch {
       setImageMessage("The selected cover image could not be loaded.");
     }
     e.target.value = "";
+  };
+
+  const removeCoverImage = () => {
+    updateField("coverImage", "");
+    setCoverImageFile(null);
   };
 
   const handlePortfolioUpload = async (e) => {
@@ -230,6 +427,7 @@ function VendorOnboarding() {
         ...prev,
         portfolio: [...prev.portfolio, ...newImages],
       }));
+      setPortfolioImageFiles((prev) => [...prev, ...files]);
       setImageMessage("");
     } catch {
       setImageMessage("One or more portfolio images could not be loaded.");
@@ -242,6 +440,7 @@ function VendorOnboarding() {
       ...prev,
       portfolio: prev.portfolio.filter((_, i) => i !== idx),
     }));
+    setPortfolioImageFiles((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const addAmenity = () => {
@@ -315,6 +514,8 @@ function VendorOnboarding() {
             profile={profile}
             errors={errors}
             updateField={updateField}
+            categories={categories}
+            categoriesError={categoriesError}
           />
         );
       case 1:
@@ -331,6 +532,7 @@ function VendorOnboarding() {
             profile={profile}
             updateField={updateField}
             handleCoverUpload={handleCoverUpload}
+            removeCoverImage={removeCoverImage}
             handlePortfolioUpload={handlePortfolioUpload}
             removePortfolioImage={removePortfolioImage}
             imageMessage={imageMessage}
@@ -391,6 +593,7 @@ function VendorOnboarding() {
               lastStepIndex={lastStepIndex}
               goBack={goBack}
               validateAndContinue={validateAndContinue}
+              isSubmitting={isSubmitting}
             />
           </form>
         </main>

@@ -17,6 +17,8 @@ use Illuminate\Auth\Events\Verified;
 
 use App\Http\Controllers\VendorProfileController;
 use App\Http\Controllers\VendorDetailsController;
+use Illuminate\Support\Facades\DB;
+
 
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
@@ -39,6 +41,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vendor-profile', [VendorProfileController::class, 'store']);
      Route::get('/vendor-profile', [VendorProfileController::class, 'show']);
     Route::post('/vendor-details', [VendorDetailsController::class, 'store']);
+});
+
+
+Route::get('/vendor-categories', function () {
+    return response()->json(
+        DB::table('vendor_categories')->select('id', 'name')->orderBy('name')->get()
+    );
 });
 
 Route::post('/forgot-password', function (Request $request) {
