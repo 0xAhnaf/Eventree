@@ -30,6 +30,7 @@ export const REQUIRED_VENDOR_PROFILE_FIELDS = [
 
 export const createEmptyVendorProfile = (user = null) => ({
   businessName: "",
+  categoryId: "",
   category: "",
   description: "",
   location: "",
