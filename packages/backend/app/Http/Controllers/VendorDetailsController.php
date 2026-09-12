@@ -23,10 +23,7 @@ class VendorDetailsController extends Controller
             'packages.*.price' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $vendorProfile = VendorProfile::where(
-            'user_id',
-            $request->user()->id
-        )->first();
+        $vendorProfile = VendorProfile::where('user_id', $request->user()->id)->first();
 
         if (!$vendorProfile) {
             return response()->json([
@@ -35,47 +32,32 @@ class VendorDetailsController extends Controller
         }
 
         DB::transaction(function () use ($validated, $vendorProfile) {
-
-            // Save amenities
-            if (!empty($validated['amenities'])) {
-                foreach ($validated['amenities'] as $amenity) {
-                    VendorAmenity::updateOrCreate(
-                        [
-                            'vendor_profile_id' => $vendorProfile->id,
-                            'amenity_name' => $amenity,
-                        ],
-                        [
-                            'amenity_name' => $amenity,
-                        ]
-                    );
-                }
+            // Delete old amenities and insert the updated list
+            $vendorProfile->amenities()->delete();
+            foreach ($validated['amenities'] ?? [] as $amenity) {
+                VendorAmenity::create([
+                    'vendor_profile_id' => $vendorProfile->id,
+                    'amenity_name' => $amenity,
+                ]);
             }
 
-            // Save packages
-            if (!empty($validated['packages'])) {
-                foreach ($validated['packages'] as $index => $package) {
-                    VendorPackage::updateOrCreate(
-                        [
-                            'vendor_profile_id' => $vendorProfile->id,
-                            'sort_order' => $index,
-                        ],
-                        [
-                            'package_name' => $package['package_name'],
-                            'description' => $package['description'] ?? null,
-                            'price' => $package['price'],
-                            'sort_order' => $index,
-                        ]
-                    );
-                }
+            // Delete old packages and insert the updated list
+            $vendorProfile->packages()->delete();
+            foreach ($validated['packages'] ?? [] as $index => $package) {
+                VendorPackage::create([
+                    'vendor_profile_id' => $vendorProfile->id,
+                    'package_name' => $package['package_name'],
+                    'description' => $package['description'] ?? null,
+                    'price' => $package['price'],
+                    'sort_order' => $index,
+                ]);
             }
         });
 
         return response()->json([
             'message' => 'Vendor amenities and packages saved successfully.',
             'amenities' => $vendorProfile->amenities()->get(),
-            'packages' => $vendorProfile->packages()
-                ->orderBy('sort_order')
-                ->get(),
-        ], 201);
+            'packages' => $vendorProfile->packages()->orderBy('sort_order')->get(),
+        ], 200);
     }
 }
