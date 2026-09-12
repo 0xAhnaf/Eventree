@@ -9,6 +9,8 @@ import RevenueChart from "./components/RevenueChart/RevenueChart";
 
 import VendorWatchlist from "./components/VendorWatchlist/VendorWatchlist";
 import PaymentAlerts from "./components/PaymentAlerts/PaymentAlerts";
+import CustomersPage from "./pages/CustomersPage/CustomersPage";
+import VendorsPage from "./pages/VendorsPage/VendorsPage";
 
 import "./AdminDashboard.css";
 
@@ -18,9 +20,9 @@ const pageDetails = {
     subtitle:
       "Welcome back, Admin. Here's what's happening with EVENTREE today.",
   },
-  "/admin/users": {
-    title: "Users",
-    subtitle: "Manage EVENTREE client, vendor, and admin accounts.",
+  "/admin/customers": {
+    title: "Customers",
+    subtitle: "Review and manage customer accounts across EVENTREE.",
   },
   "/admin/vendors": {
     title: "Vendors",
@@ -139,21 +141,13 @@ const AdminDashboard = () => {
         );
 
       case "/admin/users":
-        return (
-          <AdminModulePlaceholder
-            title="Users Management"
-            description="The Users navigation is now connected and ready for a dedicated user-management table or backend integration."
-          />
-        );
+        return <Navigate to="/admin/customers" replace />;
+
+      case "/admin/customers":
+        return <CustomersPage />;
 
       case "/admin/vendors":
-        return (
-          <section className="dashboard-section dashboard-full-width">
-            <div className="dashboard-main-card dashboard-vendor-card">
-              <VendorWatchlist />
-            </div>
-          </section>
-        );
+        return <VendorsPage />;
 
       case "/admin/bookings":
         return (
@@ -208,6 +202,7 @@ const AdminDashboard = () => {
           subtitle={currentPage?.subtitle || pageDetails["/admin"].subtitle}
           onMenuClick={openSidebar}
           isSidebarOpen={isSidebarOpen}
+          showSearch={!["/admin/customers", "/admin/vendors"].includes(location.pathname)}
         />
 
         {renderPageContent()}
