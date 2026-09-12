@@ -11,7 +11,12 @@ import ResetPassword from "./pages/ResetPassWord/ResetPassword.jsx";
 import VendorDetailsPage from "./pages/VendorDetailsPage/VendorDetailsPage.jsx";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard.jsx";
 import VendorOnboarding from "./pages/VendorOnboarding/VendorOnboarding.jsx";
+import VendorPaymentPage from "./pages/VendorPaymentPage/VendorPaymentPage.jsx";
 import { isVendorOnboardingRequired } from "./utils/vendorProfileStorage.js";
+import {
+  isVendorPaymentCompleted,
+  isVendorPaymentRequired,
+} from "./utils/vendorPaymentStorage.js";
 
 import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 import MyEvents from "./pages/MyEvents/MyEvents.jsx";
@@ -51,6 +56,10 @@ const HomeRoute = () => {
     return <Navigate to="/vendor/onboarding" replace />;
   }
 
+  if (isVendorPaymentRequired(user)) {
+    return <Navigate to="/vendor/payment" replace />;
+  }
+
   return <GlobalLandingPage />;
 };
 
@@ -61,6 +70,10 @@ const VendorOnboardingGuard = ({ children }) => {
     return <Navigate to="/vendor/onboarding" replace />;
   }
 
+  if (isVendorPaymentRequired(user)) {
+    return <Navigate to="/vendor/payment" replace />;
+  }
+
   return children;
 };
 
@@ -68,10 +81,28 @@ const VendorOnboardingRoute = () => {
   const { user } = useAuth();
 
   if (!isVendorOnboardingRequired(user)) {
-    return <Navigate to="/vendor" replace />;
+    const nextRoute = isVendorPaymentRequired(user)
+      ? "/vendor/payment"
+      : "/vendor";
+
+    return <Navigate to={nextRoute} replace />;
   }
 
   return <VendorOnboarding />;
+};
+
+const VendorPaymentRoute = () => {
+  const { user } = useAuth();
+
+  if (isVendorOnboardingRequired(user)) {
+    return <Navigate to="/vendor/onboarding" replace />;
+  }
+
+  if (isVendorPaymentCompleted(user)) {
+    return <Navigate to="/vendor" replace />;
+  }
+
+  return <VendorPaymentPage />;
 };
 
 function App() {
@@ -108,6 +139,15 @@ function App() {
                   <VendorOnboardingGuard>
                     <VendorLandingPage />
                   </VendorOnboardingGuard>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/vendor/payment"
+              element={
+                <ProtectedRoute allowedRoles={["vendor"]}>
+                  <VendorPaymentRoute />
                 </ProtectedRoute>
               }
             />

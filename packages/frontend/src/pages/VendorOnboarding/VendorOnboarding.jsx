@@ -7,6 +7,7 @@ import {
   isVendorOnboardingRequired,
   loadVendorProfile,
 } from "../../utils/vendorProfileStorage.js";
+import { markVendorPaymentRequired } from "../../utils/vendorPaymentStorage.js";
 
 import OnboardingHeader from "./components/OnboardingHeader";
 import OnboardingSidebar from "./components/OnboardingSidebar";
@@ -304,7 +305,8 @@ function VendorOnboarding() {
         };
 
         completeVendorOnboarding(user, savedProfile);
-        navigate("/vendor", { replace: true });
+        markVendorPaymentRequired(user);
+        navigate("/vendor/payment", { replace: true });
         return;
       }
 
