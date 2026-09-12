@@ -10,6 +10,7 @@ const DashboardHeader = ({
   subtitle = "Welcome back, Admin. Here's what's happening with EVENTREE today.",
   onMenuClick,
   isSidebarOpen = false,
+  showSearch = true,
 }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -81,7 +82,7 @@ const DashboardHeader = ({
 
       {/* Right Section */}
       <div className="dashboard-header-actions">
-        <div className="dashboard-search">
+        {showSearch && <div className="dashboard-search">
           <Search size={18} />
 
           <input
@@ -89,7 +90,7 @@ const DashboardHeader = ({
             placeholder="Search..."
             aria-label="Search admin dashboard"
           />
-        </div>
+        </div>}
 
         <button
           type="button"

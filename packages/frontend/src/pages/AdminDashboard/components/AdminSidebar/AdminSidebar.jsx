@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -15,27 +16,33 @@ const AdminSidebar = ({ isOpen = false, onClose }) => {
   const menuItems = [
     {
       name: "Dashboard",
+      to: "/admin",
       icon: <LayoutDashboard size={18} />,
-      active: true,
+      end: true,
     },
     {
-      name: "Users",
+      name: "Customers",
+      to: "/admin/customers",
       icon: <Users size={18} />,
     },
     {
       name: "Vendors",
+      to: "/admin/vendors",
       icon: <Building2 size={18} />,
     },
     {
       name: "Bookings",
+      to: "/admin/bookings",
       icon: <CalendarDays size={18} />,
     },
     {
       name: "Payments",
+      to: "/admin/payments",
       icon: <CreditCard size={18} />,
     },
     {
       name: "Reports & Analytics",
+      to: "/admin/reports",
       icon: <BarChart3 size={18} />,
     },
   ];
@@ -69,17 +76,20 @@ const AdminSidebar = ({ isOpen = false, onClose }) => {
 
       {/* Main Navigation */}
       <nav className="admin-menu">
-        {menuItems.map((item, index) => (
-          <div
-            key={index}
-            className={`admin-menu-item ${item.active ? "active" : ""}`}
-            aria-current={item.active ? "page" : undefined}
+        {menuItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.end}
+            className={({ isActive }) =>
+              `admin-menu-item ${isActive ? "active" : ""}`
+            }
             onClick={handleMenuItemClick}
           >
             <span className="admin-menu-icon">{item.icon}</span>
 
             <span>{item.name}</span>
-          </div>
+          </NavLink>
         ))}
       </nav>
     </aside>
