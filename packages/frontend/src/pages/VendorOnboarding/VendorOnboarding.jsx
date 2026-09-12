@@ -5,9 +5,7 @@ import {
   completeVendorOnboarding,
   createEmptyVendorProfile,
   isVendorOnboardingRequired,
-  loadVendorOnboardingDraft,
   loadVendorProfile,
-  saveVendorOnboardingDraft,
 } from "../../utils/vendorProfileStorage.js";
 
 import OnboardingHeader from "./components/OnboardingHeader";
@@ -111,13 +109,6 @@ function VendorOnboarding() {
   const { user, logout } = useAuth();
 
   const initialOnboardingState = useMemo(() => {
-    const savedDraft = loadVendorOnboardingDraft(user);
-    if (savedDraft) {
-      return {
-        currentStep: Math.min(savedDraft.currentStep, lastStepIndex),
-        profile: savedDraft.profile,
-      };
-    }
     return {
       currentStep: 0,
       profile: loadVendorProfile(user, createEmptyVendorProfile(user)),
@@ -160,20 +151,6 @@ function VendorOnboarding() {
       isMounted = false;
     };
   }, []);
-
- useEffect(() => {
-  const draftTimer = window.setTimeout(() => {
-    try {
-      const draftProfile = { ...profile, coverImage: "", portfolio: [] };
-      saveVendorOnboardingDraft(user, draftProfile, currentStep);
-    } catch {
-      setPageMessage(
-        "Your changes are visible, but this browser could not save the latest draft.",
-      );
-    }
-  }, 250);
-  return () => window.clearTimeout(draftTimer);
-}, [currentStep, profile, user]);
 
   if (!user || user.role !== "vendor") return <Navigate to="/login" replace />;
   if (!isVendorOnboardingRequired(user))
@@ -265,71 +242,71 @@ function VendorOnboarding() {
       });
 
       if (response.status === 201) {
-  const data = await response.json();
-  const images = Array.isArray(data.vendor_profile?.images)
-    ? data.vendor_profile.images
-    : [];
+        const data = await response.json();
+        const images = Array.isArray(data.vendor_profile?.images)
+          ? data.vendor_profile.images
+          : [];
 
-  const coverImageUrl =
-    images.find((img) => img.image_type === "cover")?.image_url || "";
-  const portfolioUrls = images
-    .filter((img) => img.image_type === "portfolio")
-    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
-    .map((img) => img.image_url);
+        const coverImageUrl =
+          images.find((img) => img.image_type === "cover")?.image_url || "";
+        const portfolioUrls = images
+          .filter((img) => img.image_type === "portfolio")
+          .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+          .map((img) => img.image_url);
 
-  const validAmenities = profile.amenities.filter((a) => a.trim());
-  const validPackages = profile.packages
-    .filter(
-      (pkg) =>
-        pkg.name.trim() &&
-        pkg.price !== "" &&
-        !Number.isNaN(Number(pkg.price)),
-    )
-    .map((pkg) => ({
-      package_name: pkg.name.trim(),
-      description: pkg.features.length ? pkg.features.join("\n") : null,
-      price: Number(pkg.price),
-    }));
+        const validAmenities = profile.amenities.filter((a) => a.trim());
+        const validPackages = profile.packages
+          .filter(
+            (pkg) =>
+              pkg.name.trim() &&
+              pkg.price !== "" &&
+              !Number.isNaN(Number(pkg.price)),
+          )
+          .map((pkg) => ({
+            package_name: pkg.name.trim(),
+            description: pkg.features.length ? pkg.features.join("\n") : null,
+            price: Number(pkg.price),
+          }));
 
-  if (validAmenities.length || validPackages.length) {
-    try {
-      const detailsResponse = await fetch(
-        "http://127.0.0.1:8000/api/vendor-details",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            amenities: validAmenities,
-            packages: validPackages,
-          }),
-        },
-      );
+        if (validAmenities.length || validPackages.length) {
+          try {
+            const detailsResponse = await fetch(
+              "http://127.0.0.1:8000/api/vendor-details",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  amenities: validAmenities,
+                  packages: validPackages,
+                }),
+              },
+            );
 
-      if (!detailsResponse.ok) {
-        console.error(
-          "Vendor amenities/packages could not be saved:",
-          await detailsResponse.text(),
-        );
+            if (!detailsResponse.ok) {
+              console.error(
+                "Vendor amenities/packages could not be saved:",
+                await detailsResponse.text(),
+              );
+            }
+          } catch (detailsError) {
+            console.error("Vendor details request failed:", detailsError);
+          }
+        }
+
+        const savedProfile = {
+          ...profile,
+          coverImage: coverImageUrl,
+          portfolio: portfolioUrls,
+        };
+
+        completeVendorOnboarding(user, savedProfile);
+        navigate("/vendor", { replace: true });
+        return;
       }
-    } catch (detailsError) {
-      console.error("Vendor details request failed:", detailsError);
-    }
-  }
-
-  const savedProfile = {
-    ...profile,
-    coverImage: coverImageUrl,
-    portfolio: portfolioUrls,
-  };
-
-  completeVendorOnboarding(user, savedProfile);
-  navigate("/vendor", { replace: true });
-  return;
-}
 
       if (response.status === 422) {
         const data = await response.json();

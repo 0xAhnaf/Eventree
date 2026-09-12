@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   BadgeCheck,
   Building2,
@@ -17,103 +17,91 @@ import {
   Upload,
   UserRound,
   X,
+  AlertCircle,
 } from "lucide-react";
 
-import vendors from "../../../../components/vendors.js";
 import { useAuth } from "../../../../context/AuthContext.jsx";
-import {
-  clearVendorProfile,
-  loadVendorProfile,
-  saveVendorProfile,
-  VENDOR_CATEGORIES,
-} from "../../../../utils/vendorProfileStorage.js";
 import "./BusinessProfile.css";
 
-const demoVendor = vendors[0] || {};
+const API_BASE = "http://127.0.0.1:8000/api";
 
-const systemAverageReviewRating = Number(demoVendor.rating || 0);
+const createEmptyProfile = () => ({
+  businessName: "",
+  categoryId: "",
+  description: "",
+  location: "",
+  fullAddress: "",
+  email: "",
+  phone: "",
+  website: "",
+  managerName: "",
+  startingPrice: "",
+  yearsExperience: "",
+  eventsCompleted: "",
+  coverImage: "",
+  portfolio: [],
+  amenities: [],
+  packages: [],
+});
 
-const calculateClientSatisfaction = (averageRating) =>
-  Math.min(100, Math.max(0, Math.round(Number(averageRating || 0) * 20)));
+const mapBackendProfileToFrontend = (vendorProfile) => {
+  const images = Array.isArray(vendorProfile.images) ? vendorProfile.images : [];
+  const cover = images.find((img) => img.image_type === "cover");
+  const portfolioImages = images
+    .filter((img) => img.image_type === "portfolio")
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
-const initialProfile = {
-  businessName: demoVendor.name || "",
-  category: demoVendor.category || "Event Venues",
-  description: demoVendor.description || "",
-  location: demoVendor.location || "",
-  fullAddress: "House 12, Road 7, Gulshan, Dhaka",
-  email: "hello@eventreevendor.com",
-  phone: "+880 1700-000002",
-  website: "https://www.eventreevendor.com",
-  managerName: "Ahmed Rahman",
-  startingPrice: String(demoVendor.price || "").replace(/[^0-9]/g, ""),
-  yearsExperience: "8",
-  eventsCompleted: "500",
-  coverImage: demoVendor.image || "",
-  portfolio: [
-    "https://images.unsplash.com/photo-1519225421980-715cb0215aed",
-    "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3",
-    "https://images.unsplash.com/photo-1507504031003-b417219a0fde",
-    "https://images.unsplash.com/photo-1519167758481-83f550bb49b3",
-    "https://images.unsplash.com/photo-1519741497674-611481863552",
-    "https://images.unsplash.com/photo-1469371670807-013ccf25f16a",
-  ],
-  amenities: [
-    "High Speed Fiber WiFi",
-    "Full AV Integration & Sound System",
-    "Commercial Grade Catering Kitchen",
-    "Full Accessibility Support",
-    "Valet & On-site Parking",
-    "Climate Controlled Spaces",
-  ],
-  packages: [
-    {
-      id: "general-package",
-      name: "General Package",
-      price: "15000",
-      features: [
-        "4 Hours Service",
-        "Basic Setup",
-        "Standard Support",
-        "Digital Delivery",
-      ],
-    },
-    {
-      id: "premium-package",
-      name: "Premium Package",
-      price: "40000",
-      features: [
-        "Full Day Service",
-        "Premium Setup",
-        "Priority Support",
-        "Extra Customization",
-        "Complete Package",
-      ],
-    },
-  ],
+  return {
+    businessName: vendorProfile.business_name || "",
+    categoryId: vendorProfile.category_id ? String(vendorProfile.category_id) : "",
+    description: vendorProfile.description || "",
+    location: vendorProfile.city || "",
+    fullAddress: vendorProfile.full_address || "",
+    email: vendorProfile.business_email || "",
+    phone: vendorProfile.phone || "",
+    website: vendorProfile.website || "",
+    managerName: vendorProfile.manager_name || "",
+    startingPrice:
+      vendorProfile.starting_price != null ? String(vendorProfile.starting_price) : "",
+    yearsExperience:
+      vendorProfile.years_of_experience != null
+        ? String(vendorProfile.years_of_experience)
+        : "",
+    eventsCompleted:
+      vendorProfile.events_completed != null ? String(vendorProfile.events_completed) : "",
+    coverImage: cover?.image_url || "",
+    portfolio: portfolioImages.map((img) => ({ id: img.id, url: img.image_url })),
+    amenities: Array.isArray(vendorProfile.amenities)
+      ? vendorProfile.amenities.map((a) => a.amenity_name)
+      : [],
+    packages: Array.isArray(vendorProfile.packages)
+      ? vendorProfile.packages
+          .slice()
+          .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+          .map((pkg) => ({
+            id: pkg.id,
+            name: pkg.package_name || "",
+            price: pkg.price != null ? String(pkg.price) : "",
+            features: pkg.description ? pkg.description.split("\n") : [],
+          }))
+      : [],
+  };
 };
-
-const readImageFile = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(new Error("Unable to read image file."));
-    reader.readAsDataURL(file);
-  });
 
 function BusinessProfile() {
   const { user } = useAuth();
-  const [profile, setProfile] = useState(() =>
-    loadVendorProfile(user, initialProfile),
-  );
+  const [profile, setProfile] = useState(createEmptyProfile);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [categories, setCategories] = useState([]);
   const [amenityInput, setAmenityInput] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const profileCompletion = useMemo(() => {
     const requiredValues = [
       profile.businessName,
-      profile.category,
+      profile.categoryId,
       profile.description,
       profile.location,
       profile.email,
@@ -142,26 +130,82 @@ function BusinessProfile() {
     return Math.round((completedItems / 12) * 100);
   }, [profile]);
 
+  const selectedCategoryName =
+    categories.find((category) => String(category.id) === String(profile.categoryId))
+      ?.name || "";
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch(`${API_BASE}/vendor-categories`)
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data) => {
+        if (isMounted) setCategories(data);
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const fetchVendorProfile = async () => {
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem("eventree_token");
+      const response = await fetch(`${API_BASE}/vendor-profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status === 404) {
+        setProfile(createEmptyProfile());
+        return;
+      }
+      if (!response.ok) throw new Error("Failed to load profile.");
+
+      const data = await response.json();
+      setProfile(mapBackendProfileToFrontend(data.vendor_profile));
+    } catch {
+      setErrorMessage("Could not load your business profile.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchVendorProfile();
+  }, []);
+
   const updateField = (field, value) => {
     setProfile((currentProfile) => ({
       ...currentProfile,
       [field]: value,
     }));
     setSaveMessage("");
+    setErrorMessage("");
   };
 
   const handleCoverUpload = async (event) => {
     const [file] = Array.from(event.target.files || []);
+    if (!file) return;
 
-    if (!file) {
-      return;
-    }
+    setSaveMessage("");
+    setErrorMessage("");
 
     try {
-      const imagePreview = await readImageFile(file);
-      updateField("coverImage", imagePreview);
+      const token = localStorage.getItem("eventree_token");
+      const formData = new FormData();
+      formData.append("cover_image", file);
+
+      const response = await fetch(`${API_BASE}/vendor-profile/cover-image`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("Upload failed.");
+      const data = await response.json();
+      updateField("coverImage", data.image.image_url);
     } catch {
-      setSaveMessage("The selected cover image could not be loaded.");
+      setErrorMessage("The selected cover image could not be uploaded.");
     }
 
     event.target.value = "";
@@ -169,35 +213,60 @@ function BusinessProfile() {
 
   const handlePortfolioUpload = async (event) => {
     const selectedFiles = Array.from(event.target.files || []);
-
     if (!selectedFiles.length) {
       event.target.value = "";
       return;
     }
 
+    setSaveMessage("");
+    setErrorMessage("");
+
     try {
-      const newImages = await Promise.all(selectedFiles.map(readImageFile));
+      const token = localStorage.getItem("eventree_token");
+      const formData = new FormData();
+      selectedFiles.forEach((file) => formData.append("portfolio_images[]", file));
+
+      const response = await fetch(`${API_BASE}/vendor-profile/portfolio-images`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("Upload failed.");
+      const data = await response.json();
+      const newImages = (data.images || []).map((img) => ({
+        id: img.id,
+        url: img.image_url,
+      }));
 
       setProfile((currentProfile) => ({
         ...currentProfile,
         portfolio: [...currentProfile.portfolio, ...newImages],
       }));
-      setSaveMessage("");
     } catch {
-      setSaveMessage("One or more portfolio images could not be loaded.");
+      setErrorMessage("One or more portfolio images could not be uploaded.");
     }
 
     event.target.value = "";
   };
 
-  const removePortfolioImage = (imageIndex) => {
-    setProfile((currentProfile) => ({
-      ...currentProfile,
-      portfolio: currentProfile.portfolio.filter(
-        (_, index) => index !== imageIndex,
-      ),
-    }));
-    setSaveMessage("");
+  const removePortfolioImage = async (imageId) => {
+    try {
+      const token = localStorage.getItem("eventree_token");
+      const response = await fetch(`${API_BASE}/vendor-profile/images/${imageId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) throw new Error("Delete failed.");
+
+      setProfile((currentProfile) => ({
+        ...currentProfile,
+        portfolio: currentProfile.portfolio.filter((item) => item.id !== imageId),
+      }));
+    } catch {
+      setErrorMessage("That image could not be removed. Please try again.");
+    }
   };
 
   const addAmenity = () => {
@@ -222,6 +291,7 @@ function BusinessProfile() {
     }));
     setAmenityInput("");
     setSaveMessage("");
+    setErrorMessage("");
   };
 
   const removeAmenity = (amenityToRemove) => {
@@ -232,6 +302,7 @@ function BusinessProfile() {
       ),
     }));
     setSaveMessage("");
+    setErrorMessage("");
   };
 
   const updatePackage = (packageIndex, field, value) => {
@@ -247,6 +318,7 @@ function BusinessProfile() {
       ),
     }));
     setSaveMessage("");
+    setErrorMessage("");
   };
 
   const updatePackageFeatures = (packageIndex, value) => {
@@ -260,7 +332,7 @@ function BusinessProfile() {
 
   const addPackage = () => {
     if (profile.packages.length >= 3) {
-      setSaveMessage("You can add a maximum of 3 pricing packages.");
+      setErrorMessage("You can add a maximum of 3 pricing packages.");
       return;
     }
 
@@ -277,6 +349,7 @@ function BusinessProfile() {
       ],
     }));
     setSaveMessage("");
+    setErrorMessage("");
   };
 
   const removePackage = (packageIndex) => {
@@ -287,33 +360,95 @@ function BusinessProfile() {
       ),
     }));
     setSaveMessage("");
+    setErrorMessage("");
   };
 
   const resetProfile = () => {
-    setProfile(initialProfile);
     setAmenityInput("");
-    setSaveMessage("Demo profile values restored.");
-    clearVendorProfile(user);
+    setSaveMessage("");
+    setErrorMessage("");
+    fetchVendorProfile();
   };
 
-  const handleSave = (event) => {
+  const handleSave = async (event) => {
     event.preventDefault();
+    if (isSaving) return;
+
+    setIsSaving(true);
+    setSaveMessage("");
+    setErrorMessage("");
 
     try {
-      saveVendorProfile(user, profile);
-      setSaveMessage(
-        "Business profile saved in this browser. Backend sync can replace this later.",
+      const token = localStorage.getItem("eventree_token");
+
+      const profileResponse = await fetch(`${API_BASE}/vendor-profile`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          business_name: profile.businessName,
+          category_id: profile.categoryId,
+          description: profile.description,
+          city: profile.location,
+          full_address: profile.fullAddress,
+          business_email: profile.email,
+          phone: profile.phone,
+          website: profile.website,
+          manager_name: profile.managerName,
+          years_of_experience: profile.yearsExperience || null,
+          events_completed: profile.eventsCompleted || null,
+          starting_price: profile.startingPrice || null,
+        }),
+      });
+
+      if (!profileResponse.ok) {
+        const errorData = await profileResponse.json().catch(() => ({}));
+        if (profileResponse.status === 422 && errorData.errors?.phone) {
+          throw new Error(errorData.errors.phone[0]);
+        }
+        throw new Error("Profile update failed. Please check your inputs (Phone Number).");
+      }
+
+      const validPackages = profile.packages
+        .filter(
+          (pkg) =>
+            pkg.name.trim() && pkg.price !== "" && !Number.isNaN(Number(pkg.price)),
+        )
+        .map((pkg) => ({
+          package_name: pkg.name.trim(),
+          description: pkg.features.length ? pkg.features.join("\n") : null,
+          price: Number(pkg.price),
+        }));
+
+      const detailsResponse = await fetch(`${API_BASE}/vendor-details`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          amenities: profile.amenities,
+          packages: validPackages,
+        }),
+      });
+
+      if (!detailsResponse.ok) throw new Error("Details update failed.");
+
+      setSaveMessage("Business profile saved successfully.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      setErrorMessage(
+        err.message || "Something went wrong while saving your profile. Please try again.",
       );
-    } catch {
-      setSaveMessage(
-        "Profile text is ready, but large image previews could not be stored in this browser.",
-      );
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } finally {
+      setIsSaving(false);
     }
   };
-
-  const clientSatisfaction = calculateClientSatisfaction(
-    systemAverageReviewRating,
-  );
 
   const formattedStartingPrice = profile.startingPrice
     ? `৳${Number(profile.startingPrice).toLocaleString("en-BD")}`
@@ -321,6 +456,24 @@ function BusinessProfile() {
 
   return (
     <form className="vbp-profile" onSubmit={handleSave}>
+      {errorMessage && (
+        <div className="vbp-error-banner" style={{
+          backgroundColor: '#fef2f2',
+          border: '1px solid #f87171',
+          color: '#991b1b',
+          padding: '12px 16px',
+          borderRadius: '8px',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          fontWeight: 500
+        }}>
+          <AlertCircle size={20} color="#dc2626" />
+          <span>{errorMessage}</span>
+        </div>
+      )}
+
       <section className="vbp-status-card">
         <div className="vbp-status-copy">
           <div className="vbp-status-icon">
@@ -387,14 +540,15 @@ function BusinessProfile() {
               <label className="vbp-field">
                 <span>Vendor category</span>
                 <select
-                  value={profile.category}
+                  value={profile.categoryId}
                   onChange={(event) =>
-                    updateField("category", event.target.value)
+                    updateField("categoryId", event.target.value)
                   }
                 >
-                  {VENDOR_CATEGORIES.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
+                  <option value="">Select a category</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
                     </option>
                   ))}
                 </select>
@@ -560,21 +714,6 @@ function BusinessProfile() {
                 />
               </label>
 
-              <label className="vbp-field">
-                <span>Client satisfaction (%)</span>
-                <input
-                  type="text"
-                  value={`${clientSatisfaction}%`}
-                  readOnly
-                  aria-readonly="true"
-                  title="Calculated automatically from the average review rating"
-                />
-                <small>
-                  Automatically calculated from the average review rating (
-                  {systemAverageReviewRating.toFixed(1)} × 20).
-                </small>
-              </label>
-
               <label className="vbp-field vbp-price-field">
                 <span>Starting price</span>
                 <div className="vbp-input-with-icon">
@@ -616,7 +755,7 @@ function BusinessProfile() {
               <div className="vbp-preview-copy">
                 <h3>{profile.businessName || "Your business name"}</h3>
                 <p>
-                  {profile.category || "Vendor category"} ·{` `}
+                  {selectedCategoryName || "Vendor category"} ·{` `}
                   {profile.location || "Location"}
                 </p>
               </div>
@@ -658,7 +797,7 @@ function BusinessProfile() {
             </label>
 
             <p className="vbp-upload-note">
-              Image previews are frontend-only until media storage is connected.
+              Cover image changes upload immediately.
             </p>
           </section>
         </aside>
@@ -687,13 +826,13 @@ function BusinessProfile() {
 
         <div className="vbp-portfolio-grid">
           {profile.portfolio.map((image, imageIndex) => (
-            <div className="vbp-portfolio-item" key={`${image}-${imageIndex}`}>
-              <img src={image} alt={`Portfolio preview ${imageIndex + 1}`} />
+            <div className="vbp-portfolio-item" key={image.id}>
+              <img src={image.url} alt={`Portfolio preview ${imageIndex + 1}`} />
 
               <button
                 type="button"
                 aria-label={`Remove portfolio image ${imageIndex + 1}`}
-                onClick={() => removePortfolioImage(imageIndex)}
+                onClick={() => removePortfolioImage(image.id)}
               >
                 <Trash2 size={16} />
               </button>
@@ -858,7 +997,8 @@ function BusinessProfile() {
         <div>
           <strong>Ready to save your profile?</strong>
           <p>
-            Current frontend data is stored locally until backend integration.
+            Amenities and packages save when you click Save. Images and cover
+            photo save immediately.
           </p>
           {saveMessage && (
             <span className="vbp-save-message">{saveMessage}</span>
@@ -871,12 +1011,12 @@ function BusinessProfile() {
             className="vbp-reset-button"
             onClick={resetProfile}
           >
-            Reset changes
+            Discard changes
           </button>
 
-          <button type="submit" className="vbp-save-button">
+          <button type="submit" className="vbp-save-button" disabled={isSaving}>
             <Save size={18} />
-            Save changes
+            {isSaving ? "Saving..." : "Save changes"}
           </button>
         </div>
       </section>

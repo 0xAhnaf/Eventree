@@ -212,37 +212,6 @@ export const isVendorOnboardingRequired = (user) => {
   return false;
 };
 
-export const loadVendorOnboardingDraft = (user) => {
-  const vendorIdentity = getVendorIdentity(user);
-  const drafts = readStorageMap(VENDOR_ONBOARDING_DRAFT_KEY);
-  const draft = drafts[vendorIdentity];
-
-  if (!draft || typeof draft !== "object") {
-    return null;
-  }
-
-  return {
-    currentStep: Number.isInteger(draft.currentStep) ? draft.currentStep : 0,
-    profile: normalizeVendorProfile(
-      draft.profile,
-      createEmptyVendorProfile(user),
-    ),
-  };
-};
-
-export const saveVendorOnboardingDraft = (user, profile, currentStep) => {
-  const vendorIdentity = getVendorIdentity(user);
-  const drafts = readStorageMap(VENDOR_ONBOARDING_DRAFT_KEY);
-
-  drafts[vendorIdentity] = {
-    currentStep,
-    profile: normalizeVendorProfile(profile, createEmptyVendorProfile(user)),
-    updatedAt: new Date().toISOString(),
-  };
-
-  writeStorageMap(VENDOR_ONBOARDING_DRAFT_KEY, drafts);
-};
-
 export const completeVendorOnboarding = (user, profile) => {
   const vendorIdentity = getVendorIdentity(user);
   const statuses = readStorageMap(VENDOR_ONBOARDING_STORAGE_KEY);
