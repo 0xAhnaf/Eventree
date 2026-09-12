@@ -11,6 +11,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'email', 'password', 'phone', 'google_id', 'role'])]
 #[Hidden(['password', 'remember_token'])]
@@ -29,5 +30,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function vendorProfile(): HasOne
     {
         return $this->hasOne(VendorProfile::class);
+    }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(Event::class);
     }
 }

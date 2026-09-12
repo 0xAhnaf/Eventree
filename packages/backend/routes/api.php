@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\VendorDetailsController;
 use App\Http\Controllers\VendorProfileController;
 use App\Mail\TestGatewayEmail;
@@ -41,6 +42,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/vendor-profile/images/{image}', [VendorProfileController::class, 'deleteImage']);
 
     Route::post('/vendor-details', [VendorDetailsController::class, 'store']);
+
+    // Event Routes
+    Route::apiResource('events', EventController::class);
 });
 
 Route::get('/vendor-categories', function () {
