@@ -24,6 +24,7 @@ class VendorProfile extends Model
         'starting_price',
         'onboarding_completed_at',
         'registration_payment_completed_at',
+        'admin_approved_at',
         'cover_image_id',
     ];
 
@@ -32,6 +33,7 @@ class VendorProfile extends Model
         return [
             'onboarding_completed_at' => 'datetime',
             'registration_payment_completed_at' => 'datetime',
+            'admin_approved_at' => 'datetime',
         ];
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Admin\AdminManagementController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\PublicVendorController;
 use App\Http\Controllers\VendorAvailabilityController;
@@ -60,6 +61,18 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Event Routes
     Route::apiResource('events', EventController::class);
+
+    Route::prefix('admin')->middleware('admin')->group(function () {
+        Route::get('/dashboard', [AdminManagementController::class, 'dashboard']);
+        Route::get('/customers', [AdminManagementController::class, 'customers']);
+        Route::delete('/customers/{customer}', [AdminManagementController::class, 'destroyCustomer']);
+        Route::get('/vendors', [AdminManagementController::class, 'vendors']);
+        Route::patch('/vendors/{vendor}/approve', [AdminManagementController::class, 'approveVendor']);
+        Route::delete('/vendors/{vendor}', [AdminManagementController::class, 'destroyVendor']);
+        Route::get('/bookings', [AdminManagementController::class, 'bookings']);
+        Route::get('/payments', [AdminManagementController::class, 'payments']);
+        Route::get('/reports', [AdminManagementController::class, 'reports']);
+    });
 });
 
 Route::get('/vendor-categories', function () {

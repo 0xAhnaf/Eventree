@@ -21,6 +21,7 @@ class PublicVendorController extends Controller
             ->with(['user', 'category', 'images', 'amenities', 'packages'])
             ->whereNotNull('onboarding_completed_at')
             ->whereNotNull('registration_payment_completed_at')
+            ->whereNotNull('admin_approved_at')
             ->whereHas('user', fn (Builder $userQuery) => $userQuery->where('role', 'vendor'));
 
         if (! empty($validated['category'])) {
@@ -188,6 +189,7 @@ class PublicVendorController extends Controller
     {
         return $profile->user?->role === 'vendor'
             && $profile->onboarding_completed_at !== null
-            && $profile->registration_payment_completed_at !== null;
+            && $profile->registration_payment_completed_at !== null
+            && $profile->admin_approved_at !== null;
     }
 }

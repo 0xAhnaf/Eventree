@@ -55,6 +55,10 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 const HomeRoute = () => {
   const { user } = useAuth();
 
+  if (user?.role === "admin") {
+    return <Navigate to="/admin" replace />;
+  }
+
   if (isVendorOnboardingRequired(user)) {
     return <Navigate to="/vendor/onboarding" replace />;
   }

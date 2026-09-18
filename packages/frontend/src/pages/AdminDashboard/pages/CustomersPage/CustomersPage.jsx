@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { CalendarCheck2, UserCheck, Users } from "lucide-react";
-import { ConfirmDialog, DetailsDialog, DirectoryToolbar, PreviewNotice, SummaryCard } from "../../components/management/ManagementUI";
-import { deleteCustomer, getCustomers, isAdminPreviewMode } from "../../services/adminManagementService";
+import { ConfirmDialog, DetailsDialog, DirectoryToolbar, SummaryCard } from "../../components/management/ManagementUI";
+import { deleteCustomer, getCustomers } from "../../services/adminManagementService";
 import CustomersTable from "./CustomersTable";
 
 const CustomersPage = () => {
@@ -30,7 +30,6 @@ const CustomersPage = () => {
   };
 
   return <section className="dashboard-section dashboard-full-width">
-    {isAdminPreviewMode() && <PreviewNotice />}
     <div className="management-summary-grid"><SummaryCard icon={Users} label="Total customers" value={customers.length} note="Customer accounts only" /><SummaryCard icon={UserCheck} label="Active customers" value={active} note="Currently active accounts" /><SummaryCard icon={CalendarCheck2} label="Total bookings" value={bookings} note="Across listed customers" tone="slate" /></div>
     <div className="management-directory"><div className="management-heading"><div><span>Customer management</span><h2>Customer directory</h2></div><p>View customer information and remove accounts when required.</p></div>
       <DirectoryToolbar search={search} setSearch={setSearch} placeholder="Search by name, email, or phone" filter={filter} setFilter={setFilter} label="Account status" options={[{ value: "all", label: "All customers" }, { value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }]} />
