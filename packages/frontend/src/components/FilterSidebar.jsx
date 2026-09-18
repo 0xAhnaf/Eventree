@@ -7,6 +7,7 @@ const categories = [
   "Decorations",
   "Photography & Videography",
   "Event Management",
+  "Music & Entertainment",
 ];
 
 const ratingOptions = [4.5, 4.0, 3.5];
@@ -14,7 +15,7 @@ const ratingOptions = [4.5, 4.0, 3.5];
 const PRICE_MIN = 500;
 const PRICE_MAX = 50000;
 
-const formatPrice = (value) => `$${Number(value).toLocaleString("en-US")}`;
+const formatPrice = (value) => `৳${Number(value).toLocaleString("en-BD")}`;
 
 export default function FilterSidebar({
   selectedCategories,

@@ -2,8 +2,12 @@
 
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\PublicVendorController;
+use App\Http\Controllers\VendorAvailabilityController;
+use App\Http\Controllers\VendorBookingController;
 use App\Http\Controllers\VendorDetailsController;
 use App\Http\Controllers\VendorProfileController;
+use App\Http\Controllers\VendorRegistrationController;
 use App\Mail\TestGatewayEmail;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
@@ -38,10 +42,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/vendor-profile', [VendorProfileController::class, 'show']);
     Route::put('/vendor-profile', [VendorProfileController::class, 'update']);
     Route::post('/vendor-profile/cover-image', [VendorProfileController::class, 'updateCoverImage']);
+    Route::put('/vendor-profile/cover-image/{image}', [VendorProfileController::class, 'selectCoverImage']);
     Route::post('/vendor-profile/portfolio-images', [VendorProfileController::class, 'addPortfolioImages']);
     Route::delete('/vendor-profile/images/{image}', [VendorProfileController::class, 'deleteImage']);
 
     Route::post('/vendor-details', [VendorDetailsController::class, 'store']);
+
+    Route::post('/bookings', [VendorBookingController::class, 'store']);
+    Route::get('/vendor/bookings', [VendorBookingController::class, 'index']);
+    Route::patch('/vendor/bookings/{booking}/status', [VendorBookingController::class, 'updateStatus']);
+
+    Route::get('/vendor/availability', [VendorAvailabilityController::class, 'show']);
+    Route::put('/vendor/availability', [VendorAvailabilityController::class, 'update']);
+
+    Route::get('/vendor/registration-status', [VendorRegistrationController::class, 'show']);
+    Route::post('/vendor/registration-payment/complete', [VendorRegistrationController::class, 'completePayment']);
 
     // Event Routes
     Route::apiResource('events', EventController::class);
@@ -52,6 +67,10 @@ Route::get('/vendor-categories', function () {
         DB::table('vendor_categories')->select('id', 'name')->orderBy('name')->get()
     );
 });
+
+Route::get('/vendors', [PublicVendorController::class, 'index']);
+Route::get('/vendors/{vendorProfile}/availability', [PublicVendorController::class, 'availability']);
+Route::get('/vendors/{vendorProfile}', [PublicVendorController::class, 'show']);
 
 Route::post('/forgot-password', function (Request $request) {
     $request->validate(['email' => 'required|email']);

@@ -3,50 +3,41 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../../../context/AuthContext";
 
-import { addVendorBookingRequest } from "../../../../utils/vendorPortalStorage.js";
+import { createVendorBooking } from "../../../../services/vendorApi.js";
 
 import "./BookingCard.css";
-
-const packageOptions = [
-  {
-    id: "general",
-    name: "General Package",
-  },
-  {
-    id: "premium",
-    name: "Premium Package",
-  },
-];
 
 const BookingCard = ({
   vendor = {},
   bookedDates = [],
   selectedDate = "",
   onDateChange,
+  selectedPackageId = "",
+  onPackageChange,
+  onBookingCreated,
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [selectedPackage, setSelectedPackage] = useState("general");
+  const packageOptions = Array.isArray(vendor.packages) ? vendor.packages : [];
 
   const [eventType, setEventType] = useState("");
   const [guests, setGuests] = useState("");
   const [dateError, setDateError] = useState("");
-  const [requestMessage, setRequestMessage] = useState("");
   const [requestError, setRequestError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const selectedPackageDetails = useMemo(
     () =>
       packageOptions.find(
-        (packageOption) => packageOption.id === selectedPackage,
-      ) || packageOptions[0],
-    [selectedPackage],
+        (packageOption) => String(packageOption.id) === selectedPackageId,
+      ) || null,
+    [packageOptions, selectedPackageId],
   );
 
   const handleDateChange = (event) => {
     const newDate = event.target.value;
 
-    setRequestMessage("");
     setRequestError("");
 
     if (!newDate) {
@@ -72,8 +63,7 @@ const BookingCard = ({
     }
   };
 
-  const handleBookingRequest = () => {
-    setRequestMessage("");
+  const handleBookingRequest = async () => {
     setRequestError("");
 
     if (!user) {
@@ -115,31 +105,41 @@ const BookingCard = ({
       return;
     }
 
-    const bookingResult = addVendorBookingRequest({
-      vendorId: Number(vendor.id),
-      vendorName: vendor.name || "Vendor",
-      customerId: user.id,
-      customerName: user.name,
-      customerEmail: user.email,
-      eventDate: selectedDate,
-      eventType: eventType.trim(),
-      packageId: selectedPackageDetails.id,
-      packageName: selectedPackageDetails.name,
-      guests: Number(guests),
-    });
+    setIsSubmitting(true);
 
-    if (!bookingResult.success) {
-      setRequestError(bookingResult.message || "This date is unavailable.");
+    try {
+      await createVendorBooking({
+        vendor_id: Number(vendor.id),
+        package_id: selectedPackageDetails?.id || null,
+        event_date: selectedDate,
+        event_type: eventType.trim(),
+        guests: Number(guests),
+      });
 
-      return;
+      if (typeof onBookingCreated === "function") {
+        try {
+          await onBookingCreated();
+        } catch {
+          // The booking has already been stored successfully. A follow-up
+          // availability refresh must not turn that success into a false error.
+        }
+      }
+
+      navigate(`/browse-vendor/${vendor.id}/booking-request-sent`, {
+        replace: true,
+        state: {
+          bookingRequestSent: true,
+          vendorId: vendor.id,
+          vendorName: vendor.name || "the vendor",
+          eventDate: selectedDate,
+          packageName: selectedPackageDetails?.name || "No package selected",
+        },
+      });
+    } catch (error) {
+      setRequestError(error.message || "The booking request could not be sent.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setRequestMessage(
-      "Booking request sent. This date is now reserved and cannot be booked again unless the vendor rejects the request.",
-    );
-
-    setEventType("");
-    setGuests("");
   };
 
   return (
@@ -182,17 +182,21 @@ const BookingCard = ({
 
           <select
             id="booking-package"
-            value={selectedPackage}
+            value={selectedPackageId}
             onChange={(event) => {
-              setSelectedPackage(event.target.value);
+              if (typeof onPackageChange === "function") {
+                onPackageChange(event.target.value);
+              }
 
-              setRequestMessage("");
               setRequestError("");
             }}
           >
+            {!packageOptions.length && (
+              <option value="">No package selected</option>
+            )}
             {packageOptions.map((packageOption) => (
-              <option key={packageOption.id} value={packageOption.id}>
-                {packageOption.name}
+              <option key={packageOption.id} value={String(packageOption.id)}>
+                {packageOption.name} — {packageOption.formattedPrice}
               </option>
             ))}
           </select>
@@ -208,7 +212,6 @@ const BookingCard = ({
           value={eventType}
           onChange={(event) => {
             setEventType(event.target.value);
-            setRequestMessage("");
             setRequestError("");
           }}
           placeholder="Example: Wedding, Birthday, Corporate Event"
@@ -225,7 +228,6 @@ const BookingCard = ({
           value={guests}
           onChange={(event) => {
             setGuests(event.target.value);
-            setRequestMessage("");
             setRequestError("");
           }}
           placeholder="Enter guests"
@@ -246,27 +248,13 @@ const BookingCard = ({
         </p>
       )}
 
-      {requestMessage && (
-        <p
-          style={{
-            margin: "0 0 12px",
-            color: "#13734b",
-            fontSize: "13px",
-            fontWeight: "600",
-            lineHeight: "1.45",
-          }}
-          aria-live="polite"
-        >
-          {requestMessage}
-        </p>
-      )}
-
       <button
         type="button"
         className="booking-button"
         onClick={handleBookingRequest}
+        disabled={isSubmitting}
       >
-        Send Booking Request
+        {isSubmitting ? "Sending Request..." : "Send Booking Request"}
       </button>
     </div>
   );

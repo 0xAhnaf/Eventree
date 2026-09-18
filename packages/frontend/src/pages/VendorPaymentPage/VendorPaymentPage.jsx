@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../../components/Footer.jsx";
 import Navbar from "../../components/Navbar.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { completeVendorRegistrationPayment } from "../../services/vendorApi.js";
 import { markVendorPaymentCompleted } from "../../utils/vendorPaymentStorage.js";
 import PaymentAction from "./components/PaymentAction.jsx";
 import PaymentHero from "./components/PaymentHero.jsx";
@@ -23,19 +24,29 @@ function VendorPaymentPage() {
   const [selectedMethod, setSelectedMethod] = useState("bkash");
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
 
   const formattedFee = `৳${VENDOR_REGISTRATION_FEE.toLocaleString("en-BD")}`;
 
-  const handleContinueToDashboard = () => {
+  const handleContinueToDashboard = async () => {
     if (!hasAcceptedTerms || isProcessing) return;
 
     setIsProcessing(true);
+    setPaymentError("");
 
-    markVendorPaymentCompleted(user);
+    try {
+      await completeVendorRegistrationPayment();
+      markVendorPaymentCompleted(user);
 
-    // Frontend-only placeholder. Replace this navigation with the future
-    // payment-initiation API call and gateway redirect.
-    navigate("/vendor", { replace: true });
+      // This is still a mock payment. The backend now persists completion so
+      // public vendor visibility does not depend on this browser's storage.
+      navigate("/vendor", { replace: true });
+    } catch (error) {
+      setPaymentError(
+        error.message || "Payment completion could not be saved. Please try again.",
+      );
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -70,6 +81,7 @@ function VendorPaymentPage() {
                     hasAcceptedTerms={hasAcceptedTerms}
                     onTermsChange={setHasAcceptedTerms}
                     onContinue={handleContinueToDashboard}
+                    errorMessage={paymentError}
                   />
                 </div>
               </div>

@@ -21,6 +21,17 @@
   display: block;
 }
 
+.vendor-gallery-placeholder {
+  align-items: center;
+  background: linear-gradient(145deg, #dbe9e3, #f3eadb);
+  color: #0b4a3c;
+  display: flex;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(4rem, 10vw, 8rem);
+  font-weight: 700;
+  justify-content: center;
+}
+
 /* Overlay */
 .banner-overlay {
   position: absolute;

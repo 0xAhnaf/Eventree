@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import "./VendorDetailsPage.css";
@@ -17,71 +17,68 @@ import Reviews from "./components/Reviews/Reviews";
 import BookingCard from "./components/BookingCard/BookingCard";
 import ChatManager from "./components/ChatManager/ChatManager";
 
-import vendors from "../../components/vendors.js";
-
 import {
-  getVendorUnavailableDates,
-  VENDOR_AVAILABILITY_STORAGE_KEY,
-  VENDOR_AVAILABILITY_UPDATED_EVENT,
-  VENDOR_BOOKINGS_STORAGE_KEY,
-  VENDOR_BOOKINGS_UPDATED_EVENT,
-} from "../../utils/vendorPortalStorage.js";
+  fetchPublicVendor,
+  fetchPublicVendorAvailability,
+} from "../../services/vendorApi.js";
 
 const VendorDetailsPage = () => {
   const { id } = useParams();
-
-  const vendor = vendors.find((vendorItem) => vendorItem.id === Number(id));
-
+  const [vendor, setVendor] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [pageError, setPageError] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
+  const [selectedPackageId, setSelectedPackageId] = useState("");
+  const [bookedDates, setBookedDates] = useState([]);
 
-  const [bookedDates, setBookedDates] = useState(() =>
-    getVendorUnavailableDates(Number(id)),
-  );
+  const refreshAvailability = useCallback(async () => {
+    const availability = await fetchPublicVendorAvailability(id);
+    const unavailableDates = Array.isArray(availability.unavailable_dates)
+      ? availability.unavailable_dates
+      : [];
+
+    setBookedDates(unavailableDates);
+    setSelectedDate((currentDate) =>
+      unavailableDates.includes(currentDate) ? "" : currentDate,
+    );
+  }, [id]);
 
   useEffect(() => {
-    const syncUnavailableDates = (event) => {
-      if (
-        event?.type === "storage" &&
-        event.key &&
-        event.key !== VENDOR_AVAILABILITY_STORAGE_KEY &&
-        event.key !== VENDOR_BOOKINGS_STORAGE_KEY
-      ) {
-        return;
-      }
+    let isMounted = true;
 
-      const nextUnavailableDates = getVendorUnavailableDates(Number(id));
+    setIsLoading(true);
+    setPageError("");
+    setSelectedPackageId("");
 
-      setBookedDates(nextUnavailableDates);
+    Promise.all([fetchPublicVendor(id), fetchPublicVendorAvailability(id)])
+      .then(([vendorData, availability]) => {
+        if (!isMounted) return;
 
-      setSelectedDate((currentSelectedDate) =>
-        nextUnavailableDates.includes(currentSelectedDate)
-          ? ""
-          : currentSelectedDate,
-      );
-    };
-
-    syncUnavailableDates();
-
-    window.addEventListener("storage", syncUnavailableDates);
-    window.addEventListener(
-      VENDOR_AVAILABILITY_UPDATED_EVENT,
-      syncUnavailableDates,
-    );
-    window.addEventListener(
-      VENDOR_BOOKINGS_UPDATED_EVENT,
-      syncUnavailableDates,
-    );
+        setVendor(vendorData);
+        setSelectedPackageId(
+          Array.isArray(vendorData.packages) && vendorData.packages.length
+            ? String(vendorData.packages[0].id)
+            : "",
+        );
+        setBookedDates(
+          Array.isArray(availability.unavailable_dates)
+            ? availability.unavailable_dates
+            : [],
+        );
+      })
+      .catch((error) => {
+        if (isMounted) {
+          setPageError(error.message || "Could not load this vendor.");
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
 
     return () => {
-      window.removeEventListener("storage", syncUnavailableDates);
-      window.removeEventListener(
-        VENDOR_AVAILABILITY_UPDATED_EVENT,
-        syncUnavailableDates,
-      );
-      window.removeEventListener(
-        VENDOR_BOOKINGS_UPDATED_EVENT,
-        syncUnavailableDates,
-      );
+      isMounted = false;
     };
   }, [id]);
 
@@ -92,6 +89,28 @@ const VendorDetailsPage = () => {
 
     setSelectedDate(date);
   };
+
+  if (isLoading) {
+    return (
+      <div className="vendor-details-page">
+        <Navbar />
+        <div className="vendor-details-container">Loading vendor...</div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (pageError || !vendor) {
+    return (
+      <div className="vendor-details-page">
+        <Navbar />
+        <div className="vendor-details-container">
+          {pageError || "Vendor not found."}
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="vendor-details-page">
@@ -107,9 +126,16 @@ const VendorDetailsPage = () => {
         <div className="vendor-left-content">
           <AboutVendor vendor={vendor} />
 
-          <VendorGallerySection images={vendor.photos} />
+          <VendorGallerySection
+            images={(vendor.portfolio || []).map((image) => image.url)}
+            amenities={vendor.amenities}
+          />
 
-          <PricingPackages />
+          <PricingPackages
+            packages={vendor.packages}
+            selectedPackageId={selectedPackageId}
+            onPackageSelect={setSelectedPackageId}
+          />
 
           <AvailabilityCalendar
             bookedDates={bookedDates}
@@ -125,12 +151,15 @@ const VendorDetailsPage = () => {
             bookedDates={bookedDates}
             selectedDate={selectedDate}
             onDateChange={handleDateSelect}
+            selectedPackageId={selectedPackageId}
+            onPackageChange={setSelectedPackageId}
             vendor={vendor}
+            onBookingCreated={refreshAvailability}
           />
         </aside>
       </div>
 
-      <ChatManager />
+      <ChatManager vendor={vendor} />
 
       <Footer />
     </div>

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 
@@ -9,6 +10,7 @@ import VendorLandingPage from "./pages/VendorLandingPage/VendorLandingPage.jsx";
 import ForgotPassword from "./pages/ForgotPassPage/ForgotPassPage.jsx";
 import ResetPassword from "./pages/ResetPassWord/ResetPassword.jsx";
 import VendorDetailsPage from "./pages/VendorDetailsPage/VendorDetailsPage.jsx";
+import BookingRequestSuccessPage from "./pages/BookingRequestSuccessPage/BookingRequestSuccessPage.jsx";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard.jsx";
 import VendorOnboarding from "./pages/VendorOnboarding/VendorOnboarding.jsx";
 import VendorPaymentPage from "./pages/VendorPaymentPage/VendorPaymentPage.jsx";
@@ -17,6 +19,7 @@ import {
   isVendorPaymentCompleted,
   isVendorPaymentRequired,
 } from "./utils/vendorPaymentStorage.js";
+import { completeVendorRegistrationPayment } from "./services/vendorApi.js";
 
 import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 import MyEvents from "./pages/MyEvents/MyEvents.jsx";
@@ -35,7 +38,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     // Smart redirect based on their role
     const fallbackRoute =
-      user.role === "client"
+      user.role === "customer"
         ? "/browse-vendor"
         : user.role === "vendor"
           ? "/vendor"
@@ -105,11 +108,28 @@ const VendorPaymentRoute = () => {
   return <VendorPaymentPage />;
 };
 
+const VendorRegistrationStatusSync = ({ children }) => {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user?.role !== "vendor" || !isVendorPaymentCompleted(user)) return;
+
+    // Migrates vendors who completed the earlier localStorage-only mock
+    // payment flow to the backend registration status on their next visit.
+    completeVendorRegistrationPayment().catch(() => {
+      // The normal payment page still reports backend failures interactively.
+    });
+  }, [user]);
+
+  return children;
+};
+
 function App() {
   return (
     <AuthProvider>
-      <main>
-        <BrowserRouter>
+      <VendorRegistrationStatusSync>
+        <main>
+          <BrowserRouter>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<HomeRoute />} />
@@ -118,6 +138,10 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/verify-email" element={<EmailVerified />} />
+            <Route
+              path="/browse-vendor/:id/booking-request-sent"
+              element={<BookingRequestSuccessPage />}
+            />
             <Route path="/browse-vendor/:id" element={<VendorDetailsPage />} />
             <Route path="/browse-vendor" element={<ClientLandingPage />} />
             <Route path="/profile" element={<ProfilePage />} />
@@ -162,8 +186,9 @@ function App() {
               }
             />
           </Routes>
-        </BrowserRouter>
-      </main>
+          </BrowserRouter>
+        </main>
+      </VendorRegistrationStatusSync>
     </AuthProvider>
   );
 }

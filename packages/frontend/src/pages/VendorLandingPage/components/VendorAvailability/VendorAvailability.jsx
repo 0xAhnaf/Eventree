@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CalendarCheck,
   CheckCircle2,
@@ -9,15 +9,11 @@ import {
 } from "lucide-react";
 
 import {
-  DEMO_VENDOR_ID,
-  getVendorBlockedDates,
-  getVendorConfirmedBookingDates,
-  saveVendorBlockedDates,
-  VENDOR_AVAILABILITY_STORAGE_KEY,
+  fetchVendorAvailability,
+  saveVendorAvailability,
   VENDOR_AVAILABILITY_UPDATED_EVENT,
-  VENDOR_BOOKINGS_STORAGE_KEY,
   VENDOR_BOOKINGS_UPDATED_EVENT,
-} from "../../../../utils/vendorPortalStorage.js";
+} from "../../../../services/vendorApi.js";
 
 import "./VendorAvailability.css";
 
@@ -47,64 +43,51 @@ function VendorAvailability() {
     return new Date(today.getFullYear(), today.getMonth(), 1);
   });
 
-  const [savedBlockedDates, setSavedBlockedDates] = useState(() =>
-    getVendorBlockedDates(DEMO_VENDOR_ID),
-  );
+  const [savedBlockedDates, setSavedBlockedDates] = useState([]);
 
-  const [blockedDates, setBlockedDates] = useState(savedBlockedDates);
+  const [blockedDates, setBlockedDates] = useState([]);
 
-  const [confirmedBookingDates, setConfirmedBookingDates] = useState(() =>
-    getVendorConfirmedBookingDates(DEMO_VENDOR_ID),
-  );
+  const [confirmedBookingDates, setConfirmedBookingDates] = useState([]);
 
   const [saveMessage, setSaveMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    const syncAvailability = (event) => {
-      if (
-        event?.type === "storage" &&
-        event.key &&
-        event.key !== VENDOR_AVAILABILITY_STORAGE_KEY
-      ) {
-        return;
-      }
-
-      const nextBlockedDates = getVendorBlockedDates(DEMO_VENDOR_ID);
+  const loadAvailability = useCallback(async () => {
+    try {
+      const availability = await fetchVendorAvailability();
+      const nextBlockedDates = Array.isArray(availability.blocked_dates)
+        ? availability.blocked_dates
+        : [];
+      const nextReservedDates = Array.isArray(availability.reserved_dates)
+        ? availability.reserved_dates
+        : [];
 
       setSavedBlockedDates(nextBlockedDates);
       setBlockedDates(nextBlockedDates);
-    };
+      setConfirmedBookingDates(nextReservedDates);
+      setErrorMessage("");
+    } catch (error) {
+      setErrorMessage(error.message || "Could not load availability.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-    const syncBookings = (event) => {
-      if (
-        event?.type === "storage" &&
-        event.key &&
-        event.key !== VENDOR_BOOKINGS_STORAGE_KEY
-      ) {
-        return;
-      }
-
-      setConfirmedBookingDates(getVendorConfirmedBookingDates(DEMO_VENDOR_ID));
-    };
-
-    window.addEventListener("storage", syncAvailability);
-    window.addEventListener(
-      VENDOR_AVAILABILITY_UPDATED_EVENT,
-      syncAvailability,
-    );
-    window.addEventListener("storage", syncBookings);
-    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
+  useEffect(() => {
+    loadAvailability();
+    window.addEventListener(VENDOR_AVAILABILITY_UPDATED_EVENT, loadAvailability);
+    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadAvailability);
 
     return () => {
-      window.removeEventListener("storage", syncAvailability);
       window.removeEventListener(
         VENDOR_AVAILABILITY_UPDATED_EVENT,
-        syncAvailability,
+        loadAvailability,
       );
-      window.removeEventListener("storage", syncBookings);
-      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
+      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadAvailability);
     };
-  }, []);
+  }, [loadAvailability]);
 
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
@@ -150,21 +133,41 @@ function VendorAvailability() {
     );
 
     setSaveMessage("");
+    setErrorMessage("");
   };
 
-  const handleSave = () => {
-    const savedDates = saveVendorBlockedDates(DEMO_VENDOR_ID, blockedDates);
+  const handleSave = async () => {
+    setIsSaving(true);
+    setSaveMessage("");
+    setErrorMessage("");
 
-    setSavedBlockedDates(savedDates);
-    setBlockedDates(savedDates);
-    setSaveMessage(
-      "Availability saved. The public Vendor Details calendar is now updated in this browser.",
-    );
+    try {
+      const availability = await saveVendorAvailability(blockedDates);
+      const savedDates = Array.isArray(availability.blocked_dates)
+        ? availability.blocked_dates
+        : [];
+
+      setSavedBlockedDates(savedDates);
+      setBlockedDates(savedDates);
+      setConfirmedBookingDates(
+        Array.isArray(availability.reserved_dates)
+          ? availability.reserved_dates
+          : [],
+      );
+      setSaveMessage(
+        "Availability saved. Customers now see the updated calendar.",
+      );
+    } catch (error) {
+      setErrorMessage(error.message || "Availability could not be saved.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const resetChanges = () => {
     setBlockedDates(savedBlockedDates);
     setSaveMessage("Unsaved availability changes were reset.");
+    setErrorMessage("");
   };
 
   const calendarDays = [];
@@ -222,6 +225,8 @@ function VendorAvailability() {
 
   return (
     <section className="vav-page">
+      {isLoading && <p className="vav-save-message">Loading availability...</p>}
+      {errorMessage && <p className="vav-save-message">{errorMessage}</p>}
       <div className="vav-overview-grid">
         <article className="vav-overview-card">
           <span className="vav-overview-icon">
@@ -366,10 +371,10 @@ function VendorAvailability() {
               type="button"
               className="vav-save-button"
               onClick={handleSave}
-              disabled={!hasUnsavedChanges}
+              disabled={!hasUnsavedChanges || isSaving}
             >
               <Save size={17} />
-              Save availability
+              {isSaving ? "Saving..." : "Save availability"}
             </button>
           </div>
 

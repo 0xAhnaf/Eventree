@@ -4,10 +4,10 @@ import { useSearchParams } from "react-router-dom";
 import "./ClientLandingPage.css";
 import FilterSidebar from "../../components/FilterSidebar";
 import VendorCard from "../../components/VendorCard";
-import vendors from "../../components/vendors";
 import Pagination from "../../components/Pagination";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import { fetchPublicVendors } from "../../services/vendorApi.js";
 
 const vendorsPerPage = 6;
 
@@ -17,6 +17,7 @@ const validCategories = [
   "Decorations",
   "Photography & Videography",
   "Event Management",
+  "Music & Entertainment",
 ];
 
 const DEFAULT_PRICE_MAX = 50000;
@@ -31,6 +32,10 @@ const parsePrice = (price) => {
 export default function ClientLandingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
+  const [vendors, setVendors] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [sortOption, setSortOption] = useState("recommended");
 
   const categoriesFromUrl = searchParams
     .getAll("category")
@@ -49,6 +54,37 @@ export default function ClientLandingPage() {
     setAppliedFilters(filters);
     setCurrentPage(1);
   };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    setIsLoading(true);
+    setLoadError("");
+
+    fetchPublicVendors({
+      availabilityDate: appliedFilters.availabilityDate,
+    })
+      .then((realVendors) => {
+        if (isMounted) {
+          setVendors(realVendors);
+        }
+      })
+      .catch((error) => {
+        if (isMounted) {
+          setVendors([]);
+          setLoadError(error.message || "Could not load vendors.");
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [appliedFilters.availabilityDate]);
 
   useEffect(() => {
     setSelectedCategories(categoriesFromUrl);
@@ -103,12 +139,23 @@ export default function ClientLandingPage() {
         appliedFilters.minRating === 0 ||
         (vendor.rating ?? 0) >= appliedFilters.minRating;
 
-      // Note: vendors don't carry availability data yet, so the date
-      // picker doesn't filter results until that's added on the backend.
-
       return matchesCategory && matchesPrice && matchesRating;
+    }).sort((firstVendor, secondVendor) => {
+      if (sortOption === "top-rated") {
+        return (secondVendor.rating ?? 0) - (firstVendor.rating ?? 0);
+      }
+
+      if (sortOption === "price-low-high") {
+        return parsePrice(firstVendor.price) - parsePrice(secondVendor.price);
+      }
+
+      if (sortOption === "price-high-low") {
+        return parsePrice(secondVendor.price) - parsePrice(firstVendor.price);
+      }
+
+      return String(firstVendor.name).localeCompare(String(secondVendor.name));
     });
-  }, [selectedCategories, appliedFilters]);
+  }, [vendors, selectedCategories, appliedFilters, sortOption]);
 
   const lastIndex = currentPage * vendorsPerPage;
   const firstIndex = lastIndex - vendorsPerPage;
@@ -149,7 +196,13 @@ export default function ClientLandingPage() {
                   : "selected category vendors"}
               </p>
 
-              <select defaultValue="recommended">
+              <select
+                value={sortOption}
+                onChange={(event) => {
+                  setSortOption(event.target.value);
+                  setCurrentPage(1);
+                }}
+              >
                 <option value="recommended">Recommended</option>
 
                 <option value="top-rated">Top Rated</option>
@@ -168,7 +221,15 @@ export default function ClientLandingPage() {
               </div>
             )}
 
-            {currentVendors.length > 0 ? (
+            {isLoading ? (
+              <div className="vendor-empty-CLP">
+                <p>Loading vendors...</p>
+              </div>
+            ) : loadError ? (
+              <div className="vendor-empty-CLP">
+                <p>{loadError}</p>
+              </div>
+            ) : currentVendors.length > 0 ? (
               <div className="vendor-grid-CLP">
                 {currentVendors.map((vendor) => (
                   <VendorCard key={vendor.id} vendor={vendor} />

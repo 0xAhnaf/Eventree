@@ -7,7 +7,13 @@ export default function VendorCard({ vendor }) {
       {vendor.featured && <span className="featured-badge-CLP">Featured</span>}
 
       <div className="image-wrapper-CLP">
-        <img src={vendor.image} alt={vendor.name} />
+        {vendor.image ? (
+          <img src={vendor.image} alt={vendor.name} />
+        ) : (
+          <div className="vendor-image-placeholder-CLP" aria-hidden="true">
+            {vendor.name?.charAt(0)?.toUpperCase() || "V"}
+          </div>
+        )}
 
         <div className="overlay-CLP">
           <button onClick={() => navigate(`/browse-vendor/${vendor.id}`)}>
@@ -20,7 +26,9 @@ export default function VendorCard({ vendor }) {
         <div className="vendor-header-CLP">
           <h3>{vendor.name}</h3>
 
-          <span className="rating-CLP">⭐ {vendor.rating}</span>
+          <span className="rating-CLP">
+            {vendor.rating == null ? "New" : `⭐ ${vendor.rating}`}
+          </span>
         </div>
 
         <p className="location-CLP">
