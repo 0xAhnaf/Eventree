@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "./FilterSidebar.css";
 
 const categories = [
@@ -8,12 +9,56 @@ const categories = [
   "Event Management",
 ];
 
+const ratingOptions = [4.5, 4.0, 3.5];
+
+const PRICE_MIN = 500;
+const PRICE_MAX = 50000;
+
+const formatPrice = (value) => `$${Number(value).toLocaleString("en-US")}`;
+
 export default function FilterSidebar({
   selectedCategories,
   onCategoryChange,
   onAllServices,
+  priceMax = PRICE_MAX,
+  minRating = 0,
+  availabilityDate = "",
+  onApply,
 }) {
   const allServicesSelected = selectedCategories.length === 0;
+
+  // Price, rating, and availability are "draft" until Apply Filters is
+  // clicked, matching the button's purpose. Category checkboxes still
+  // apply instantly, same as before.
+  const [draftPrice, setDraftPrice] = useState(priceMax);
+  const [draftRating, setDraftRating] = useState(minRating);
+  const [draftAvailability, setDraftAvailability] = useState(availabilityDate);
+
+  // Keep the draft values in sync if the applied filters change elsewhere
+  // (e.g. a "reset" action from the parent).
+  useEffect(() => {
+    setDraftPrice(priceMax);
+  }, [priceMax]);
+
+  useEffect(() => {
+    setDraftRating(minRating);
+  }, [minRating]);
+
+  useEffect(() => {
+    setDraftAvailability(availabilityDate);
+  }, [availabilityDate]);
+
+  const toggleRating = (value) => {
+    setDraftRating((current) => (current === value ? 0 : value));
+  };
+
+  const handleApply = () => {
+    onApply?.({
+      priceMax: draftPrice,
+      minRating: draftRating,
+      availabilityDate: draftAvailability,
+    });
+  };
 
   return (
     <aside className="filter-sidebar-CLP">
@@ -53,11 +98,22 @@ export default function FilterSidebar({
         <div className="filter-group-CLP">
           <label className="filter-title-CLP">Price Range</label>
 
-          <input type="range" min="500" max="50000" defaultValue="25000" />
+          <input
+            type="range"
+            min={PRICE_MIN}
+            max={PRICE_MAX}
+            step="100"
+            value={draftPrice}
+            onChange={(event) => setDraftPrice(Number(event.target.value))}
+          />
 
           <div className="price-values-CLP">
-            <span>$500</span>
-            <span>$50,000+</span>
+            <span>{formatPrice(PRICE_MIN)}</span>
+            <span>
+              {draftPrice >= PRICE_MAX
+                ? `${formatPrice(PRICE_MAX)}+`
+                : `Up to ${formatPrice(draftPrice)}`}
+            </span>
           </div>
         </div>
 
@@ -68,9 +124,17 @@ export default function FilterSidebar({
           <label className="filter-title-CLP">Minimum Rating</label>
 
           <div className="rating-buttons-CLP">
-            <button type="button">4.5+</button>
-            <button type="button">4.0+</button>
-            <button type="button">3.5+</button>
+            {ratingOptions.map((value) => (
+              <button
+                key={value}
+                type="button"
+                className={draftRating === value ? "rating-active-CLP" : ""}
+                aria-pressed={draftRating === value}
+                onClick={() => toggleRating(value)}
+              >
+                {value.toFixed(1)}+
+              </button>
+            ))}
           </div>
         </div>
 
@@ -80,10 +144,14 @@ export default function FilterSidebar({
         <div className="filter-group-CLP">
           <label className="filter-title-CLP">Availability</label>
 
-          <input type="date" />
+          <input
+            type="date"
+            value={draftAvailability}
+            onChange={(event) => setDraftAvailability(event.target.value)}
+          />
         </div>
 
-        <button type="button" className="apply-btn-CLP">
+        <button type="button" className="apply-btn-CLP" onClick={handleApply}>
           Apply Filters
         </button>
       </div>

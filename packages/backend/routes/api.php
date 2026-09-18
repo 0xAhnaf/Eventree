@@ -1,19 +1,20 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\GoogleAuthController;
-
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\VendorDetailsController;
+use App\Http\Controllers\VendorProfileController;
 use App\Mail\TestGatewayEmail;
-use Illuminate\Support\Facades\Mail;
-
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
-
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
@@ -31,6 +32,25 @@ Route::middleware('auth:sanctum')->group(function () {
 
         return response()->json(['message' => 'Verification link sent!']);
     })->middleware('throttle:6,1');
+
+    // Vendor Profile & Details Routes
+    Route::post('/vendor-profile', [VendorProfileController::class, 'store']);
+    Route::get('/vendor-profile', [VendorProfileController::class, 'show']);
+    Route::put('/vendor-profile', [VendorProfileController::class, 'update']);
+    Route::post('/vendor-profile/cover-image', [VendorProfileController::class, 'updateCoverImage']);
+    Route::post('/vendor-profile/portfolio-images', [VendorProfileController::class, 'addPortfolioImages']);
+    Route::delete('/vendor-profile/images/{image}', [VendorProfileController::class, 'deleteImage']);
+
+    Route::post('/vendor-details', [VendorDetailsController::class, 'store']);
+
+    // Event Routes
+    Route::apiResource('events', EventController::class);
+});
+
+Route::get('/vendor-categories', function () {
+    return response()->json(
+        DB::table('vendor_categories')->select('id', 'name')->orderBy('name')->get()
+    );
 });
 
 Route::post('/forgot-password', function (Request $request) {
@@ -85,6 +105,6 @@ Route::get('/v1/test-email', function () {
 
     return response()->json([
         'status' => 'success',
-        'message' => 'Test email queued successfully!'
+        'message' => 'Test email queued successfully!',
     ]);
 });

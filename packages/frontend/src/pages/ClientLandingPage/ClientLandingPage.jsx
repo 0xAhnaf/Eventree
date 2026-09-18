@@ -19,6 +19,15 @@ const validCategories = [
   "Event Management",
 ];
 
+const DEFAULT_PRICE_MAX = 50000;
+
+// vendor.price is stored as a display string like "৳15,000" — pull out
+// just the digits so it can be compared against the price filter.
+const parsePrice = (price) => {
+  const numeric = Number(String(price ?? "").replace(/[^0-9.]/g, ""));
+  return Number.isFinite(numeric) ? numeric : 0;
+};
+
 export default function ClientLandingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,6 +38,17 @@ export default function ClientLandingPage() {
 
   const [selectedCategories, setSelectedCategories] =
     useState(categoriesFromUrl);
+
+  const [appliedFilters, setAppliedFilters] = useState({
+    priceMax: DEFAULT_PRICE_MAX,
+    minRating: 0,
+    availabilityDate: "",
+  });
+
+  const handleApplyFilters = (filters) => {
+    setAppliedFilters(filters);
+    setCurrentPage(1);
+  };
 
   useEffect(() => {
     setSelectedCategories(categoriesFromUrl);
@@ -68,18 +88,27 @@ export default function ClientLandingPage() {
   };
 
   const filteredVendors = useMemo(() => {
-    if (selectedCategories.length === 0) {
-      return vendors;
-    }
+    return vendors.filter((vendor) => {
+      const matchesCategory =
+        selectedCategories.length === 0 ||
+        selectedCategories.some(
+          (category) =>
+            vendor.category?.trim().toLowerCase() ===
+            category.trim().toLowerCase(),
+        );
 
-    return vendors.filter((vendor) =>
-      selectedCategories.some(
-        (category) =>
-          vendor.category?.trim().toLowerCase() ===
-          category.trim().toLowerCase(),
-      ),
-    );
-  }, [selectedCategories]);
+      const matchesPrice = parsePrice(vendor.price) <= appliedFilters.priceMax;
+
+      const matchesRating =
+        appliedFilters.minRating === 0 ||
+        (vendor.rating ?? 0) >= appliedFilters.minRating;
+
+      // Note: vendors don't carry availability data yet, so the date
+      // picker doesn't filter results until that's added on the backend.
+
+      return matchesCategory && matchesPrice && matchesRating;
+    });
+  }, [selectedCategories, appliedFilters]);
 
   const lastIndex = currentPage * vendorsPerPage;
   const firstIndex = lastIndex - vendorsPerPage;
@@ -105,6 +134,10 @@ export default function ClientLandingPage() {
             selectedCategories={selectedCategories}
             onCategoryChange={handleCategoryChange}
             onAllServices={handleAllServices}
+            priceMax={appliedFilters.priceMax}
+            minRating={appliedFilters.minRating}
+            availabilityDate={appliedFilters.availabilityDate}
+            onApply={handleApplyFilters}
           />
 
           <main className="vendor-section-CLP">

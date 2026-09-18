@@ -1,38 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Banknote,
-  Building2,
-  Camera,
-  Check,
-  CheckCircle2,
-  ChevronRight,
-  Globe2,
-  ImagePlus,
-  LogOut,
-  Mail,
-  MapPin,
-  Phone,
-  Plus,
-  Sparkles,
-  Trash2,
-  Upload,
-  UserRound,
-} from "lucide-react";
-
-import eventreeLogo from "../../assets/eventree-logo2.png";
 import { useAuth } from "../../context/AuthContext.jsx";
 import {
   completeVendorOnboarding,
   createEmptyVendorProfile,
   isVendorOnboardingRequired,
-  loadVendorOnboardingDraft,
   loadVendorProfile,
-  saveVendorOnboardingDraft,
-  VENDOR_CATEGORIES,
 } from "../../utils/vendorProfileStorage.js";
+import { markVendorPaymentRequired } from "../../utils/vendorPaymentStorage.js";
+
+import OnboardingHeader from "./components/OnboardingHeader";
+import OnboardingSidebar from "./components/OnboardingSidebar";
+import OnboardingFooter from "./components/OnboardingFooter";
+import BusinessStep from "./components/BusinessStep";
+import ContactStep from "./components/ContactStep";
+import HighlightsStep from "./components/HighlightsStep";
+import ServicesStep from "./components/ServicesStep";
+import ReviewStep from "./components/ReviewStep";
+
 import "./VendorOnboarding.css";
 
 const onboardingSteps = [
@@ -60,82 +45,64 @@ const onboardingSteps = [
 
 const lastStepIndex = onboardingSteps.length - 1;
 
+const backendFieldToFrontend = {
+  business_name: "businessName",
+  category_id: "category",
+  description: "description",
+  city: "location",
+  full_address: "fullAddress",
+  business_email: "email",
+  phone: "phone",
+  website: "website",
+  manager_name: "managerName",
+  years_of_experience: "yearsExperience",
+  events_completed: "eventsCompleted",
+  starting_price: "startingPrice",
+};
+
 const readImageFile = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
-
     reader.onload = () => resolve(reader.result);
     reader.onerror = () => reject(new Error("Unable to read image file."));
     reader.readAsDataURL(file);
   });
 
-const isValidEmail = (value) => /^\S+@\S+\.\S+$/.test(value.trim());
-
-const isValidWebsite = (value) => {
+const isValidEmail = (val) => /^\S+@\S+\.\S+$/.test(val.trim());
+const isValidWebsite = (val) => {
   try {
-    const websiteUrl = new URL(value.trim());
-    return ["http:", "https:"].includes(websiteUrl.protocol);
+    const url = new URL(val.trim());
+    return ["http:", "https:"].includes(url.protocol);
   } catch {
     return false;
   }
 };
 
 const getStepErrors = (stepIndex, profile) => {
-  const stepErrors = {};
-
+  const errors = {};
   if (stepIndex === 0) {
-    if (!profile.businessName.trim()) {
-      stepErrors.businessName = "Business name is required.";
-    }
-
-    if (!profile.category.trim()) {
-      stepErrors.category = "Vendor category is required.";
-    }
-
-    if (!profile.description.trim()) {
-      stepErrors.description = "Business description is required.";
-    }
+    if (!profile.businessName.trim())
+      errors.businessName = "Business name is required.";
+    if (!profile.categoryId)
+      errors.category = "Vendor category is required.";
+    if (!profile.description.trim())
+      errors.description = "Business description is required.";
   }
-
   if (stepIndex === 1) {
-    if (!profile.location.trim()) {
-      stepErrors.location = "City or area is required.";
-    }
-
-    if (!profile.fullAddress.trim()) {
-      stepErrors.fullAddress = "Full address is required.";
-    }
-
-    if (!profile.email.trim()) {
-      stepErrors.email = "Business email is required.";
-    } else if (!isValidEmail(profile.email)) {
-      stepErrors.email = "Enter a valid email address.";
-    }
-
-    if (!profile.phone.trim()) {
-      stepErrors.phone = "Phone number is required.";
-    }
-
-    if (!profile.website.trim()) {
-      stepErrors.website = "Website is required.";
-    } else if (!isValidWebsite(profile.website)) {
-      stepErrors.website = "Use a full URL, for example https://example.com.";
-    }
-
-    if (!profile.managerName.trim()) {
-      stepErrors.managerName = "Manager or contact person is required.";
-    }
+    if (!profile.location.trim()) errors.location = "City or area is required.";
+    if (!profile.fullAddress.trim())
+      errors.fullAddress = "Full address is required.";
+    if (!profile.email.trim()) errors.email = "Business email is required.";
+    else if (!isValidEmail(profile.email))
+      errors.email = "Enter a valid email address.";
+    if (!profile.phone.trim()) errors.phone = "Phone number is required.";
+    if (!profile.website.trim()) errors.website = "Website is required.";
+    else if (!isValidWebsite(profile.website))
+      errors.website = "Use a full URL, for example https://example.com.";
+    if (!profile.managerName.trim())
+      errors.managerName = "Manager or contact person is required.";
   }
-
-  return stepErrors;
-};
-
-const formatPrice = (price) => {
-  if (!String(price || "").trim()) {
-    return "Not added";
-  }
-
-  return `৳${Number(price).toLocaleString("en-BD")}`;
+  return errors;
 };
 
 function VendorOnboarding() {
@@ -143,15 +110,6 @@ function VendorOnboarding() {
   const { user, logout } = useAuth();
 
   const initialOnboardingState = useMemo(() => {
-    const savedDraft = loadVendorOnboardingDraft(user);
-
-    if (savedDraft) {
-      return {
-        currentStep: Math.min(savedDraft.currentStep, lastStepIndex),
-        profile: savedDraft.profile,
-      };
-    }
-
     return {
       currentStep: 0,
       profile: loadVendorProfile(user, createEmptyVendorProfile(user)),
@@ -167,59 +125,55 @@ function VendorOnboarding() {
   const [pageMessage, setPageMessage] = useState("");
   const [imageMessage, setImageMessage] = useState("");
 
+  const [coverImageFile, setCoverImageFile] = useState(null);
+  const [portfolioImageFiles, setPortfolioImageFiles] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [categories, setCategories] = useState([]);
+  const [categoriesError, setCategoriesError] = useState("");
+
   useEffect(() => {
-    const draftTimer = window.setTimeout(() => {
-      try {
-        saveVendorOnboardingDraft(user, profile, currentStep);
-      } catch {
-        setPageMessage(
-          "Your changes are visible, but this browser could not save the latest draft.",
-        );
-      }
-    }, 250);
+    let isMounted = true;
+    fetch("http://127.0.0.1:8000/api/vendor-categories")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load categories.");
+        return res.json();
+      })
+      .then((data) => {
+        if (isMounted) setCategories(data);
+      })
+      .catch(() => {
+        if (isMounted)
+          setCategoriesError(
+            "Could not load vendor categories. Please refresh.",
+          );
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
-    return () => window.clearTimeout(draftTimer);
-  }, [currentStep, profile, user]);
-
-  if (!user || user.role !== "vendor") {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!isVendorOnboardingRequired(user)) {
+  if (!user || user.role !== "vendor") return <Navigate to="/login" replace />;
+  if (!isVendorOnboardingRequired(user))
     return <Navigate to="/vendor" replace />;
-  }
 
-  const currentStepDetails = onboardingSteps[currentStep];
   const progressPercentage = Math.round(
     ((currentStep + 1) / onboardingSteps.length) * 100,
   );
 
   const updateField = (field, value) => {
-    setProfile((currentProfile) => ({
-      ...currentProfile,
-      [field]: value,
-    }));
-    setErrors((currentErrors) => ({
-      ...currentErrors,
-      [field]: "",
-    }));
+    setProfile((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: "" }));
     setPageMessage("");
   };
 
-  const renderFieldError = (fieldName) =>
-    errors[fieldName] ? (
-      <span className="vob-field-error">{errors[fieldName]}</span>
-    ) : null;
-
   const validateAndContinue = () => {
     const stepErrors = getStepErrors(currentStep, profile);
-
     if (Object.keys(stepErrors).length) {
       setErrors(stepErrors);
       setPageMessage("Complete the highlighted required fields to continue.");
       return;
     }
-
     setErrors({});
     setPageMessage("");
     setCurrentStep((step) => Math.min(step + 1, lastStepIndex));
@@ -233,19 +187,18 @@ function VendorOnboarding() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const finishOnboarding = () => {
-    const businessErrors = getStepErrors(0, profile);
-    const contactErrors = getStepErrors(1, profile);
+  const finishOnboarding = async () => {
+    const bErrors = getStepErrors(0, profile);
+    const cErrors = getStepErrors(1, profile);
 
-    if (Object.keys(businessErrors).length) {
-      setErrors(businessErrors);
+    if (Object.keys(bErrors).length) {
+      setErrors(bErrors);
       setCurrentStep(0);
       setPageMessage("Complete the required business information first.");
       return;
     }
-
-    if (Object.keys(contactErrors).length) {
-      setErrors(contactErrors);
+    if (Object.keys(cErrors).length) {
+      setErrors(cErrors);
       setCurrentStep(1);
       setPageMessage(
         "Complete the required location and contact details first.",
@@ -253,25 +206,171 @@ function VendorOnboarding() {
       return;
     }
 
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    setPageMessage("");
+
     try {
-      completeVendorOnboarding(user, profile);
-      navigate("/vendor", { replace: true });
+      const token = localStorage.getItem("eventree_token");
+      const formData = new FormData();
+
+      formData.append("business_name", profile.businessName);
+      formData.append("category_id", profile.categoryId);
+      formData.append("description", profile.description);
+      formData.append("city", profile.location);
+      formData.append("full_address", profile.fullAddress);
+      formData.append("business_email", profile.email);
+      formData.append("phone", profile.phone);
+      formData.append("website", profile.website);
+      formData.append("manager_name", profile.managerName);
+
+      if (profile.yearsExperience !== "")
+        formData.append("years_of_experience", profile.yearsExperience);
+      if (profile.eventsCompleted !== "")
+        formData.append("events_completed", profile.eventsCompleted);
+      if (profile.startingPrice !== "")
+        formData.append("starting_price", profile.startingPrice);
+
+      if (coverImageFile) formData.append("cover_image", coverImageFile);
+      portfolioImageFiles.forEach((file) => {
+        formData.append("portfolio_images[]", file);
+      });
+
+      const response = await fetch("http://127.0.0.1:8000/api/vendor-profile", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      if (response.status === 201) {
+        const data = await response.json();
+        const images = Array.isArray(data.vendor_profile?.images)
+          ? data.vendor_profile.images
+          : [];
+
+        const coverImageUrl =
+          images.find((img) => img.image_type === "cover")?.image_url || "";
+        const portfolioUrls = images
+          .filter((img) => img.image_type === "portfolio")
+          .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+          .map((img) => img.image_url);
+
+        const validAmenities = profile.amenities.filter((a) => a.trim());
+        const validPackages = profile.packages
+          .filter(
+            (pkg) =>
+              pkg.name.trim() &&
+              pkg.price !== "" &&
+              !Number.isNaN(Number(pkg.price)),
+          )
+          .map((pkg) => ({
+            package_name: pkg.name.trim(),
+            description: pkg.features.length ? pkg.features.join("\n") : null,
+            price: Number(pkg.price),
+          }));
+
+        if (validAmenities.length || validPackages.length) {
+          try {
+            const detailsResponse = await fetch(
+              "http://127.0.0.1:8000/api/vendor-details",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  amenities: validAmenities,
+                  packages: validPackages,
+                }),
+              },
+            );
+
+            if (!detailsResponse.ok) {
+              console.error(
+                "Vendor amenities/packages could not be saved:",
+                await detailsResponse.text(),
+              );
+            }
+          } catch (detailsError) {
+            console.error("Vendor details request failed:", detailsError);
+          }
+        }
+
+        const savedProfile = {
+          ...profile,
+          coverImage: coverImageUrl,
+          portfolio: portfolioUrls,
+        };
+
+        completeVendorOnboarding(user, savedProfile);
+        markVendorPaymentRequired(user);
+        navigate("/vendor/payment", { replace: true });
+        return;
+      }
+
+      if (response.status === 422) {
+        const data = await response.json();
+        const backendErrors = data.errors || {};
+        const mappedErrors = {};
+        let firstErrorStep = null;
+
+        Object.entries(backendErrors).forEach(([backendField, messages]) => {
+          const baseField = backendField.replace(/\.\d+$/, "").replace("[]", "");
+
+          if (baseField === "cover_image" || baseField === "portfolio_images") {
+            setImageMessage(messages[0]);
+            firstErrorStep = firstErrorStep ?? 2;
+            return;
+          }
+
+          const frontendField = backendFieldToFrontend[baseField] || baseField;
+          mappedErrors[frontendField] = messages[0];
+
+          if (
+            ["businessName", "category", "description"].includes(frontendField)
+          ) {
+            firstErrorStep = firstErrorStep ?? 0;
+          } else {
+            firstErrorStep = firstErrorStep ?? 1;
+          }
+        });
+
+        setErrors(mappedErrors);
+        setPageMessage(
+          data.message || "Please fix the highlighted fields and try again.",
+        );
+        if (firstErrorStep !== null) setCurrentStep(firstErrorStep);
+        return;
+      }
+
+      if (response.status === 401) {
+        setPageMessage("Your session has expired. Please sign in again.");
+        await logout();
+        navigate("/login", { replace: true });
+        return;
+      }
+
+      setPageMessage(
+        "Something went wrong while saving your profile. Please try again.",
+      );
     } catch {
       setPageMessage(
-        "The profile could not be saved in this browser. Please try again.",
+        "Could not connect to the server. Please check your connection and try again.",
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (currentStep === lastStepIndex) {
       finishOnboarding();
-      return;
+    } else {
+      validateAndContinue();
     }
-
-    validateAndContinue();
   };
 
   const handleSignOut = async () => {
@@ -279,883 +378,174 @@ function VendorOnboarding() {
     navigate("/login", { replace: true });
   };
 
-  const handleCoverUpload = async (event) => {
-    const [selectedFile] = Array.from(event.target.files || []);
-
-    if (!selectedFile) {
-      return;
-    }
-
+  const handleCoverUpload = async (e) => {
+    const [file] = Array.from(e.target.files || []);
+    if (!file) return;
     try {
-      const imagePreview = await readImageFile(selectedFile);
-      updateField("coverImage", imagePreview);
+      const preview = await readImageFile(file);
+      updateField("coverImage", preview);
+      setCoverImageFile(file);
       setImageMessage("");
     } catch {
       setImageMessage("The selected cover image could not be loaded.");
     }
-
-    event.target.value = "";
+    e.target.value = "";
   };
 
-  const handlePortfolioUpload = async (event) => {
-    const selectedFiles = Array.from(event.target.files || []);
+  const removeCoverImage = () => {
+    updateField("coverImage", "");
+    setCoverImageFile(null);
+  };
 
-    if (!selectedFiles.length) {
-      return;
-    }
-
+  const handlePortfolioUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
     try {
-      const newImages = await Promise.all(selectedFiles.map(readImageFile));
-
-      setProfile((currentProfile) => ({
-        ...currentProfile,
-        portfolio: [...currentProfile.portfolio, ...newImages],
+      const newImages = await Promise.all(files.map(readImageFile));
+      setProfile((prev) => ({
+        ...prev,
+        portfolio: [...prev.portfolio, ...newImages],
       }));
+      setPortfolioImageFiles((prev) => [...prev, ...files]);
       setImageMessage("");
     } catch {
       setImageMessage("One or more portfolio images could not be loaded.");
     }
-
-    event.target.value = "";
+    e.target.value = "";
   };
 
-  const removePortfolioImage = (imageIndex) => {
-    setProfile((currentProfile) => ({
-      ...currentProfile,
-      portfolio: currentProfile.portfolio.filter(
-        (_, index) => index !== imageIndex,
-      ),
+  const removePortfolioImage = (idx) => {
+    setProfile((prev) => ({
+      ...prev,
+      portfolio: prev.portfolio.filter((_, i) => i !== idx),
     }));
+    setPortfolioImageFiles((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const addAmenity = () => {
     const newAmenity = amenityInput.trim();
-
-    if (!newAmenity) {
-      return;
-    }
-
-    const alreadyAdded = profile.amenities.some(
-      (amenity) => amenity.toLowerCase() === newAmenity.toLowerCase(),
-    );
-
-    if (alreadyAdded) {
+    if (!newAmenity) return;
+    if (
+      profile.amenities.some(
+        (a) => a.toLowerCase() === newAmenity.toLowerCase(),
+      )
+    ) {
       setAmenityInput("");
       return;
     }
-
-    setProfile((currentProfile) => ({
-      ...currentProfile,
-      amenities: [...currentProfile.amenities, newAmenity],
+    setProfile((prev) => ({
+      ...prev,
+      amenities: [...prev.amenities, newAmenity],
     }));
     setAmenityInput("");
   };
 
-  const removeAmenity = (amenityToRemove) => {
-    setProfile((currentProfile) => ({
-      ...currentProfile,
-      amenities: currentProfile.amenities.filter(
-        (amenity) => amenity !== amenityToRemove,
-      ),
+  const removeAmenity = (item) => {
+    setProfile((prev) => ({
+      ...prev,
+      amenities: prev.amenities.filter((a) => a !== item),
     }));
   };
 
   const addPackage = () => {
-    if (profile.packages.length >= 3) {
-      return;
-    }
-
-    setProfile((currentProfile) => ({
-      ...currentProfile,
+    if (profile.packages.length >= 3) return;
+    setProfile((prev) => ({
+      ...prev,
       packages: [
-        ...currentProfile.packages,
-        {
-          id: `package-${Date.now()}`,
-          name: "",
-          price: "",
-          features: [],
-        },
+        ...prev.packages,
+        { id: `package-${Date.now()}`, name: "", price: "", features: [] },
       ],
     }));
   };
 
-  const updatePackage = (packageIndex, field, value) => {
-    setProfile((currentProfile) => ({
-      ...currentProfile,
-      packages: currentProfile.packages.map((packageItem, index) =>
-        index === packageIndex
-          ? {
-              ...packageItem,
-              [field]: value,
-            }
-          : packageItem,
+  const updatePackage = (idx, field, value) => {
+    setProfile((prev) => ({
+      ...prev,
+      packages: prev.packages.map((pkg, i) =>
+        i === idx ? { ...pkg, [field]: value } : pkg,
       ),
     }));
   };
 
-  const updatePackageFeatures = (packageIndex, value) => {
+  const updatePackageFeatures = (idx, value) => {
     updatePackage(
-      packageIndex,
+      idx,
       "features",
       value
         .split("\n")
-        .map((feature) => feature.trim())
+        .map((f) => f.trim())
         .filter(Boolean),
     );
   };
 
-  const removePackage = (packageIndex) => {
-    setProfile((currentProfile) => ({
-      ...currentProfile,
-      packages: currentProfile.packages.filter(
-        (_, index) => index !== packageIndex,
-      ),
+  const removePackage = (idx) => {
+    setProfile((prev) => ({
+      ...prev,
+      packages: prev.packages.filter((_, i) => i !== idx),
     }));
   };
 
-  const renderBusinessStep = () => (
-    <div className="vob-step-content">
-      <div className="vob-step-intro">
-        <span className="vob-step-icon">
-          <Building2 size={23} />
-        </span>
-        <div>
-          <h2>Tell us about your business</h2>
-          <p>
-            These required details will appear in your vendor banner, header,
-            and About section.
-          </p>
-        </div>
-      </div>
-
-      <div className="vob-field-grid">
-        <label className="vob-field">
-          <span>
-            Business name <b>*</b>
-          </span>
-          <input
-            className={errors.businessName ? "vob-input-invalid" : ""}
-            type="text"
-            value={profile.businessName}
-            onChange={(event) =>
-              updateField("businessName", event.target.value)
-            }
-            placeholder="Enter your business name"
-            autoComplete="organization"
-          />
-          {renderFieldError("businessName")}
-        </label>
-
-        <label className="vob-field">
-          <span>
-            Vendor category <b>*</b>
-          </span>
-          <select
-            className={errors.category ? "vob-input-invalid" : ""}
-            value={profile.category}
-            onChange={(event) => updateField("category", event.target.value)}
-          >
-            <option value="">Select a vendor category</option>
-            {VENDOR_CATEGORIES.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-          {renderFieldError("category")}
-        </label>
-
-        <label className="vob-field vob-field-full">
-          <span>
-            Business description <b>*</b>
-          </span>
-          <textarea
-            className={errors.description ? "vob-input-invalid" : ""}
-            rows="6"
-            maxLength="600"
-            value={profile.description}
-            onChange={(event) => updateField("description", event.target.value)}
-            placeholder="Describe your services, style, and experience"
-          />
-          <div className="vob-field-meta">
-            {renderFieldError("description")}
-            <small>{profile.description.length}/600 characters</small>
-          </div>
-        </label>
-      </div>
-    </div>
-  );
-
-  const renderContactStep = () => (
-    <div className="vob-step-content">
-      <div className="vob-step-intro">
-        <span className="vob-step-icon">
-          <MapPin size={23} />
-        </span>
-        <div>
-          <h2>Add your location and contact details</h2>
-          <p>
-            All fields in this step are required. You can edit them later from
-            Business Profile.
-          </p>
-        </div>
-      </div>
-
-      <div className="vob-field-grid">
-        <label className="vob-field">
-          <span>
-            City / area <b>*</b>
-          </span>
-          <div
-            className={`vob-input-with-icon ${errors.location ? "vob-input-invalid" : ""}`}
-          >
-            <MapPin size={17} />
-            <input
-              type="text"
-              value={profile.location}
-              onChange={(event) => updateField("location", event.target.value)}
-              placeholder="Example: Dhaka, BD"
-              autoComplete="address-level2"
-            />
-          </div>
-          {renderFieldError("location")}
-        </label>
-
-        <label className="vob-field">
-          <span>
-            Full address <b>*</b>
-          </span>
-          <input
-            className={errors.fullAddress ? "vob-input-invalid" : ""}
-            type="text"
-            value={profile.fullAddress}
-            onChange={(event) => updateField("fullAddress", event.target.value)}
-            placeholder="Enter your business address"
-            autoComplete="street-address"
-          />
-          {renderFieldError("fullAddress")}
-        </label>
-
-        <label className="vob-field">
-          <span>
-            Business email <b>*</b>
-          </span>
-          <div
-            className={`vob-input-with-icon ${errors.email ? "vob-input-invalid" : ""}`}
-          >
-            <Mail size={17} />
-            <input
-              type="email"
-              value={profile.email}
-              onChange={(event) => updateField("email", event.target.value)}
-              placeholder="business@example.com"
-              autoComplete="email"
-            />
-          </div>
-          {renderFieldError("email")}
-        </label>
-
-        <label className="vob-field">
-          <span>
-            Phone number <b>*</b>
-          </span>
-          <div
-            className={`vob-input-with-icon ${errors.phone ? "vob-input-invalid" : ""}`}
-          >
-            <Phone size={17} />
-            <input
-              type="tel"
-              value={profile.phone}
-              onChange={(event) => updateField("phone", event.target.value)}
-              placeholder="+880 1XXXXXXXXX"
-              autoComplete="tel"
-            />
-          </div>
-          {renderFieldError("phone")}
-        </label>
-
-        <label className="vob-field">
-          <span>
-            Website <b>*</b>
-          </span>
-          <div
-            className={`vob-input-with-icon ${errors.website ? "vob-input-invalid" : ""}`}
-          >
-            <Globe2 size={17} />
-            <input
-              type="url"
-              value={profile.website}
-              onChange={(event) => updateField("website", event.target.value)}
-              placeholder="https://yourwebsite.com"
-              autoComplete="url"
-            />
-          </div>
-          {renderFieldError("website")}
-        </label>
-
-        <label className="vob-field">
-          <span>
-            Manager / contact person <b>*</b>
-          </span>
-          <div
-            className={`vob-input-with-icon ${errors.managerName ? "vob-input-invalid" : ""}`}
-          >
-            <UserRound size={17} />
-            <input
-              type="text"
-              value={profile.managerName}
-              onChange={(event) =>
-                updateField("managerName", event.target.value)
-              }
-              placeholder="Enter contact person name"
-              autoComplete="name"
-            />
-          </div>
-          {renderFieldError("managerName")}
-        </label>
-      </div>
-    </div>
-  );
-
-  const renderHighlightsStep = () => (
-    <div className="vob-step-content">
-      <div className="vob-step-intro">
-        <span className="vob-step-icon">
-          <Sparkles size={23} />
-        </span>
-        <div>
-          <div className="vob-heading-with-badge">
-            <h2>Make your public profile stand out</h2>
-            <span>Optional</span>
-          </div>
-          <p>
-            Add these now, skip them, or update them later from Business
-            Profile.
-          </p>
-        </div>
-      </div>
-
-      <div className="vob-field-grid vob-three-column-grid">
-        <label className="vob-field">
-          <span>Years of experience</span>
-          <input
-            type="number"
-            min="0"
-            value={profile.yearsExperience}
-            onChange={(event) =>
-              updateField("yearsExperience", event.target.value)
-            }
-            placeholder="Example: 5"
-          />
-        </label>
-
-        <label className="vob-field">
-          <span>Events completed</span>
-          <input
-            type="number"
-            min="0"
-            value={profile.eventsCompleted}
-            onChange={(event) =>
-              updateField("eventsCompleted", event.target.value)
-            }
-            placeholder="Example: 120"
-          />
-        </label>
-
-        <label className="vob-field">
-          <span>Starting price</span>
-          <div className="vob-input-with-icon">
-            <Banknote size={17} />
-            <input
-              type="number"
-              min="0"
-              value={profile.startingPrice}
-              onChange={(event) =>
-                updateField("startingPrice", event.target.value)
-              }
-              placeholder="Amount in Taka"
-            />
-          </div>
-        </label>
-      </div>
-
-      <div className="vob-media-grid">
-        <section className="vob-sub-card">
-          <div className="vob-sub-card-heading">
-            <span className="vob-small-icon">
-              <Camera size={19} />
-            </span>
-            <div>
-              <h3>Cover image</h3>
-              <p>Optional · Recommended ratio 16:6</p>
-            </div>
-          </div>
-
-          {profile.coverImage ? (
-            <div className="vob-cover-preview">
-              <img src={profile.coverImage} alt="Business cover preview" />
-              <button
-                type="button"
-                onClick={() => updateField("coverImage", "")}
-              >
-                <Trash2 size={16} />
-                Remove
-              </button>
-            </div>
-          ) : (
-            <label className="vob-cover-upload">
-              <Upload size={23} />
-              <strong>Add cover image</strong>
-              <span>JPG, PNG or WEBP</span>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleCoverUpload}
-              />
-            </label>
-          )}
-        </section>
-
-        <section className="vob-sub-card">
-          <div className="vob-sub-card-heading">
-            <span className="vob-small-icon">
-              <ImagePlus size={19} />
-            </span>
-            <div>
-              <h3>Portfolio gallery</h3>
-              <p>Optional · Add photos of your work</p>
-            </div>
-          </div>
-
-          <div className="vob-portfolio-grid">
-            {profile.portfolio.map((image, imageIndex) => (
-              <div
-                className="vob-portfolio-item"
-                key={`${imageIndex}-${image.slice(-20)}`}
-              >
-                <img src={image} alt={`Portfolio ${imageIndex + 1}`} />
-                <button
-                  type="button"
-                  aria-label={`Remove portfolio image ${imageIndex + 1}`}
-                  onClick={() => removePortfolioImage(imageIndex)}
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            ))}
-
-            <label className="vob-portfolio-upload">
-              <ImagePlus size={21} />
-              <span>Add photos</span>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handlePortfolioUpload}
-              />
-            </label>
-          </div>
-        </section>
-      </div>
-
-      {imageMessage && <p className="vob-inline-message">{imageMessage}</p>}
-
-      <p className="vob-storage-note">
-        Images are optional. You can skip them now and add or replace them later
-        from Business Profile.
-      </p>
-    </div>
-  );
-
-  const renderServicesStep = () => (
-    <div className="vob-step-content">
-      <div className="vob-step-intro">
-        <span className="vob-step-icon">
-          <Check size={23} />
-        </span>
-        <div>
-          <div className="vob-heading-with-badge">
-            <h2>Add services and pricing packages</h2>
-            <span>Optional</span>
-          </div>
-          <p>
-            Both sections can be skipped now and completed later from Business
-            Profile.
-          </p>
-        </div>
-      </div>
-
-      <section className="vob-sub-card vob-service-card">
-        <div className="vob-sub-card-heading">
-          <span className="vob-small-icon">
-            <Check size={19} />
-          </span>
-          <div>
-            <h3>Key amenities and services</h3>
-            <p>Add one service at a time.</p>
-          </div>
-        </div>
-
-        <div className="vob-add-row">
-          <input
-            type="text"
-            value={amenityInput}
-            onChange={(event) => setAmenityInput(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                event.preventDefault();
-                addAmenity();
-              }
-            }}
-            placeholder="Example: On-site parking"
-          />
-          <button type="button" onClick={addAmenity}>
-            <Plus size={17} />
-            Add amenity
-          </button>
-        </div>
-
-        {profile.amenities.length ? (
-          <div className="vob-chip-list">
-            {profile.amenities.map((amenity) => (
-              <span className="vob-chip" key={amenity}>
-                <Check size={14} />
-                {amenity}
-                <button
-                  type="button"
-                  aria-label={`Remove ${amenity}`}
-                  onClick={() => removeAmenity(amenity)}
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="vob-empty-message">No amenities added yet.</p>
-        )}
-      </section>
-
-      <section className="vob-sub-card vob-package-section">
-        <div className="vob-package-section-heading">
-          <div className="vob-sub-card-heading">
-            <span className="vob-small-icon">
-              <Banknote size={19} />
-            </span>
-            <div>
-              <h3>Pricing packages</h3>
-              <p>Add up to three packages.</p>
-            </div>
-          </div>
-
-          {profile.packages.length < 3 && (
-            <button
-              type="button"
-              className="vob-add-package-button"
-              onClick={addPackage}
-            >
-              <Plus size={17} />
-              Add package ({profile.packages.length}/3)
-            </button>
-          )}
-        </div>
-
-        {profile.packages.length ? (
-          <div className="vob-package-grid">
-            {profile.packages.map((packageItem, packageIndex) => (
-              <article className="vob-package-card" key={packageItem.id}>
-                <div className="vob-package-header">
-                  <span>Package {packageIndex + 1}</span>
-                  <button
-                    type="button"
-                    aria-label={`Remove package ${packageIndex + 1}`}
-                    onClick={() => removePackage(packageIndex)}
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                </div>
-
-                <label className="vob-field">
-                  <span>Package name</span>
-                  <input
-                    type="text"
-                    value={packageItem.name}
-                    onChange={(event) =>
-                      updatePackage(packageIndex, "name", event.target.value)
-                    }
-                    placeholder="Example: General Package"
-                  />
-                </label>
-
-                <label className="vob-field">
-                  <span>Package price</span>
-                  <input
-                    type="number"
-                    min="0"
-                    value={packageItem.price}
-                    onChange={(event) =>
-                      updatePackage(packageIndex, "price", event.target.value)
-                    }
-                    placeholder="Amount in Taka"
-                  />
-                </label>
-
-                <label className="vob-field">
-                  <span>Package features</span>
-                  <textarea
-                    rows="5"
-                    value={packageItem.features.join("\n")}
-                    onChange={(event) =>
-                      updatePackageFeatures(packageIndex, event.target.value)
-                    }
-                    placeholder="Write one feature per line"
-                  />
-                </label>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="vob-empty-package">
-            <Banknote size={26} />
-            <p>No pricing packages added.</p>
-            <span>You can add them now or later from Business Profile.</span>
-          </div>
-        )}
-      </section>
-    </div>
-  );
-
-  const renderReviewStep = () => (
-    <div className="vob-step-content">
-      <div className="vob-step-intro">
-        <span className="vob-step-icon vob-success-icon">
-          <CheckCircle2 size={24} />
-        </span>
-        <div>
-          <h2>Your required information is ready</h2>
-          <p>
-            Review the summary below. Optional items can still be added from
-            Business Profile after setup.
-          </p>
-        </div>
-      </div>
-
-      <div className="vob-review-grid">
-        <section className="vob-review-card vob-review-card-wide">
-          <div className="vob-review-heading">
-            <Building2 size={19} />
-            <h3>Business information</h3>
-          </div>
-          <dl>
-            <div>
-              <dt>Business name</dt>
-              <dd>{profile.businessName}</dd>
-            </div>
-            <div>
-              <dt>Category</dt>
-              <dd>{profile.category}</dd>
-            </div>
-            <div className="vob-review-full-row">
-              <dt>Description</dt>
-              <dd>{profile.description}</dd>
-            </div>
-          </dl>
-          <button type="button" onClick={() => setCurrentStep(0)}>
-            Edit business information
-          </button>
-        </section>
-
-        <section className="vob-review-card vob-review-card-wide">
-          <div className="vob-review-heading">
-            <MapPin size={19} />
-            <h3>Location and contact</h3>
-          </div>
-          <dl>
-            <div>
-              <dt>City / area</dt>
-              <dd>{profile.location}</dd>
-            </div>
-            <div>
-              <dt>Full address</dt>
-              <dd>{profile.fullAddress}</dd>
-            </div>
-            <div>
-              <dt>Email</dt>
-              <dd>{profile.email}</dd>
-            </div>
-            <div>
-              <dt>Phone</dt>
-              <dd>{profile.phone}</dd>
-            </div>
-            <div>
-              <dt>Website</dt>
-              <dd>{profile.website}</dd>
-            </div>
-            <div>
-              <dt>Contact person</dt>
-              <dd>{profile.managerName}</dd>
-            </div>
-          </dl>
-          <button type="button" onClick={() => setCurrentStep(1)}>
-            Edit contact details
-          </button>
-        </section>
-
-        <section className="vob-review-card">
-          <div className="vob-review-heading">
-            <Sparkles size={19} />
-            <h3>Optional highlights</h3>
-          </div>
-          <ul>
-            <li>
-              <span>Experience</span>
-              <strong>
-                {profile.yearsExperience
-                  ? `${profile.yearsExperience} years`
-                  : "Not added"}
-              </strong>
-            </li>
-            <li>
-              <span>Events completed</span>
-              <strong>{profile.eventsCompleted || "Not added"}</strong>
-            </li>
-            <li>
-              <span>Starting price</span>
-              <strong>{formatPrice(profile.startingPrice)}</strong>
-            </li>
-            <li>
-              <span>Cover image</span>
-              <strong>{profile.coverImage ? "Added" : "Not added"}</strong>
-            </li>
-            <li>
-              <span>Portfolio photos</span>
-              <strong>{profile.portfolio.length}</strong>
-            </li>
-          </ul>
-          <button type="button" onClick={() => setCurrentStep(2)}>
-            Edit profile highlights
-          </button>
-        </section>
-
-        <section className="vob-review-card">
-          <div className="vob-review-heading">
-            <Banknote size={19} />
-            <h3>Optional services</h3>
-          </div>
-          <ul>
-            <li>
-              <span>Amenities</span>
-              <strong>{profile.amenities.length}</strong>
-            </li>
-            <li>
-              <span>Pricing packages</span>
-              <strong>{profile.packages.length}</strong>
-            </li>
-          </ul>
-          <button type="button" onClick={() => setCurrentStep(3)}>
-            Edit services and packages
-          </button>
-        </section>
-      </div>
-
-      <div className="vob-ready-banner">
-        <CheckCircle2 size={22} />
-        <div>
-          <strong>Ready to continue to your vendor dashboard</strong>
-          <p>
-            Your onboarding data will also appear in Dashboard → Business
-            Profile.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderCurrentStep = () => {
+  const renderStep = () => {
     switch (currentStep) {
       case 0:
-        return renderBusinessStep();
+        return (
+          <BusinessStep
+            profile={profile}
+            errors={errors}
+            updateField={updateField}
+            categories={categories}
+            categoriesError={categoriesError}
+          />
+        );
       case 1:
-        return renderContactStep();
+        return (
+          <ContactStep
+            profile={profile}
+            errors={errors}
+            updateField={updateField}
+          />
+        );
       case 2:
-        return renderHighlightsStep();
+        return (
+          <HighlightsStep
+            profile={profile}
+            updateField={updateField}
+            handleCoverUpload={handleCoverUpload}
+            removeCoverImage={removeCoverImage}
+            handlePortfolioUpload={handlePortfolioUpload}
+            removePortfolioImage={removePortfolioImage}
+            imageMessage={imageMessage}
+          />
+        );
       case 3:
-        return renderServicesStep();
+        return (
+          <ServicesStep
+            profile={profile}
+            amenityInput={amenityInput}
+            setAmenityInput={setAmenityInput}
+            addAmenity={addAmenity}
+            removeAmenity={removeAmenity}
+            addPackage={addPackage}
+            updatePackage={updatePackage}
+            updatePackageFeatures={updatePackageFeatures}
+            removePackage={removePackage}
+          />
+        );
       default:
-        return renderReviewStep();
+        return <ReviewStep profile={profile} setCurrentStep={setCurrentStep} />;
     }
   };
 
   return (
     <div className="vob-page">
-      <header className="vob-header">
-        <div className="vob-brand">
-          <img src={eventreeLogo} alt="Eventree" />
-          <span>Eventree</span>
-        </div>
-
-        <div className="vob-account">
-          <div>
-            <span>Signed in as</span>
-            <strong>{user.email}</strong>
-          </div>
-          <button type="button" onClick={handleSignOut}>
-            <LogOut size={17} />
-            Sign out
-          </button>
-        </div>
-      </header>
+      <OnboardingHeader userEmail={user.email} onSignOut={handleSignOut} />
 
       <div className="vob-layout">
-        <aside className="vob-sidebar">
-          <span className="vob-eyebrow">VENDOR SETUP</span>
-          <h1>Let’s set up your business profile</h1>
-          <p>
-            Complete the required details once. You can manage everything later
-            from your vendor dashboard.
-          </p>
-
-          <div className="vob-progress-summary">
-            <div>
-              <span>
-                Step {currentStep + 1} of {onboardingSteps.length}
-              </span>
-              <strong>{progressPercentage}%</strong>
-            </div>
-            <div
-              className="vob-progress-track"
-              role="progressbar"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              aria-valuenow={progressPercentage}
-            >
-              <span style={{ width: `${progressPercentage}%` }} />
-            </div>
-          </div>
-
-          <ol className="vob-step-list">
-            {onboardingSteps.map((step, stepIndex) => {
-              const isComplete = stepIndex < currentStep;
-              const isActive = stepIndex === currentStep;
-
-              return (
-                <li
-                  className={`${isActive ? "vob-step-active" : ""} ${isComplete ? "vob-step-complete" : ""}`}
-                  key={step.title}
-                >
-                  <span className="vob-step-number">
-                    {isComplete ? <Check size={16} /> : stepIndex + 1}
-                  </span>
-                  <div>
-                    <strong>{step.title}</strong>
-                    <p>{step.description}</p>
-                  </div>
-                  {isActive && <ChevronRight size={18} />}
-                </li>
-              );
-            })}
-          </ol>
-        </aside>
+        <OnboardingSidebar
+          steps={onboardingSteps}
+          currentStep={currentStep}
+          progressPercentage={progressPercentage}
+        />
 
         <main className="vob-main">
           <form className="vob-form-card" onSubmit={handleSubmit} noValidate>
@@ -1163,7 +553,7 @@ function VendorOnboarding() {
               <span>
                 Step {currentStep + 1} of {onboardingSteps.length}
               </span>
-              <strong>{currentStepDetails.title}</strong>
+              <strong>{onboardingSteps[currentStep].title}</strong>
               <div className="vob-progress-track">
                 <span style={{ width: `${progressPercentage}%` }} />
               </div>
@@ -1175,47 +565,15 @@ function VendorOnboarding() {
               </div>
             )}
 
-            {renderCurrentStep()}
+            {renderStep()}
 
-            <div className="vob-form-footer">
-              <div>
-                {currentStep > 0 && (
-                  <button
-                    type="button"
-                    className="vob-back-button"
-                    onClick={goBack}
-                  >
-                    <ArrowLeft size={18} />
-                    Back
-                  </button>
-                )}
-              </div>
-
-              <div className="vob-forward-actions">
-                {currentStep >= 2 && currentStep < lastStepIndex && (
-                  <button
-                    type="button"
-                    className="vob-skip-button"
-                    onClick={validateAndContinue}
-                  >
-                    Skip for now
-                  </button>
-                )}
-
-                <button type="submit" className="vob-continue-button">
-                  {currentStep === lastStepIndex
-                    ? "Finish setup"
-                    : currentStep >= 2
-                      ? "Save and continue"
-                      : "Continue"}
-                  {currentStep === lastStepIndex ? (
-                    <CheckCircle2 size={18} />
-                  ) : (
-                    <ArrowRight size={18} />
-                  )}
-                </button>
-              </div>
-            </div>
+            <OnboardingFooter
+              currentStep={currentStep}
+              lastStepIndex={lastStepIndex}
+              goBack={goBack}
+              validateAndContinue={validateAndContinue}
+              isSubmitting={isSubmitting}
+            />
           </form>
         </main>
       </div>

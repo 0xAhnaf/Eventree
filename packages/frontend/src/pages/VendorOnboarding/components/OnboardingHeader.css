@@ -1,0 +1,74 @@
+.vob-header {
+  background: var(--vob-card-bg);
+  border-bottom: 1px solid var(--vob-border);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vob-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vob-brand img {
+  height: 36px;
+  width: auto;
+}
+
+.vob-brand span {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--vob-green);
+}
+
+.vob-account {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.vob-account div {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  font-size: 0.85rem;
+}
+
+.vob-account span {
+  color: var(--vob-subtle);
+}
+
+.vob-account strong {
+  color: var(--vob-dark);
+}
+
+.vob-account button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--vob-border);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--vob-slate);
+  cursor: pointer;
+  transition: var(--vob-transition);
+}
+
+.vob-account button:hover {
+  background: var(--vob-cream-soft);
+  color: var(--vob-dark);
+}
+
+@media (max-width: 860px) {
+  .vob-header {
+    padding: 14px 20px;
+  }
+  .vob-account div {
+    display: none;
+  }
+}

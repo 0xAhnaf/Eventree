@@ -1,4 +1,4 @@
-import "../../pages/SignUp/SignUp.css";
+import "../../pages/Signup/Signup.css";
 
 function VendorTypeDropdown({ value, onChange, required = false }) {
   return (
