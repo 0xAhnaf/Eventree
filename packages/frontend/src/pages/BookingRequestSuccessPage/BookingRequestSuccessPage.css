@@ -31,7 +31,7 @@
   margin: 0 auto 25px;
 }
 
-.brs-progress-ring svg {
+.brs-progress-ring > svg {
   width: 100%;
   height: 100%;
   display: block;
