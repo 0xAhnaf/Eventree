@@ -13,7 +13,7 @@ const DashboardHeader = ({
   showSearch = true,
 }) => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef(null);
@@ -95,7 +95,8 @@ const DashboardHeader = ({
         <button
           type="button"
           className="notification-btn"
-          aria-label="Notifications"
+          aria-label="Open pending vendor approvals"
+          onClick={() => navigate("/admin/vendors")}
         >
           <Bell size={20} />
           <span className="notification-dot"></span>
@@ -110,10 +111,10 @@ const DashboardHeader = ({
             aria-expanded={isProfileMenuOpen}
             onClick={() => setIsProfileMenuOpen((current) => !current)}
           >
-            <span className="admin-avatar">A</span>
+            <span className="admin-avatar">{user?.name?.charAt(0)?.toUpperCase() || "A"}</span>
 
             <span className="admin-info">
-              <span className="admin-info-name">Admin</span>
+              <span className="admin-info-name">{user?.name || "Admin"}</span>
               <span className="admin-info-brand">EVENTREE</span>
             </span>
           </button>

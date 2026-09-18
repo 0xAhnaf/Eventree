@@ -11,8 +11,13 @@ import VendorWatchlist from "./components/VendorWatchlist/VendorWatchlist";
 import PaymentAlerts from "./components/PaymentAlerts/PaymentAlerts";
 import CustomersPage from "./pages/CustomersPage/CustomersPage";
 import VendorsPage from "./pages/VendorsPage/VendorsPage";
+import BookingsPage from "./pages/BookingsPage/BookingsPage";
+import PaymentsPage from "./pages/PaymentsPage/PaymentsPage";
+import ReportsPage from "./pages/ReportsPage/ReportsPage";
+import { getAdminDashboard } from "./services/adminManagementService";
 
 import "./AdminDashboard.css";
+import "./AdminModules.css";
 
 const pageDetails = {
   "/admin": {
@@ -36,7 +41,7 @@ const pageDetails = {
   "/admin/payments": {
     title: "Payments",
     subtitle:
-      "Review payouts, refunds, completed payments, and failed transactions.",
+      "Review completed vendor registration payments and revenue.",
   },
   "/admin/reports": {
     title: "Reports & Analytics",
@@ -44,19 +49,11 @@ const pageDetails = {
   },
 };
 
-const AdminModulePlaceholder = ({ title, description }) => {
-  return (
-    <section className="dashboard-section dashboard-full-width">
-      <div className="dashboard-main-card admin-module-placeholder">
-        <h2>{title}</h2>
-        <p>{description}</p>
-      </div>
-    </section>
-  );
-};
-
 const AdminDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [dashboardLoading, setDashboardLoading] = useState(false);
+  const [dashboardError, setDashboardError] = useState("");
   const location = useLocation();
 
   const currentPage = pageDetails[location.pathname];
@@ -77,6 +74,17 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     setIsSidebarOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname !== "/admin") return;
+
+    setDashboardLoading(true);
+    setDashboardError("");
+    getAdminDashboard()
+      .then(setDashboardData)
+      .catch((error) => setDashboardError(error.message))
+      .finally(() => setDashboardLoading(false));
   }, [location.pathname]);
 
   useEffect(() => {
@@ -113,28 +121,36 @@ const AdminDashboard = () => {
   const renderPageContent = () => {
     switch (location.pathname) {
       case "/admin":
+        if (dashboardError) {
+          return <div className="management-error">{dashboardError}</div>;
+        }
+
+        if (dashboardLoading || !dashboardData) {
+          return <div className="management-loading">Loading dashboard...</div>;
+        }
+
         return (
           <>
             {/* Statistics */}
             <section className="dashboard-section overview-section">
-              <OverviewCards />
+              <OverviewCards metrics={dashboardData.metrics} />
             </section>
 
             {/* Analytics Row */}
             <section className="dashboard-section dashboard-two-column">
               <div className="dashboard-main-card">
-                <RevenueChart />
+                <RevenueChart data={dashboardData.monthlyRevenue} />
               </div>
 
               <div className="dashboard-side-card">
-                <PaymentAlerts />
+                <PaymentAlerts payments={dashboardData.recentPayments} />
               </div>
             </section>
 
             {/* Vendor Watchlist */}
             <section className="dashboard-section dashboard-full-width">
               <div className="dashboard-main-card dashboard-vendor-card">
-                <VendorWatchlist />
+                <VendorWatchlist vendors={dashboardData.vendorWatchlist} />
               </div>
             </section>
           </>
@@ -150,30 +166,13 @@ const AdminDashboard = () => {
         return <VendorsPage />;
 
       case "/admin/bookings":
-        return (
-          <AdminModulePlaceholder
-            title="Bookings Management"
-            description="The Bookings navigation is now connected and ready for the detailed booking-management interface."
-          />
-        );
+        return <BookingsPage />;
 
       case "/admin/payments":
-        return (
-          <section className="dashboard-section dashboard-full-width">
-            <div className="dashboard-main-card">
-              <PaymentAlerts />
-            </div>
-          </section>
-        );
+        return <PaymentsPage />;
 
       case "/admin/reports":
-        return (
-          <section className="dashboard-section dashboard-full-width">
-            <div className="dashboard-main-card">
-              <RevenueChart />
-            </div>
-          </section>
-        );
+        return <ReportsPage />;
 
       default:
         return <Navigate to="/admin" replace />;
@@ -202,7 +201,7 @@ const AdminDashboard = () => {
           subtitle={currentPage?.subtitle || pageDetails["/admin"].subtitle}
           onMenuClick={openSidebar}
           isSidebarOpen={isSidebarOpen}
-          showSearch={!["/admin/customers", "/admin/vendors"].includes(location.pathname)}
+          showSearch={false}
         />
 
         {renderPageContent()}

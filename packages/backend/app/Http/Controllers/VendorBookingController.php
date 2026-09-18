@@ -36,6 +36,7 @@ class VendorBookingController extends Controller
                     ->whereKey($validated['vendor_id'])
                     ->whereNotNull('onboarding_completed_at')
                     ->whereNotNull('registration_payment_completed_at')
+                    ->whereNotNull('admin_approved_at')
                     ->whereHas('user', fn ($query) => $query->where('role', 'vendor'))
                     ->lockForUpdate()
                     ->firstOrFail();

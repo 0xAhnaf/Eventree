@@ -76,3 +76,8 @@
     height: 245px;
   }
 }
+.revenue-chart-period {
+  color: #667085;
+  font-size: 12px;
+  font-weight: 700;
+}
