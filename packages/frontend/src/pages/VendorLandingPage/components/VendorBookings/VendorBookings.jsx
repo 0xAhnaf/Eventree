@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CalendarDays,
   Check,
@@ -14,12 +14,10 @@ import {
 } from "lucide-react";
 
 import {
-  DEMO_VENDOR_ID,
-  getVendorBookings,
+  fetchVendorBookings,
   updateVendorBookingStatus,
-  VENDOR_BOOKINGS_STORAGE_KEY,
   VENDOR_BOOKINGS_UPDATED_EVENT,
-} from "../../../../utils/vendorPortalStorage.js";
+} from "../../../../services/vendorApi.js";
 
 import "./VendorBookings.css";
 
@@ -64,32 +62,29 @@ const getStatusIcon = (status) => {
 function VendorBookings() {
   const [activeTab, setActiveTab] = useState("upcoming");
 
-  const [bookings, setBookings] = useState(() =>
-    getVendorBookings(DEMO_VENDOR_ID),
-  );
+  const [bookings, setBookings] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const loadBookings = useCallback(async () => {
+    try {
+      setErrorMessage("");
+      setBookings(await fetchVendorBookings());
+    } catch (error) {
+      setErrorMessage(error.message || "Could not load bookings.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const syncBookings = (event) => {
-      if (
-        event?.type === "storage" &&
-        event.key &&
-        event.key !== VENDOR_BOOKINGS_STORAGE_KEY
-      ) {
-        return;
-      }
-
-      setBookings(getVendorBookings(DEMO_VENDOR_ID));
-    };
-
-    window.addEventListener("storage", syncBookings);
-    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
+    loadBookings();
+    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
 
     return () => {
-      window.removeEventListener("storage", syncBookings);
-
-      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
+      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
     };
-  }, []);
+  }, [loadBookings]);
 
   const upcomingBookings = useMemo(
     () =>
@@ -126,8 +121,13 @@ function VendorBookings() {
   const displayedBookings =
     activeTab === "upcoming" ? upcomingBookings : completedBookings;
 
-  const handleBookingDecision = (bookingId, nextStatus) => {
-    updateVendorBookingStatus(bookingId, nextStatus);
+  const handleBookingDecision = async (bookingId, nextStatus) => {
+    try {
+      setErrorMessage("");
+      await updateVendorBookingStatus(bookingId, nextStatus);
+    } catch (error) {
+      setErrorMessage(error.message || "Booking status could not be updated.");
+    }
   };
 
   return (
@@ -196,7 +196,11 @@ function VendorBookings() {
           </div>
         </div>
 
-        {displayedBookings.length ? (
+        {errorMessage && <p className="vbk-empty-state">{errorMessage}</p>}
+
+        {isLoading ? (
+          <div className="vbk-empty-state">Loading bookings...</div>
+        ) : displayedBookings.length ? (
           <div className="vbk-list">
             {displayedBookings.map((booking) => (
               <article className="vbk-booking-card" key={booking.id}>

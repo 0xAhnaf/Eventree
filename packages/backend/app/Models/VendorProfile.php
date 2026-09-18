@@ -22,7 +22,18 @@ class VendorProfile extends Model
         'years_of_experience',
         'events_completed',
         'starting_price',
+        'onboarding_completed_at',
+        'registration_payment_completed_at',
+        'cover_image_id',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'onboarding_completed_at' => 'datetime',
+            'registration_payment_completed_at' => 'datetime',
+        ];
+    }
 
     public function user(): BelongsTo
     {
@@ -39,6 +50,11 @@ class VendorProfile extends Model
         return $this->hasMany(VendorImage::class);
     }
 
+    public function coverImage(): BelongsTo
+    {
+        return $this->belongsTo(VendorImage::class, 'cover_image_id');
+    }
+
     public function amenities(): HasMany
     {
         return $this->hasMany(VendorAmenity::class);
@@ -47,5 +63,15 @@ class VendorProfile extends Model
     public function packages(): HasMany
     {
         return $this->hasMany(VendorPackage::class);
+    }
+
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(VendorBooking::class);
+    }
+
+    public function blockedDates(): HasMany
+    {
+        return $this->hasMany(VendorBlockedDate::class);
     }
 }

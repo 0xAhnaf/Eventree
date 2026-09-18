@@ -25,7 +25,8 @@ function BusinessInformationSection({ profile, categories, onFieldChange }) {
           <span>Vendor category</span>
           <select
             value={profile.categoryId}
-            onChange={(event) => onFieldChange("categoryId", event.target.value)}
+            disabled
+            aria-label="Vendor category is fixed"
           >
             <option value="">Select a category</option>
             {categories.map((category) => (
@@ -34,6 +35,9 @@ function BusinessInformationSection({ profile, categories, onFieldChange }) {
               </option>
             ))}
           </select>
+          <small className="vbp-locked-field-note">
+            Category is fixed from vendor onboarding.
+          </small>
         </label>
 
         <label className="vbp-field vbp-field-full">

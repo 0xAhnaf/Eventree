@@ -11,6 +11,7 @@ import ProfileReadiness from "./components/ProfileReadiness.jsx";
 import ProfileSaveBar from "./components/ProfileSaveBar.jsx";
 import PublicHighlightsSection from "./components/PublicHighlightsSection.jsx";
 import PublicPreviewCard from "./components/PublicPreviewCard.jsx";
+import { getAmenitySuggestions } from "./utils/amenitySuggestions.js";
 import "./BusinessProfile.css";
 
 const API_BASE = "http://127.0.0.1:8000/api";
@@ -28,6 +29,7 @@ const createEmptyProfile = () => ({
   startingPrice: "",
   yearsExperience: "",
   eventsCompleted: "",
+  coverImageId: null,
   coverImage: "",
   portfolio: [],
   amenities: [],
@@ -36,7 +38,13 @@ const createEmptyProfile = () => ({
 
 const mapBackendProfileToFrontend = (vendorProfile) => {
   const images = Array.isArray(vendorProfile.images) ? vendorProfile.images : [];
-  const cover = images.find((img) => img.image_type === "cover");
+  const selectedCover = vendorProfile.cover_image_id
+    ? images.find(
+        (img) => String(img.id) === String(vendorProfile.cover_image_id),
+      )
+    : null;
+  const cover =
+    selectedCover || images.find((img) => img.image_type === "cover");
   const portfolioImages = images
     .filter((img) => img.image_type === "portfolio")
     .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
@@ -59,6 +67,7 @@ const mapBackendProfileToFrontend = (vendorProfile) => {
         : "",
     eventsCompleted:
       vendorProfile.events_completed != null ? String(vendorProfile.events_completed) : "",
+    coverImageId: cover?.id ?? null,
     coverImage: cover?.image_url || "",
     portfolio: portfolioImages.map((img) => ({ id: img.id, url: img.image_url })),
     amenities: Array.isArray(vendorProfile.amenities)
@@ -122,6 +131,10 @@ function BusinessProfile() {
   const selectedCategoryName =
     categories.find((category) => String(category.id) === String(profile.categoryId))
       ?.name || "";
+  const amenitySuggestions = useMemo(
+    () => getAmenitySuggestions(selectedCategoryName),
+    [selectedCategoryName],
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -186,18 +199,64 @@ function BusinessProfile() {
 
       const response = await fetch(`${API_BASE}/vendor-profile/cover-image`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 
-      if (!response.ok) throw new Error("Upload failed.");
       const data = await response.json();
-      updateField("coverImage", data.image.image_url);
-    } catch {
-      setErrorMessage("The selected cover image could not be uploaded.");
+      if (!response.ok) {
+        throw new Error(data.message || "Cover image upload failed.");
+      }
+
+      setProfile((currentProfile) => ({
+        ...currentProfile,
+        coverImageId: data.image.id,
+        coverImage: data.image.image_url,
+      }));
+      setSaveMessage("Cover image updated successfully.");
+    } catch (error) {
+      setErrorMessage(
+        error.message || "The selected cover image could not be uploaded.",
+      );
     }
 
     event.target.value = "";
+  };
+
+  const selectPortfolioAsCover = async (image) => {
+    setSaveMessage("");
+    setErrorMessage("");
+
+    try {
+      const token = localStorage.getItem("eventree_token");
+      const response = await fetch(
+        `${API_BASE}/vendor-profile/cover-image/${image.id}`,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Cover image selection failed.");
+      }
+
+      setProfile((currentProfile) => ({
+        ...currentProfile,
+        coverImageId: data.image.id,
+        coverImage: data.image.image_url,
+      }));
+      setSaveMessage("Gallery image selected as cover.");
+    } catch (error) {
+      setErrorMessage(error.message || "That image could not be set as cover.");
+    }
   };
 
   const handlePortfolioUpload = async (event) => {
@@ -244,43 +303,47 @@ function BusinessProfile() {
       const token = localStorage.getItem("eventree_token");
       const response = await fetch(`${API_BASE}/vendor-profile/images/${imageId}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      if (!response.ok) throw new Error("Delete failed.");
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Delete failed.");
+      }
 
       setProfile((currentProfile) => ({
         ...currentProfile,
         portfolio: currentProfile.portfolio.filter((item) => item.id !== imageId),
       }));
-    } catch {
-      setErrorMessage("That image could not be removed. Please try again.");
+    } catch (error) {
+      setErrorMessage(
+        error.message || "That image could not be removed. Please try again.",
+      );
     }
   };
 
-  const addAmenity = () => {
-    const newAmenity = amenityInput.trim();
-
-    if (!newAmenity) {
-      return;
-    }
-
-    const alreadyExists = profile.amenities.some(
-      (amenity) => amenity.toLowerCase() === newAmenity.toLowerCase(),
-    );
-
-    if (alreadyExists) {
-      setAmenityInput("");
-      return;
-    }
+  const addAmenityValue = (amenityValue) => {
+    const newAmenity = amenityValue.trim();
+    if (!newAmenity) return;
 
     setProfile((currentProfile) => ({
       ...currentProfile,
-      amenities: [...currentProfile.amenities, newAmenity],
+      amenities: currentProfile.amenities.some(
+        (amenity) => amenity.toLowerCase() === newAmenity.toLowerCase(),
+      )
+        ? currentProfile.amenities
+        : [...currentProfile.amenities, newAmenity],
     }));
-    setAmenityInput("");
     setSaveMessage("");
     setErrorMessage("");
+  };
+
+  const addAmenity = () => {
+    addAmenityValue(amenityInput);
+    setAmenityInput("");
   };
 
   const removeAmenity = (amenityToRemove) => {
@@ -427,6 +490,7 @@ function BusinessProfile() {
 
       if (!detailsResponse.ok) throw new Error("Details update failed.");
 
+      await fetchVendorProfile();
       setSaveMessage("Business profile saved successfully.");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
@@ -471,21 +535,29 @@ function BusinessProfile() {
             selectedCategoryName={selectedCategoryName}
             formattedStartingPrice={formattedStartingPrice}
           />
-          <CoverImageCard onCoverUpload={handleCoverUpload} />
+          <CoverImageCard
+            coverImage={profile.coverImage}
+            onCoverUpload={handleCoverUpload}
+          />
         </aside>
       </div>
 
       <PortfolioGallerySection
         portfolio={profile.portfolio}
+        coverImageId={profile.coverImageId}
         onUpload={handlePortfolioUpload}
         onRemove={removePortfolioImage}
+        onSetCover={selectPortfolioAsCover}
       />
 
       <AmenitiesSection
         amenities={profile.amenities}
+        suggestions={amenitySuggestions}
+        categoryName={selectedCategoryName}
         input={amenityInput}
         onInputChange={setAmenityInput}
         onAdd={addAmenity}
+        onAddSuggestion={addAmenityValue}
         onRemove={removeAmenity}
       />
 
@@ -507,4 +579,3 @@ function BusinessProfile() {
 }
 
 export default BusinessProfile;
-

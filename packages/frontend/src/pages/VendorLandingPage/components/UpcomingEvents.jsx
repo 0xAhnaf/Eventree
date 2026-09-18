@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
-  DEMO_VENDOR_ID,
-  getVendorBookings,
-  VENDOR_BOOKINGS_STORAGE_KEY,
+  fetchVendorBookings,
   VENDOR_BOOKINGS_UPDATED_EVENT,
-} from "../../../utils/vendorPortalStorage.js";
+} from "../../../services/vendorApi.js";
 
 import "./UpcomingEvents.css";
 
@@ -31,33 +29,24 @@ const getDateParts = (dateValue) => {
 };
 
 function UpcomingEvents({ onViewCalendar }) {
-  const [bookings, setBookings] = useState(() =>
-    getVendorBookings(DEMO_VENDOR_ID),
-  );
+  const [bookings, setBookings] = useState([]);
+
+  const loadBookings = useCallback(async () => {
+    try {
+      setBookings(await fetchVendorBookings());
+    } catch {
+      setBookings([]);
+    }
+  }, []);
 
   useEffect(() => {
-    const syncBookings = (event) => {
-      if (
-        event?.type === "storage" &&
-        event.key &&
-        event.key !== VENDOR_BOOKINGS_STORAGE_KEY
-      ) {
-        return;
-      }
-
-      setBookings(getVendorBookings(DEMO_VENDOR_ID));
-    };
-
-    window.addEventListener("storage", syncBookings);
-
-    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
+    loadBookings();
+    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
 
     return () => {
-      window.removeEventListener("storage", syncBookings);
-
-      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
+      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
     };
-  }, []);
+  }, [loadBookings]);
 
   const upcomingEvents = useMemo(
     () =>

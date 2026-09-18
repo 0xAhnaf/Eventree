@@ -7,7 +7,10 @@ const AvailabilityCalendar = ({
   selectedDate = "",
   onDateSelect,
 }) => {
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 9, 1));
+  const [currentDate, setCurrentDate] = useState(() => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), 1);
+  });
 
   useEffect(() => {
     if (!selectedDate) {
@@ -58,7 +61,15 @@ const AvailabilityCalendar = ({
   const isUnavailable = (day) => {
     const formattedDate = formatDate(day);
 
-    return bookedDates.includes(formattedDate);
+    const date = new Date(`${formattedDate}T00:00:00`);
+    const today = new Date();
+    const todayStart = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+    );
+
+    return date < todayStart || bookedDates.includes(formattedDate);
   };
 
   const selectDate = (day) => {

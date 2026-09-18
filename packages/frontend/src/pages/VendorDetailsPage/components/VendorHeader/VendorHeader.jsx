@@ -17,7 +17,11 @@ const VendorHeader = ({ vendor }) => {
           <div className="vendor-meta">
             <span>📍 {vendor.location}</span>
 
-            <span className="rating">⭐ {vendor.rating} (120 Reviews)</span>
+            <span className="rating">
+              {vendor.rating == null
+                ? "No reviews yet"
+                : `⭐ ${vendor.rating} (${vendor.reviewCount} Reviews)`}
+            </span>
           </div>
         </div>
 

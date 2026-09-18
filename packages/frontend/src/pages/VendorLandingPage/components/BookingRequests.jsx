@@ -1,13 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Check, X } from "lucide-react";
 
 import {
-  DEMO_VENDOR_ID,
-  getVendorBookings,
+  fetchVendorBookings,
   updateVendorBookingStatus,
-  VENDOR_BOOKINGS_STORAGE_KEY,
   VENDOR_BOOKINGS_UPDATED_EVENT,
-} from "../../../utils/vendorPortalStorage.js";
+} from "../../../services/vendorApi.js";
 
 import "./BookingRequests.css";
 
@@ -35,31 +33,26 @@ const getInitials = (name = "") =>
     .toUpperCase() || "CL";
 
 function BookingRequests() {
-  const [bookings, setBookings] = useState(() =>
-    getVendorBookings(DEMO_VENDOR_ID),
-  );
+  const [bookings, setBookings] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const loadBookings = useCallback(async () => {
+    try {
+      setBookings(await fetchVendorBookings());
+      setErrorMessage("");
+    } catch (error) {
+      setErrorMessage(error.message || "Could not load booking requests.");
+    }
+  }, []);
 
   useEffect(() => {
-    const syncBookings = (event) => {
-      if (
-        event?.type === "storage" &&
-        event.key &&
-        event.key !== VENDOR_BOOKINGS_STORAGE_KEY
-      ) {
-        return;
-      }
-
-      setBookings(getVendorBookings(DEMO_VENDOR_ID));
-    };
-
-    window.addEventListener("storage", syncBookings);
-    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
+    loadBookings();
+    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
 
     return () => {
-      window.removeEventListener("storage", syncBookings);
-      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
+      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
     };
-  }, []);
+  }, [loadBookings]);
 
   const pendingRequests = useMemo(
     () =>
@@ -73,12 +66,20 @@ function BookingRequests() {
     [bookings],
   );
 
-  const handleDecline = (bookingId) => {
-    updateVendorBookingStatus(bookingId, "rejected");
+  const handleDecline = async (bookingId) => {
+    try {
+      await updateVendorBookingStatus(bookingId, "rejected");
+    } catch (error) {
+      setErrorMessage(error.message || "Booking could not be rejected.");
+    }
   };
 
-  const handleAccept = (bookingId) => {
-    updateVendorBookingStatus(bookingId, "accepted");
+  const handleAccept = async (bookingId) => {
+    try {
+      await updateVendorBookingStatus(bookingId, "accepted");
+    } catch (error) {
+      setErrorMessage(error.message || "Booking could not be accepted.");
+    }
   };
 
   return (
@@ -92,6 +93,7 @@ function BookingRequests() {
       </div>
 
       <div className="booking-requests-table-wrap-VLP">
+        {errorMessage && <p className="booking-empty-VLP">{errorMessage}</p>}
         <table className="booking-requests-table-VLP">
           <thead>
             <tr>
