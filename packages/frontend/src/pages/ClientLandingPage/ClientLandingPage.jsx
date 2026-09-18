@@ -29,6 +29,16 @@ const parsePrice = (price) => {
   return Number.isFinite(numeric) ? numeric : 0;
 };
 
+const getStartingPrice = (vendor) => {
+  if (vendor.startingPrice !== null && vendor.startingPrice !== undefined) {
+    const startingPrice = Number(vendor.startingPrice);
+    return Number.isFinite(startingPrice) ? startingPrice : null;
+  }
+
+  const parsedPrice = parsePrice(vendor.price);
+  return parsedPrice > 0 ? parsedPrice : null;
+};
+
 export default function ClientLandingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,11 +59,6 @@ export default function ClientLandingPage() {
     minRating: 0,
     availabilityDate: "",
   });
-
-  const handleApplyFilters = (filters) => {
-    setAppliedFilters(filters);
-    setCurrentPage(1);
-  };
 
   useEffect(() => {
     let isMounted = true;
@@ -101,26 +106,11 @@ export default function ClientLandingPage() {
     setSearchParams(newSearchParams);
   };
 
-  const handleCategoryChange = (category) => {
-    let updatedCategories;
-
-    if (selectedCategories.includes(category)) {
-      updatedCategories = selectedCategories.filter(
-        (selectedCategory) => selectedCategory !== category,
-      );
-    } else {
-      updatedCategories = [...selectedCategories, category];
-    }
-
-    setSelectedCategories(updatedCategories);
+  const handleApplyFilters = ({ categories, ...filters }) => {
+    setSelectedCategories(categories);
+    setAppliedFilters(filters);
     setCurrentPage(1);
-    updateCategoryParams(updatedCategories);
-  };
-
-  const handleAllServices = () => {
-    setSelectedCategories([]);
-    setCurrentPage(1);
-    setSearchParams({});
+    updateCategoryParams(categories);
   };
 
   const filteredVendors = useMemo(() => {
@@ -133,7 +123,11 @@ export default function ClientLandingPage() {
             category.trim().toLowerCase(),
         );
 
-      const matchesPrice = parsePrice(vendor.price) <= appliedFilters.priceMax;
+      const vendorPrice = getStartingPrice(vendor);
+      const matchesPrice =
+        vendorPrice === null
+          ? appliedFilters.priceMax >= DEFAULT_PRICE_MAX
+          : vendorPrice <= appliedFilters.priceMax;
 
       const matchesRating =
         appliedFilters.minRating === 0 ||
@@ -179,8 +173,6 @@ export default function ClientLandingPage() {
         <div className="browse-container-CLP">
           <FilterSidebar
             selectedCategories={selectedCategories}
-            onCategoryChange={handleCategoryChange}
-            onAllServices={handleAllServices}
             priceMax={appliedFilters.priceMax}
             minRating={appliedFilters.minRating}
             availabilityDate={appliedFilters.availabilityDate}

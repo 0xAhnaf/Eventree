@@ -19,24 +19,22 @@ const formatPrice = (value) => `৳${Number(value).toLocaleString("en-BD")}`;
 
 export default function FilterSidebar({
   selectedCategories,
-  onCategoryChange,
-  onAllServices,
   priceMax = PRICE_MAX,
   minRating = 0,
   availabilityDate = "",
   onApply,
 }) {
-  const allServicesSelected = selectedCategories.length === 0;
-
-  // Price, rating, and availability are "draft" until Apply Filters is
-  // clicked, matching the button's purpose. Category checkboxes still
-  // apply instantly, same as before.
+  const [draftCategories, setDraftCategories] = useState(selectedCategories);
   const [draftPrice, setDraftPrice] = useState(priceMax);
   const [draftRating, setDraftRating] = useState(minRating);
   const [draftAvailability, setDraftAvailability] = useState(availabilityDate);
 
-  // Keep the draft values in sync if the applied filters change elsewhere
-  // (e.g. a "reset" action from the parent).
+  const allServicesSelected = draftCategories.length === 0;
+
+  useEffect(() => {
+    setDraftCategories(selectedCategories);
+  }, [selectedCategories]);
+
   useEffect(() => {
     setDraftPrice(priceMax);
   }, [priceMax]);
@@ -53,8 +51,17 @@ export default function FilterSidebar({
     setDraftRating((current) => (current === value ? 0 : value));
   };
 
+  const toggleCategory = (category) => {
+    setDraftCategories((currentCategories) =>
+      currentCategories.includes(category)
+        ? currentCategories.filter((item) => item !== category)
+        : [...currentCategories, category],
+    );
+  };
+
   const handleApply = () => {
     onApply?.({
+      categories: draftCategories,
       priceMax: draftPrice,
       minRating: draftRating,
       availabilityDate: draftAvailability,
@@ -74,7 +81,7 @@ export default function FilterSidebar({
             <input
               type="checkbox"
               checked={allServicesSelected}
-              onChange={onAllServices}
+              onChange={() => setDraftCategories([])}
             />
             All Services
           </label>
@@ -84,8 +91,8 @@ export default function FilterSidebar({
               <input
                 type="checkbox"
                 value={category}
-                checked={selectedCategories.includes(category)}
-                onChange={() => onCategoryChange(category)}
+                checked={draftCategories.includes(category)}
+                onChange={() => toggleCategory(category)}
               />
 
               {category}
