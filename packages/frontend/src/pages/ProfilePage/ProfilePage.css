@@ -1,36 +1,7 @@
 .profile-page {
-  min-height: 100vh;
   background: #fff8f5;
   color: #27180e;
   font-family: sans-serif;
-
-  display: flex;
-  flex-direction: column;
-}
-
-/* =========================================
-   AREA BETWEEN NAVBAR AND FOOTER
-   ========================================= */
-
-.profile-layout {
-  flex: 1;
-
-  display: flex;
-
-  width: 100%;
-
-  min-height: 0;
-}
-
-/* =========================================
-   SIDEBAR
-   ========================================= */
-
-.profile-layout .profile-sidebar {
-  width: 256px;
-  min-width: 256px;
-
-  flex-shrink: 0;
 }
 
 /* =========================================
@@ -38,15 +9,9 @@
    ========================================= */
 
 .profile-main {
-  flex: 1;
-
-  margin-left: 0;
-
-  padding: 48px;
-
-  box-sizing: border-box;
-
-  overflow-y: auto;
+  width: 100%;
+  min-width: 0;
+  padding: 45px 48px 70px;
 }
 
 /* =========================================
@@ -83,15 +48,6 @@
    ========================================= */
 
 @media (max-width: 768px) {
-  .profile-layout {
-    display: block;
-  }
-
-  .profile-layout .profile-sidebar {
-    width: 100%;
-    min-width: 0;
-  }
-
   .profile-main {
     padding: 24px 16px;
   }

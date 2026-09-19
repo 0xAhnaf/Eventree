@@ -1,34 +1,25 @@
 import React from "react";
-import ProfileSidebar from "../../components/Profile/ProfileSidebar";
+import { CustomerDashboardLayout } from "../../components/CustomerDashboard";
 import ProfileHeader from "../../components/Profile/ProfileHeader";
 import ProfileInfo from "../../components/Profile/ProfileInfo";
-
 import ProfileActions from "../../components/Profile/ProfileActions";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
 import "./ProfilePage.css";
 
 const ProfilePage = () => {
   return (
-    <div className="profile-page">
-      <Navbar />
-      <div className="profile-layout">
-        <ProfileSidebar />
+    <CustomerDashboardLayout
+      className="profile-page"
+      contentClassName="profile-main"
+    >
+      <div className="profile-content">
+        <ProfileHeader />
 
-        <main className="profile-main">
-          <div className="profile-content">
-            <ProfileHeader />
-
-            <section className="profile-card">
-              <ProfileInfo />
-
-              <ProfileActions />
-            </section>
-          </div>
-        </main>
+        <section className="profile-card">
+          <ProfileInfo />
+          <ProfileActions />
+        </section>
       </div>
-      <Footer />
-    </div>
+    </CustomerDashboardLayout>
   );
 };
 
