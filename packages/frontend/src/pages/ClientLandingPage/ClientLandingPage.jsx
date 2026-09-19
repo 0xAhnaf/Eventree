@@ -97,7 +97,8 @@ export default function ClientLandingPage() {
   }, [searchParams.toString()]);
 
   const updateCategoryParams = (categories) => {
-    const newSearchParams = new URLSearchParams();
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete("category");
 
     categories.forEach((category) => {
       newSearchParams.append("category", category);
@@ -224,7 +225,7 @@ export default function ClientLandingPage() {
             ) : currentVendors.length > 0 ? (
               <div className="vendor-grid-CLP">
                 {currentVendors.map((vendor) => (
-                  <VendorCard key={vendor.id} vendor={vendor} />
+                  <VendorCard key={vendor.id} vendor={vendor} eventId={searchParams.get("eventId")} />
                 ))}
               </div>
             ) : (

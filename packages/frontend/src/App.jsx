@@ -149,7 +149,7 @@ function App() {
             <Route path="/browse-vendor/:id" element={<VendorDetailsPage />} />
             <Route path="/browse-vendor" element={<ClientLandingPage />} />
             <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/my-events" element={<MyEvents />} />
+            <Route path="/my-events" element={<ProtectedRoute allowedRoles={["customer"]}><MyEvents /></ProtectedRoute>} />
             {/* Vendor-Only Route (or allow admin to inspect if desired) */}
             <Route
               path="/vendor/onboarding"

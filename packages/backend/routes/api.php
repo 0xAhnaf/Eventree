@@ -60,6 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vendor/registration-payment/complete', [VendorRegistrationController::class, 'completePayment']);
 
     // Event Routes
+    Route::post('/events/{event}/complete', [EventController::class, 'complete']);
     Route::apiResource('events', EventController::class);
 
     Route::prefix('admin')->middleware('admin')->group(function () {

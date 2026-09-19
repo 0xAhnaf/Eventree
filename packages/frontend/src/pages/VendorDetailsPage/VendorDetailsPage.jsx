@@ -28,6 +28,8 @@ const VendorDetailsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [pageError, setPageError] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
+  const [eventDateLock, setEventDateLock] = useState("");
+  const handleEventSelect = useCallback((date) => { setEventDateLock(date); setSelectedDate(date); }, []);
   const [selectedPackageId, setSelectedPackageId] = useState("");
   const [bookedDates, setBookedDates] = useState([]);
 
@@ -83,7 +85,7 @@ const VendorDetailsPage = () => {
   }, [id]);
 
   const handleDateSelect = (date) => {
-    if (bookedDates.includes(date)) {
+    if ((eventDateLock && date !== eventDateLock) || bookedDates.includes(date)) {
       return;
     }
 
@@ -151,6 +153,7 @@ const VendorDetailsPage = () => {
             bookedDates={bookedDates}
             selectedDate={selectedDate}
             onDateChange={handleDateSelect}
+            onEventSelect={handleEventSelect}
             selectedPackageId={selectedPackageId}
             onPackageChange={setSelectedPackageId}
             vendor={vendor}

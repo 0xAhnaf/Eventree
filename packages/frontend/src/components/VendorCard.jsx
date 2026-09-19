@@ -1,6 +1,6 @@
 import "./VendorCard.css";
 import { useNavigate } from "react-router-dom";
-export default function VendorCard({ vendor }) {
+export default function VendorCard({ vendor, eventId }) {
   const navigate = useNavigate();
   return (
     <div className={`vendor-card-CLP ${vendor.featured ? "featured" : ""}`}>
@@ -16,7 +16,7 @@ export default function VendorCard({ vendor }) {
         )}
 
         <div className="overlay-CLP">
-          <button onClick={() => navigate(`/browse-vendor/${vendor.id}`)}>
+          <button onClick={() => navigate(`/browse-vendor/${vendor.id}${eventId ? `?eventId=${encodeURIComponent(eventId)}` : ""}`)}>
             View Portfolio
           </button>
         </div>

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class VendorBooking extends Model
 {
     protected $fillable = [
+        'event_id',
+        'event_category_id',
+        'event_category_key',
         'vendor_profile_id',
         'customer_id',
         'vendor_package_id',
@@ -34,6 +37,11 @@ class VendorBooking extends Model
     public function vendorProfile(): BelongsTo
     {
         return $this->belongsTo(VendorProfile::class);
+    }
+
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(Event::class);
     }
 
     public function customer(): BelongsTo

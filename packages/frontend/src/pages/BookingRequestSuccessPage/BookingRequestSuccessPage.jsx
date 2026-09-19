@@ -18,8 +18,8 @@ function BookingRequestSuccessPage() {
     String(confirmation.vendorId) === String(id);
 
   const returnToVendor = useCallback(() => {
-    navigate(`/browse-vendor/${id}`, { replace: true });
-  }, [id, navigate]);
+    navigate(`/browse-vendor/${id}${confirmation?.eventId ? `?eventId=${encodeURIComponent(confirmation.eventId)}` : ""}`, { replace: true });
+  }, [id, navigate, confirmation?.eventId]);
 
   useEffect(() => {
     if (!hasValidConfirmation) {
