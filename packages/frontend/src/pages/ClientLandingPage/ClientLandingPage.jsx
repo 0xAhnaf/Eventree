@@ -126,9 +126,9 @@ export default function ClientLandingPage() {
 
       const vendorPrice = getStartingPrice(vendor);
       const matchesPrice =
-        vendorPrice === null
-          ? appliedFilters.priceMax >= DEFAULT_PRICE_MAX
-          : vendorPrice <= appliedFilters.priceMax;
+        appliedFilters.priceMax >= DEFAULT_PRICE_MAX ||
+        vendorPrice === null ||
+        vendorPrice <= appliedFilters.priceMax;
 
       const matchesRating =
         appliedFilters.minRating === 0 ||

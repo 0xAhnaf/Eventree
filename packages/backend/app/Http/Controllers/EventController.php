@@ -79,7 +79,7 @@ class EventController extends Controller
         $event = DB::transaction(function () use ($event) {
             $event = Event::whereKey($event->id)->lockForUpdate()->firstOrFail();
             if ($event->completed_at) return $event;
-            abort_if($event->date->format('Y-m-d') >= today()->format('Y-m-d'), 422, 'Complete this event after its event date has passed.');
+            abort_if($event->date->format('Y-m-d') > today()->format('Y-m-d'), 422, 'Complete this event on or after its event date.');
             $event->bookings()->where('status', 'accepted')->update([
                 'status' => 'completed', 'active_date_key' => null, 'status_updated_at' => now(),
             ]);

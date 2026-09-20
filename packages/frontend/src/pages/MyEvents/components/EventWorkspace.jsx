@@ -11,10 +11,10 @@ export default function EventWorkspace({event, busy, onBack, onEdit, onDelete, o
       <div className="me-row"><div><span className="me-eyebrow">{event.category}</span><h1>{event.title}</h1></div><span className="me-badge">{done ? "Completed" : event.status}</span></div>
       <div className="me-meta"><span>{eventDateLabel(event.date)}</span><span>{event.location}</span><span>{event.guests} guests</span><span>Budget: {money(event.budget)}</span></div>
       {!done && <div className="me-actions"><button className="me-secondary" onClick={onEdit} disabled={busy}>Edit details</button>
-        <button className="me-primary" onClick={onComplete} disabled={busy || event.date >= todayLocal()}>Complete event</button>
+        <button className="me-primary" onClick={onComplete} disabled={busy || event.date > todayLocal()}>Complete event</button>
         {!event.has_bookings && <button className="me-danger" onClick={onDelete} disabled={busy}>Delete event</button>}
       </div>}
-      {!done && <p className="me-note">Complete event becomes available after the event date. Confirmed means at least one vendor has accepted.</p>}
+      {!done && <p className="me-note">Complete event becomes available on the event date. Confirmed means at least one vendor has accepted.</p>}
     </section>
     <section className="me-panel"><h2>Your vendor team</h2><p>Request several vendors in a category. Once one accepts, the other pending requests in that category close automatically.</p>
       <div className="me-category-grid">{VENDOR_CATEGORIES.map(category => {
