@@ -143,7 +143,7 @@ class EventBookingFlowTest extends TestCase
         $this->patchJson('/api/vendor/bookings/'.$booking.'/status', ['status' => 'accepted'])->assertOk();
         Sanctum::actingAs($customer);
         $this->postJson('/api/events/'.$event->id.'/complete')->assertUnprocessable();
-        $this->travel(11)->days();
+        $this->travel(10)->days();
         $this->postJson('/api/events/'.$event->id.'/complete')->assertOk()->assertJsonPath('event.status', 'Past');
         $this->assertDatabaseHas('vendor_bookings', ['id' => $booking, 'status' => 'completed']);
         $this->postJson('/api/events/'.$event->id.'/complete')->assertOk();
