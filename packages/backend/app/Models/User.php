@@ -12,6 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\CustomerProfile;
 
 #[Fillable(['name', 'email', 'password', 'phone', 'google_id', 'role'])]
 #[Hidden(['password', 'remember_token'])]
@@ -40,5 +41,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function vendorBookings(): HasMany
     {
         return $this->hasMany(VendorBooking::class, 'customer_id');
+    }
+    public function customerProfile(): HasOne
+    {
+        return $this->hasOne(CustomerProfile::class);
     }
 }
