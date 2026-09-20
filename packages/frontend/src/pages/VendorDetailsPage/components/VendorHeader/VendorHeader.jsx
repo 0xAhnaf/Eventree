@@ -1,11 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { toggleFavoriteApi } from "../../../../services/favoritesApi";
 import "./VendorHeader.css";
 
 const VendorHeader = ({ vendor }) => {
   const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
+  // Sync state with incoming vendor object
+  useEffect(() => {
+    if (vendor) {
+      setSaved(Boolean(vendor.is_favorited || vendor.saved));
+    }
+  }, [vendor]);
+
+  // Handle Save / Unsave via backend API
+  const handleToggleSave = async () => {
+    if (!vendor?.id || saving) return;
+
+    try {
+      setSaving(true);
+      const response = await toggleFavoriteApi(vendor.id);
+      
+      // Update state based on backend response, or fall back to toggling state
+      if (typeof response?.favorited === "boolean") {
+        setSaved(response.favorited);
+      } else {
+        setSaved((prev) => !prev);
+      }
+    } catch (err) {
+      console.error("Failed to toggle favorite:", err);
+      alert("Failed to update saved status. Please check if you are logged in.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Handle Share functionality
   const handleShare = async () => {
-    // Dynamically uses window.location.origin (works on localhost & production domain)
     const shareUrl = vendor?.id 
       ? `${window.location.origin}/browse-vendor/${vendor.id}` 
       : window.location.href;
@@ -65,7 +97,7 @@ const VendorHeader = ({ vendor }) => {
             <span className="rating">
               {vendor?.rating == null
                 ? "No reviews yet"
-                : `⭐ ${vendor.rating} (${vendor.reviewCount} Reviews)`}
+                : `⭐ ${vendor.rating} (${vendor.reviewCount || 0} Reviews)`}
             </span>
           </div>
         </div>
@@ -79,7 +111,14 @@ const VendorHeader = ({ vendor }) => {
             {copied ? "✓ Copied!" : "↗ Share"}
           </button>
 
-          <button type="button">♡ Save</button>
+          <button 
+            type="button" 
+            onClick={handleToggleSave}
+            disabled={saving}
+            className={saved ? "saved-btn" : ""}
+          >
+            {saving ? "Saving..." : saved ? "♥ Saved" : "♡ Save"}
+          </button>
         </div>
       </div>
     </section>
