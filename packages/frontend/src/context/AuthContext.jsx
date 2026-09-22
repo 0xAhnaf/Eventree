@@ -9,6 +9,14 @@ export const AuthProvider = ({ children }) => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
+  const updateUser = (updatedUserData) => {
+    setUser((prevUser) => {
+      const newUser = { ...prevUser, ...updatedUserData };
+      localStorage.setItem("eventree_user", JSON.stringify(newUser));
+      return newUser;
+    });
+  };
+
   const login = async (identifier, password) => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/login", {
@@ -124,7 +132,7 @@ export const AuthProvider = ({ children }) => {
             access_token: googleAccessToken,
             role,
           }),
-        },
+        }
       );
 
       const data = await response.json();
@@ -187,7 +195,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, loginWithGoogle, logout }}
+      value={{ user, updateUser, login, register, loginWithGoogle, logout }}
     >
       {children}
     </AuthContext.Provider>

@@ -30,6 +30,10 @@ class AuthController extends Controller
         'role' => $validated['role'],
     ]);
 
+    if ($user->role === 'customer') {
+        $user->customerProfile()->create();
+    }   
+
     $token = $user->createToken('auth_token')->plainTextToken;
 
     Mail::to($user->email)->queue(new WelcomeEmail($user));

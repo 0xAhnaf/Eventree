@@ -55,7 +55,7 @@ function ForgotPassword() {
   return (
     <div className="fp-page">
       <div className="fp-card">
-        <h1>Forgot Password?</h1>
+        <h1>Reset Password?</h1>
 
         <p className="fp-subtitle">
           Enter the email associated with your account and we'll send you a
