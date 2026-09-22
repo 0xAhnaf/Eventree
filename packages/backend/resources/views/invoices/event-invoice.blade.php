@@ -303,16 +303,7 @@
 
         <table class="total-table">
 
-            <tr>
-                <td class="subtotal-label">
-                    Subtotal
-                </td>
-
-                <td class="subtotal-value">
-                    Tk {{ number_format($displaySubtotal, 2) }}
-                </td>
-            </tr>
-
+            
             <tr class="grand-total">
                 <td>
                     Total
