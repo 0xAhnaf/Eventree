@@ -1,0 +1,81 @@
+/* src/pages/FavouritePage/FavouritePage.css */
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+/* Ensure the cards don't expand infinitely inside grid cells */
+.favorites-grid > * {
+  width: 100%;
+  box-sizing: border-box;
+}
+.favorites-page {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.favorites-container h2 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 28px;
+  color: #002319;
+  margin-bottom: 24px;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+}
+/* src/pages/FavouritePage/FavouritePage.css */
+
+.favorites-page {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.favorites-container h2 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 28px;
+  color: #002319;
+  margin-bottom: 24px;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+/* Remove button styling positioned over top-left of card */
+.favorite-card-wrapper {
+  position: relative;
+}
+
+.remove-favorite-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  color: #d9534f;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.remove-favorite-btn:hover {
+  background: #d9534f;
+  color: #fff;
+  transform: scale(1.1);
+}
