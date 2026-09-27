@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   LayoutDashboard,
   User,
@@ -11,6 +11,8 @@ import {
   Armchair,
   Eye,
   Contact,
+  Clock,
+  CheckCircle2,
   Menu,
   X,
 } from "lucide-react";
@@ -26,6 +28,10 @@ import BusinessProfile from "./components/BusinessProfile/BusinessProfile.jsx";
 import VendorBookings from "./components/VendorBookings/VendorBookings.jsx";
 import VendorAvailability from "./components/VendorAvailability/VendorAvailability.jsx";
 
+import {
+  fetchVendorDashboard,
+  VENDOR_BOOKINGS_UPDATED_EVENT,
+} from "../../services/vendorApi.js";
 import "./VendorLandingPage.css";
 
 const sidebarLinks = [
@@ -77,44 +83,73 @@ const viewDetails = {
   },
 };
 
-const stats = [
-  {
-    icon: <Wallet size={20} />,
-    iconVariant: "revenue",
-    label: "Total Revenue",
-    value: "৳24,850.00",
-    trend: "+12%",
-    trendDirection: "up",
-  },
-  {
-    icon: <Armchair size={20} />,
-    iconVariant: "bookings",
-    label: "Confirmed Bookings",
-    value: "42",
-    trend: "+5.2%",
-    trendDirection: "up",
-  },
-  {
-    icon: <Eye size={20} />,
-    iconVariant: "views",
-    label: "Profile Views",
-    value: "1,204",
-    trend: "-1.2%",
-    trendDirection: "down",
-  },
-  {
-    icon: <Contact size={20} />,
-    iconVariant: "contacts",
-    label: "Contact Unlocks",
-    value: "89",
-    trend: "+24%",
-    trendDirection: "up",
-  },
-];
-
 function VendorLandingPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeView, setActiveView] = useState("analytics");
+
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      const data = await fetchVendorDashboard();
+      setDashboardData(data);
+    } catch (error) {
+      console.error("Failed to load vendor dashboard:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchDashboardData();
+
+    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, fetchDashboardData);
+    return () => {
+      window.removeEventListener(
+        VENDOR_BOOKINGS_UPDATED_EVENT,
+        fetchDashboardData,
+      );
+    };
+  }, [fetchDashboardData]);
+
+  const computedStats = useMemo(() => {
+    const rawStats = dashboardData?.stats;
+
+    return [
+      {
+        icon: <Wallet size={20} />,
+        iconVariant: "revenue",
+        label: "Total Revenue",
+        loading,
+        value: `৳${Number(rawStats?.total_revenue ?? 0).toLocaleString("en-BD", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`,
+      },
+      {
+        icon: <CalendarCheck size={20} />,
+        iconVariant: "bookings",
+        label: "Confirmed Bookings",
+        loading,
+        value: String(rawStats?.confirmed_bookings ?? 0),
+      },
+      {
+        icon: <Clock size={20} />,
+        iconVariant: "contacts",
+        label: "Pending Requests",
+        loading,
+        value: String(rawStats?.pending_requests ?? 0),
+      },
+      {
+        icon: <CheckCircle2 size={20} />,
+        iconVariant: "views",
+        label: "Events Completed",
+        loading,
+        value: String(rawStats?.events_completed ?? 0),
+      },
+    ];
+  }, [dashboardData, loading]);
 
   const handleSidebarLinkClick = (event, link) => {
     event.preventDefault();
@@ -142,24 +177,31 @@ function VendorLandingPage() {
         return (
           <>
             <div className="vlp-stats-grid">
-              {stats.map((stat) => (
+              {computedStats.map((stat) => (
                 <StatCard key={stat.label} {...stat} />
               ))}
             </div>
 
             <div className="vlp-bento-grid">
               <div className="vlp-bento-chart">
-                <RevenueChart />
+                <RevenueChart
+                  data={dashboardData?.revenue_chart}
+                  highlightDay={dashboardData?.highlight_day}
+                  loading={loading}
+                />
               </div>
 
               <div className="vlp-bento-events">
                 <UpcomingEvents
+                  events={dashboardData?.upcoming_events}
                   onViewCalendar={() => setActiveView("bookings")}
                 />
               </div>
 
               <div className="vlp-bento-bookings">
-                <BookingRequests />
+                <BookingRequests
+                  requests={dashboardData?.booking_requests}
+                />
               </div>
             </div>
           </>

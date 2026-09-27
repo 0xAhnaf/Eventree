@@ -28,7 +28,7 @@ const getDateParts = (dateValue) => {
   };
 };
 
-function UpcomingEvents({ onViewCalendar }) {
+function UpcomingEvents({ events, onViewCalendar }) {
   const [bookings, setBookings] = useState([]);
 
   const loadBookings = useCallback(async () => {
@@ -40,26 +40,27 @@ function UpcomingEvents({ onViewCalendar }) {
   }, []);
 
   useEffect(() => {
-    loadBookings();
+    if (!events) {
+      loadBookings();
+    }
     window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
 
     return () => {
       window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
     };
-  }, [loadBookings]);
+  }, [events, loadBookings]);
 
-  const upcomingEvents = useMemo(
-    () =>
-      bookings
-        .filter((booking) => ["accepted", "confirmed"].includes(booking.status))
-        .sort(
-          (firstBooking, secondBooking) =>
-            new Date(firstBooking.eventDate) -
-            new Date(secondBooking.eventDate),
-        )
-        .slice(0, 3),
-    [bookings],
-  );
+  const upcomingEvents = useMemo(() => {
+    const list = events && Array.isArray(events) ? events : bookings.filter((booking) => ["accepted", "confirmed"].includes(booking.status));
+
+    return list
+      .sort(
+        (firstBooking, secondBooking) =>
+          new Date(firstBooking.eventDate || firstBooking.event_date) -
+          new Date(secondBooking.eventDate || secondBooking.event_date),
+      )
+      .slice(0, 3);
+  }, [events, bookings]);
 
   return (
     <div className="upcoming-events-VLP">
@@ -68,7 +69,8 @@ function UpcomingEvents({ onViewCalendar }) {
       <div className="upcoming-events-list-VLP">
         {upcomingEvents.length ? (
           upcomingEvents.map((event) => {
-            const { month, day } = getDateParts(event.eventDate);
+            const dateValue = event.eventDate || event.event_date;
+            const { month, day } = getDateParts(dateValue);
 
             return (
               <div className="upcoming-event-item-VLP" key={event.id}>
@@ -80,12 +82,12 @@ function UpcomingEvents({ onViewCalendar }) {
 
                 <div className="upcoming-event-info-VLP">
                   <p className="upcoming-event-name-VLP">
-                    {event.eventType || "Event type not provided"}
+                    {event.eventType || event.event_type || "Event type not provided"}
                   </p>
 
                   <p className="upcoming-event-meta-VLP">
-                    {event.clientName || "Client"} •{" "}
-                    {event.packageName || "Package not selected"}
+                    {event.clientName || event.customer?.name || "Client"} •{" "}
+                    {event.packageName || event.package_name || "Package not selected"}
                   </p>
                 </div>
               </div>

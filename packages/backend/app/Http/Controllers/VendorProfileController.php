@@ -365,4 +365,117 @@ class VendorProfileController extends Controller
 
         return response()->json(['message' => 'Image deleted successfully.'], 200);
     }
+
+    public function dashboard(Request $request): JsonResponse
+    {
+        $profile = VendorProfile::where('user_id', $request->user()->id)->first();
+
+        if (!$profile) {
+            return response()->json(['message' => 'Vendor profile not found.'], 404);
+        }
+
+        $bookings = $profile->bookings()->get();
+
+        $confirmedBookings = $bookings->where('status', 'completed');
+        $totalRevenue = $confirmedBookings->sum('package_price');
+        $pendingRequestsCount = $bookings->where('status', 'pending')->count();
+
+        // Upcoming events (accepted bookings from today onward)
+        $upcomingEvents = $profile->bookings()
+            ->with('customer')
+            ->where('status', 'accepted')
+            ->whereDate('event_date', '>=', today())
+            ->orderBy('event_date', 'asc')
+            ->take(5)
+            ->get();
+
+        // Pending booking requests
+        $bookingRequests = $profile->bookings()
+            ->with('customer')
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        $serializeBooking = function ($booking) {
+            return [
+                'id' => $booking->id,
+                'eventId' => $booking->event_id,
+                'vendorId' => $booking->vendor_profile_id,
+                'customerId' => $booking->customer_id,
+                'clientName' => $booking->customer?->name,
+                'clientEmail' => $booking->customer?->email,
+                'eventDate' => $booking->event_date instanceof \DateTimeInterface ? $booking->event_date->format('Y-m-d') : (string) $booking->event_date,
+                'eventType' => $booking->event_type,
+                'guests' => $booking->guests,
+                'packageId' => $booking->vendor_package_id,
+                'packageName' => $booking->package_name,
+                'packagePrice' => $booking->package_price,
+                'status' => $booking->status,
+                'createdAt' => $booking->created_at?->toISOString(),
+            ];
+        };
+
+        // Compute revenue chart by day of the week
+        $daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        $startOfWeek = now()->startOfWeek();
+        $endOfWeek = now()->endOfWeek();
+
+        $weeklyRevenueByDay = [];
+        foreach ($daysOfWeek as $day) {
+            $weeklyRevenueByDay[$day] = 0.0;
+        }
+
+        $weeklyBookings = $confirmedBookings->filter(function ($b) use ($startOfWeek, $endOfWeek) {
+            if (!$b->event_date) {
+                return false;
+            }
+            $date = \Carbon\Carbon::parse($b->event_date);
+            return $date->between($startOfWeek, $endOfWeek);
+        });
+
+        // Only use current week's bookings (no fallback to historical data)
+        $sourceBookings = $weeklyBookings;
+
+        foreach ($sourceBookings as $b) {
+            if ($b->event_date) {
+                $dayName = \Carbon\Carbon::parse($b->event_date)->format('D');
+                if (isset($weeklyRevenueByDay[$dayName])) {
+                    $weeklyRevenueByDay[$dayName] += (float) ($b->package_price ?? 0);
+                }
+            }
+        }
+
+        $maxRevenue = $weeklyRevenueByDay ? max(array_values($weeklyRevenueByDay)) : 0;
+
+        $revenueChart = [];
+        foreach ($daysOfWeek as $day) {
+            $revenue = $weeklyRevenueByDay[$day];
+            $height = $maxRevenue > 0 && $revenue > 0
+                ? max(15, (int) round(($revenue / $maxRevenue) * 100))
+                : 0;
+
+            $revenueChart[] = [
+                'day' => $day,
+                'height' => $height,
+                'revenue' => $revenue,
+                'formatted_revenue' => '৳' . number_format($revenue, 2),
+            ];
+        }
+
+        $highlightDay = now()->format('D');
+
+        return response()->json([
+            'stats' => [
+                'total_revenue' => $totalRevenue,
+                'confirmed_bookings' => $confirmedBookings->count(),
+                'pending_requests' => $pendingRequestsCount,
+                'events_completed' => $bookings->where('status', 'completed')->count(),
+            ],
+            'upcoming_events' => $upcomingEvents->map($serializeBooking),
+            'booking_requests' => $bookingRequests->map($serializeBooking),
+            'revenue_chart' => $revenueChart,
+            'highlight_day' => $highlightDay,
+        ]);
+    }
 }

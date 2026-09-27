@@ -1,16 +1,20 @@
 import "./RevenueChart.css";
 
-const defaultData = [
-  { day: "Mon", height: 40 },
-  { day: "Tue", height: 65 },
-  { day: "Wed", height: 50 },
-  { day: "Thu", height: 80 },
-  { day: "Fri", height: 95 },
-  { day: "Sat", height: 70 },
-  { day: "Sun", height: 85 },
-];
+const DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-function RevenueChart({ data = defaultData, highlightDay = "Fri" }) {
+function RevenueChart({ data, highlightDay, loading = false }) {
+  const chartData =
+    data && Array.isArray(data) && data.length > 0
+      ? data
+      : DAYS_OF_WEEK.map((day) => ({
+          day,
+          height: 0,
+          revenue: 0,
+          formatted_revenue: "৳0.00",
+        }));
+
+  const activeDay = highlightDay || "Mon";
+
   return (
     <div className="revenue-chart-VLP">
       <div className="revenue-chart-header-VLP">
@@ -28,23 +32,47 @@ function RevenueChart({ data = defaultData, highlightDay = "Fri" }) {
         </div>
       </div>
 
-      <div className="revenue-chart-bars-VLP">
-        {data.map((item) => (
-          <div
-            key={item.day}
-            className={`revenue-bar-VLP ${item.day === highlightDay ? "revenue-bar-active-VLP" : ""}`}
-            style={{ height: `${item.height}%` }}
-          ></div>
-        ))}
-      </div>
+      {loading ? (
+        <div className="revenue-chart-bars-VLP">
+          {DAYS_OF_WEEK.map((day, idx) => (
+            <div
+              key={day}
+              className="revenue-bar-VLP revenue-skeleton-bar-VLP"
+              style={{
+                height: `${25 + ((idx * 15) % 50)}%`,
+              }}
+              aria-hidden="true"
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="revenue-chart-bars-VLP">
+          {chartData.map((item) => {
+            const isHighlight = item.day === activeDay;
+            const tooltip = `${item.day}: ${item.formatted_revenue || (item.revenue != null ? `৳${Number(item.revenue).toLocaleString("en-BD")}` : `${item.height || 0}%`)}`;
+
+            return (
+              <div
+                key={item.day}
+                className={`revenue-bar-VLP ${isHighlight ? "revenue-bar-active-VLP" : ""}`}
+                style={{
+                  height: item.height > 0 ? `${item.height}%` : "6px",
+                  opacity: item.height > 0 ? 1 : 0.35,
+                }}
+                title={tooltip}
+              ></div>
+            );
+          })}
+        </div>
+      )}
 
       <div className="revenue-chart-labels-VLP">
-        {data.map((item) => (
+        {DAYS_OF_WEEK.map((day) => (
           <span
-            key={item.day}
-            className={`revenue-label-VLP ${item.day === highlightDay ? "revenue-label-active-VLP" : ""}`}
+            key={day}
+            className={`revenue-label-VLP ${!loading && day === activeDay ? "revenue-label-active-VLP" : ""}`}
           >
-            {item.day}
+            {day}
           </span>
         ))}
       </div>

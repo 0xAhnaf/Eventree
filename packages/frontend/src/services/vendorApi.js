@@ -132,3 +132,7 @@ export const completeVendorRegistrationPayment = async () =>
     { method: "POST" },
     true,
   );
+
+export const fetchVendorDashboard = async () =>
+  request("/vendor/dashboard", {}, true);
+
