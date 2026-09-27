@@ -67,6 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/vendor/registration-status', [VendorRegistrationController::class, 'show']);
     Route::post('/vendor/registration-payment/complete', [VendorRegistrationController::class, 'completePayment']);
+    Route::get('/vendor/dashboard', [VendorProfileController::class, 'dashboard']);
 
     // Event Routes
     Route::post('/events/{event}/complete', [EventController::class, 'complete']);

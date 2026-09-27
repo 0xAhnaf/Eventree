@@ -32,7 +32,7 @@ const getInitials = (name = "") =>
     .join("")
     .toUpperCase() || "CL";
 
-function BookingRequests() {
+function BookingRequests({ requests }) {
   const [bookings, setBookings] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -46,25 +46,25 @@ function BookingRequests() {
   }, []);
 
   useEffect(() => {
-    loadBookings();
+    if (!requests) {
+      loadBookings();
+    }
     window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
 
     return () => {
       window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
     };
-  }, [loadBookings]);
+  }, [requests, loadBookings]);
 
-  const pendingRequests = useMemo(
-    () =>
-      bookings
-        .filter((booking) => booking.status === "pending")
-        .sort(
-          (firstBooking, secondBooking) =>
-            new Date(firstBooking.createdAt) -
-            new Date(secondBooking.createdAt),
-        ),
-    [bookings],
-  );
+  const pendingRequests = useMemo(() => {
+    const list = requests && Array.isArray(requests) ? requests : bookings.filter((booking) => booking.status === "pending");
+
+    return list.sort(
+      (firstBooking, secondBooking) =>
+        new Date(firstBooking.createdAt || firstBooking.created_at) -
+        new Date(secondBooking.createdAt || secondBooking.created_at),
+    );
+  }, [requests, bookings]);
 
   const handleDecline = async (bookingId) => {
     try {
@@ -106,33 +106,39 @@ function BookingRequests() {
           </thead>
 
           <tbody>
-            {pendingRequests.map((request) => (
-              <tr key={request.id}>
-                <td>
-                  <div className="booking-client-VLP">
-                    <span className="booking-avatar-VLP">
-                      {getInitials(request.clientName)}
+            {pendingRequests.map((request) => {
+              const clientName = request.clientName || request.customer?.name || "Client";
+              const eventType = request.eventType || request.event_type || "Event type not provided";
+              const eventDate = request.eventDate || request.event_date;
+              const packageName = request.packageName || request.package_name || "Package not selected";
+
+              return (
+                <tr key={request.id}>
+                  <td>
+                    <div className="booking-client-VLP">
+                      <span className="booking-avatar-VLP">
+                        {getInitials(clientName)}
+                      </span>
+
+                      <span className="booking-client-name-VLP">
+                        {clientName}
+                      </span>
+                    </div>
+                  </td>
+
+                  <td className="booking-cell-muted-VLP">
+                    {eventType}
+                  </td>
+
+                  <td className="booking-cell-muted-VLP">
+                    {formatDate(eventDate)}
+                  </td>
+
+                  <td>
+                    <span className="booking-package-VLP">
+                      {packageName}
                     </span>
-
-                    <span className="booking-client-name-VLP">
-                      {request.clientName || "Client"}
-                    </span>
-                  </div>
-                </td>
-
-                <td className="booking-cell-muted-VLP">
-                  {request.eventType || "Event type not provided"}
-                </td>
-
-                <td className="booking-cell-muted-VLP">
-                  {formatDate(request.eventDate)}
-                </td>
-
-                <td>
-                  <span className="booking-package-VLP">
-                    {request.packageName || "Package not selected"}
-                  </span>
-                </td>
+                  </td>
 
                 <td>
                   <div className="booking-actions-VLP">
@@ -158,7 +164,8 @@ function BookingRequests() {
                   </div>
                 </td>
               </tr>
-            ))}
+            );
+          })}
 
             {pendingRequests.length === 0 && (
               <tr>

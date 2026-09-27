@@ -76,3 +76,22 @@
   color: #002319;
   margin: 0;
 }
+
+.stat-skeleton-pill-VLP {
+  height: 28px;
+  width: 95px;
+  background: linear-gradient(90deg, #edf2ef 25%, #dce5e0 50%, #edf2ef 75%);
+  background-size: 200% 100%;
+  animation: stat-shimmer 1.5s infinite ease-in-out;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+@keyframes stat-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
