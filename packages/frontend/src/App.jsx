@@ -14,6 +14,7 @@ import BookingRequestSuccessPage from "./pages/BookingRequestSuccessPage/Booking
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard.jsx";
 import VendorOnboarding from "./pages/VendorOnboarding/VendorOnboarding.jsx";
 import VendorPaymentPage from "./pages/VendorPaymentPage/VendorPaymentPage.jsx";
+import FavoritesPage from "./pages/FavouritePage/FavouritePage.jsx";
 import { isVendorOnboardingRequired } from "./utils/vendorProfileStorage.js";
 import {
   isVendorPaymentCompleted,
@@ -134,62 +135,78 @@ function App() {
       <VendorRegistrationStatusSync>
         <main>
           <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<HomeRoute />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/verify-email" element={<EmailVerified />} />
-            <Route
-              path="/browse-vendor/:id/booking-request-sent"
-              element={<BookingRequestSuccessPage />}
-            />
-            <Route path="/browse-vendor/:id" element={<VendorDetailsPage />} />
-            <Route path="/browse-vendor" element={<ClientLandingPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/my-events" element={<ProtectedRoute allowedRoles={["customer"]}><MyEvents /></ProtectedRoute>} />
-            {/* Vendor-Only Route (or allow admin to inspect if desired) */}
-            <Route
-              path="/vendor/onboarding"
-              element={
-                <ProtectedRoute allowedRoles={["vendor"]}>
-                  <VendorOnboardingRoute />
-                </ProtectedRoute>
-              }
-            />
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<HomeRoute />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/verify-email" element={<EmailVerified />} />
+              <Route
+                path="/browse-vendor/:id/booking-request-sent"
+                element={<BookingRequestSuccessPage />}
+              />
+              <Route path="/browse-vendor/:id" element={<VendorDetailsPage />} />
+              <Route path="/browse-vendor" element={<ClientLandingPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route
+                path="/my-events"
+                element={
+                  <ProtectedRoute allowedRoles={["customer"]}>
+                    <MyEvents />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/favorites"
+                element={
+                  <ProtectedRoute allowedRoles={["customer"]}>
+                    <FavoritesPage />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/vendor"
-              element={
-                <ProtectedRoute allowedRoles={["vendor"]}>
-                  <VendorOnboardingGuard>
-                    <VendorLandingPage />
-                  </VendorOnboardingGuard>
-                </ProtectedRoute>
-              }
-            />
+              {/* Vendor-Only Route (or allow admin to inspect if desired) */}
+              <Route
+                path="/vendor/onboarding"
+                element={
+                  <ProtectedRoute allowedRoles={["vendor"]}>
+                    <VendorOnboardingRoute />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/vendor/payment"
-              element={
-                <ProtectedRoute allowedRoles={["vendor"]}>
-                  <VendorPaymentRoute />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/vendor"
+                element={
+                  <ProtectedRoute allowedRoles={["vendor"]}>
+                    <VendorOnboardingGuard>
+                      <VendorLandingPage />
+                    </VendorOnboardingGuard>
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Admin-Only Routes */}
-            <Route
-              path="/admin/*"
-              element={
-                <ProtectedRoute allowedRoles={["admin"]}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
+              <Route
+                path="/vendor/payment"
+                element={
+                  <ProtectedRoute allowedRoles={["vendor"]}>
+                    <VendorPaymentRoute />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Admin-Only Routes */}
+              <Route
+                path="/admin/*"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
           </BrowserRouter>
         </main>
       </VendorRegistrationStatusSync>

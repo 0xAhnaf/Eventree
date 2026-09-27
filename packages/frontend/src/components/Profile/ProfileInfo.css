@@ -6,51 +6,92 @@
   display: flex;
   align-items: center;
   gap: 24px;
-
   padding-bottom: 40px;
   margin-bottom: 40px;
-
   border-bottom: 1px solid #c1c8c2;
 }
 
-.profile-avatar2 {
+/* =========================================
+   AVATAR & HOVER OVERLAY
+   ========================================= */
+
+.profile-avatar-container {
+  position: relative;
   width: 128px;
   height: 128px;
-
   border-radius: 50%;
-
-  background: #1b4332;
-  color: #ffffff;
-
+  overflow: hidden;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #1b4332;
+}
 
+.profile-avatar-container.editable {
+  cursor: pointer;
+}
+
+.profile-avatar2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #1b4332;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: "Libre Caslon Text", Georgia, serif;
   font-size: 36px;
   font-weight: 700;
-
-  flex-shrink: 0;
 }
+
+.profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-hover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(1, 45, 29, 0.75);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Work Sans", Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.profile-avatar-container.editable:hover .avatar-hover-overlay {
+  opacity: 1;
+}
+
+/* =========================================
+   USER DETAILS & FIELDS
+   ========================================= */
 
 .profile-user-details h2 {
   margin: 0 0 6px;
-
   font-family: "Libre Caslon Text", Georgia, serif;
   font-size: 24px;
   line-height: 32px;
   font-weight: 600;
-
   color: #181c20;
 }
 
 .profile-user-details p {
   margin: 0;
-
   display: flex;
   align-items: center;
   gap: 6px;
-
   color: #414844;
   font-size: 14px;
 }
@@ -74,21 +115,38 @@
 
 .profile-field label {
   color: #717973;
-
   font-size: 12px;
   line-height: 16px;
   font-weight: 500;
   letter-spacing: 0.05em;
 }
 
-.profile-field div {
+.profile-field-value {
   padding-bottom: 8px;
-
   border-bottom: 1px solid #e0e3e8;
-
   color: #181c20;
   font-size: 16px;
   line-height: 24px;
+}
+
+.profile-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 24px;
+  color: #181c20;
+  background-color: #ffffff;
+  border: 1px solid #c1c8c2;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-input:focus {
+  border-color: #012d1d;
+  box-shadow: 0 0 0 2px rgba(1, 45, 29, 0.1);
 }
 
 @media (max-width: 600px) {
@@ -97,9 +155,12 @@
     align-items: flex-start;
   }
 
-  .profile-avatar {
+  .profile-avatar-container {
     width: 96px;
     height: 96px;
+  }
+
+  .profile-avatar2 {
     font-size: 28px;
   }
 

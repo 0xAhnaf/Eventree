@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CustomerProfileController;
+use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\InvoiceController;
 
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
@@ -28,9 +31,14 @@ Route::post('/auth/google/callback', [GoogleAuthController::class, 'handleGoogle
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
-    });
 
+    });
+    Route::get('/customer-profile', [CustomerProfileController::class, 'show']);
+    Route::put('/customer-profile', [CustomerProfileController::class, 'update']);
     Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+    
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+    Route::post('/favorites/toggle', [FavoriteController::class, 'toggle']);
 
     Route::post('/email/verification-notification', function (Request $request) {
         $request->user()->sendEmailVerificationNotification();
@@ -46,8 +54,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/vendor-profile/cover-image/{image}', [VendorProfileController::class, 'selectCoverImage']);
     Route::post('/vendor-profile/portfolio-images', [VendorProfileController::class, 'addPortfolioImages']);
     Route::delete('/vendor-profile/images/{image}', [VendorProfileController::class, 'deleteImage']);
-
+    Route::get('/events/{eventId}/invoice', [InvoiceController::class, 'show']);
     Route::post('/vendor-details', [VendorDetailsController::class, 'store']);
+    Route::get('/events/{eventId}/invoice/download', [InvoiceController::class, 'download']);
 
     Route::post('/bookings', [VendorBookingController::class, 'store']);
     Route::get('/vendor/bookings', [VendorBookingController::class, 'index']);
