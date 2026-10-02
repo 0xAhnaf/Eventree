@@ -4,6 +4,7 @@ import { Bell, Home, LogOut, Menu, Search } from "lucide-react";
 
 import { useAuth } from "../../../../context/AuthContext";
 import "./DashboardHeader.css";
+import { fetchNotificationSummary } from "../../../../services/notificationsApi";
 
 const DashboardHeader = ({
   title = "Dashboard Overview",
@@ -16,7 +17,27 @@ const DashboardHeader = ({
   const { user, logout } = useAuth();
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [pendingVendorCount, setPendingVendorCount] = useState(0);
   const profileMenuRef = useRef(null);
+
+  useEffect(() => {
+    const refreshCount = async () => {
+      try {
+        const summary = await fetchNotificationSummary();
+        setPendingVendorCount(
+          Math.max(0, Number(summary.pendingVendorApprovalCount || 0)),
+        );
+      } catch {
+        // Keep the admin header usable if the count request fails.
+      }
+    };
+
+    refreshCount();
+    const timer = window.setInterval(() => {
+      if (!document.hidden) refreshCount();
+    }, 15000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (!isProfileMenuOpen) {
@@ -82,15 +103,17 @@ const DashboardHeader = ({
 
       {/* Right Section */}
       <div className="dashboard-header-actions">
-        {showSearch && <div className="dashboard-search">
-          <Search size={18} />
+        {showSearch && (
+          <div className="dashboard-search">
+            <Search size={18} />
 
-          <input
-            type="text"
-            placeholder="Search..."
-            aria-label="Search admin dashboard"
-          />
-        </div>}
+            <input
+              type="text"
+              placeholder="Search..."
+              aria-label="Search admin dashboard"
+            />
+          </div>
+        )}
 
         <button
           type="button"
@@ -99,7 +122,11 @@ const DashboardHeader = ({
           onClick={() => navigate("/admin/vendors")}
         >
           <Bell size={20} />
-          <span className="notification-dot"></span>
+          {pendingVendorCount > 0 && (
+            <span className="notification-count">
+              {pendingVendorCount > 99 ? "99+" : pendingVendorCount}
+            </span>
+          )}
         </button>
 
         <div className="admin-profile-wrapper" ref={profileMenuRef}>
@@ -111,7 +138,9 @@ const DashboardHeader = ({
             aria-expanded={isProfileMenuOpen}
             onClick={() => setIsProfileMenuOpen((current) => !current)}
           >
-            <span className="admin-avatar">{user?.name?.charAt(0)?.toUpperCase() || "A"}</span>
+            <span className="admin-avatar">
+              {user?.name?.charAt(0)?.toUpperCase() || "A"}
+            </span>
 
             <span className="admin-info">
               <span className="admin-info-name">{user?.name || "Admin"}</span>

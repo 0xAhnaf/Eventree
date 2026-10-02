@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { CustomerDashboardLayout } from "../../components/CustomerDashboard";
-import { listEvents, saveEvent, deleteEvent, completeEvent } from "../../services/eventsApi";
+import {
+  listEvents,
+  saveEvent,
+  deleteEvent,
+  completeEvent,
+} from "../../services/eventsApi";
 import EventForm from "./components/EventForm";
 import EventStatusFilters from "./components/EventsOverview/EventStatusFilters";
 import EventsOverviewGrid from "./components/EventsOverview/EventsOverviewGrid";
@@ -39,6 +44,21 @@ export default function MyEvents() {
   }, [refresh]);
 
   useEffect(() => {
+    const bookingId = params.get("bookingId");
+    if (!bookingId || params.get("eventId") || !events.length) return;
+
+    const matchingEvent = events.find((event) =>
+      event.bookings?.some(
+        (booking) => String(booking.id) === String(bookingId),
+      ),
+    );
+
+    if (matchingEvent) {
+      setParams({ eventId: String(matchingEvent.id) }, { replace: true });
+    }
+  }, [events, params, setParams]);
+
+  useEffect(() => {
     const update = () => {
       if (!document.hidden) refresh();
     };
@@ -65,11 +85,7 @@ export default function MyEvents() {
     setEditing(false);
 
     const returnTo = params.get("returnTo");
-    if (
-      !eventId &&
-      returnTo &&
-      /^\/browse-vendor\/\d+$/.test(returnTo)
-    ) {
+    if (!eventId && returnTo && /^\/browse-vendor\/\d+$/.test(returnTo)) {
       navigate(returnTo + "?eventId=" + saved.id);
       return;
     }
@@ -100,9 +116,7 @@ export default function MyEvents() {
       } else {
         const updated = await completeEvent(selected.id);
         setEvents((current) =>
-          current.map((event) =>
-            event.id === updated.id ? updated : event,
-          ),
+          current.map((event) => (event.id === updated.id ? updated : event)),
         );
       }
     } catch (requestError) {
@@ -154,10 +168,7 @@ export default function MyEvents() {
           <p role="status">That event was not found in your account.</p>
         )}
 
-        <EventStatusFilters
-          activeFilter={filter}
-          onFilterChange={setFilter}
-        />
+        <EventStatusFilters activeFilter={filter} onFilterChange={setFilter} />
 
         <EventsOverviewGrid
           events={filteredEvents}
