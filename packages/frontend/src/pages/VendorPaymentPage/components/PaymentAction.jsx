@@ -30,7 +30,7 @@ function PaymentAction({
         <LockKeyhole size={18} />
         <span>
           {isProcessing
-            ? "Preparing payment..."
+            ? "Redirecting to secure payment..."
             : `Proceed to Payment — ${formattedFee}`}
         </span>
         {!isProcessing && <ArrowRight size={18} />}
@@ -42,8 +42,8 @@ function PaymentAction({
         </p>
       ) : (
         <p className="vpp-action-note">
-          This mock payment records registration completion and continues to the
-          vendor dashboard.
+          You will be redirected to SSLCommerz to complete your payment, then
+          brought back to Eventree.
         </p>
       )}
     </div>

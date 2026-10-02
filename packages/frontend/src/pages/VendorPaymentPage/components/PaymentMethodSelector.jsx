@@ -1,23 +1,11 @@
-import { CreditCard, Landmark, Smartphone } from "lucide-react";
+import { CreditCard } from "lucide-react";
 
 export const paymentMethods = [
   {
-    id: "bkash",
-    label: "bKash",
-    description: "Pay using your bKash mobile wallet",
-    icon: Smartphone,
-  },
-  {
-    id: "card",
-    label: "Card",
-    description: "Debit or credit card payment",
+    id: "sslcommerz",
+    label: "SSLCommerz",
+    description: "Pay with card, bKash, Nagad, Rocket or internet banking",
     icon: CreditCard,
-  },
-  {
-    id: "mobile-banking",
-    label: "Mobile Banking",
-    description: "Choose another supported mobile bank",
-    icon: Landmark,
   },
 ];
 

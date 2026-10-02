@@ -94,7 +94,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/vendor/availability', [VendorAvailabilityController::class, 'update']);
 
     Route::get('/vendor/registration-status', [VendorRegistrationController::class, 'show']);
-    Route::post('/vendor/registration-payment/complete', [VendorRegistrationController::class, 'completePayment']);
+    Route::post('/vendor/registration-payment/initiate', [VendorRegistrationController::class, 'initiatePayment'])
+        ->middleware('throttle:10,1');
     Route::get('/vendor/dashboard', [VendorProfileController::class, 'dashboard']);
 
     // Customer <-> Vendor messaging

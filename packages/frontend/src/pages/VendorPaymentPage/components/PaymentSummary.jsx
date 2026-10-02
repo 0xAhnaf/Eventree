@@ -27,8 +27,9 @@ function PaymentSummary({ selectedMethod, formattedFee }) {
         <div>
           <strong>{activeMethod?.description}</strong>
           <p>
-            Your secure payment details will be collected by the payment
-            gateway when backend integration is added.
+            You will be redirected to SSLCommerz&apos;s secure page to choose
+            your payment method and pay. Eventree never sees your card or
+            wallet details.
           </p>
         </div>
       </div>

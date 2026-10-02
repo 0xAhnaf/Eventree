@@ -41,13 +41,12 @@ class VendorMarketplaceFlowTest extends TestCase
         $this->getJson("/api/vendors/{$profile->id}")
             ->assertNotFound();
 
-        Sanctum::actingAs($vendor);
-
-        $this->postJson('/api/vendor/registration-payment/complete')
-            ->assertOk()
-            ->assertJsonPath('onboarding_completed', true)
-            ->assertJsonPath('payment_completed', true)
-            ->assertJsonPath('is_public', true);
+        // The mock "complete" endpoint is gone. Payment is only recorded by a
+        // validated SSLCommerz callback (see VendorRegistrationPaymentTest).
+        $profile->forceFill([
+            'onboarding_completed_at' => now(),
+            'registration_payment_completed_at' => now(),
+        ])->save();
 
         $this->getJson('/api/vendors')
             ->assertOk()
