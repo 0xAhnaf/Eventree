@@ -18,7 +18,15 @@ class PublicVendorController extends Controller
         ]);
 
         $query = VendorProfile::query()
-            ->with(['user', 'category', 'images', 'amenities', 'packages'])
+            ->with([
+                'user',
+                'category',
+                'images',
+                'amenities',
+                'packages',
+                'ratings',
+                'reviews.user'
+            ])
             ->whereNotNull('onboarding_completed_at')
             ->whereNotNull('registration_payment_completed_at')
             ->whereNotNull('admin_approved_at')
@@ -63,9 +71,18 @@ class PublicVendorController extends Controller
         return response()->json(['vendors' => $vendors]);
     }
 
+
     public function show(VendorProfile $vendorProfile): JsonResponse
     {
-        $vendorProfile->load(['user', 'category', 'images', 'amenities', 'packages']);
+        $vendorProfile->load([
+            'user',
+            'category',
+            'images',
+            'amenities',
+            'packages',
+            'ratings',
+            'reviews.user'
+        ]);
 
         if (! $this->isPubliclyVisible($vendorProfile)) {
             return response()->json(['message' => 'Vendor not found.'], 404);
@@ -75,6 +92,7 @@ class PublicVendorController extends Controller
             'vendor' => $this->serializeVendor($vendorProfile),
         ]);
     }
+
 
     public function availability(VendorProfile $vendorProfile): JsonResponse
     {
@@ -86,6 +104,7 @@ class PublicVendorController extends Controller
 
         return response()->json($this->availabilityPayload($vendorProfile));
     }
+
 
     private function serializeVendor(VendorProfile $profile): array
     {
@@ -109,6 +128,7 @@ class PublicVendorController extends Controller
             ->merge($portfolio->pluck('url'))
             ->unique()
             ->values();
+
         $firstPortfolio = $portfolio->first();
 
         return [
@@ -127,15 +147,19 @@ class PublicVendorController extends Controller
             'yearsExperience' => $profile->years_of_experience,
             'eventsCompleted' => $profile->events_completed,
             'startingPrice' => $profile->starting_price,
+
             'price' => $profile->starting_price !== null
                 ? '৳' . number_format((float) $profile->starting_price, 0)
                 : 'Price on request',
+
             'image' => $coverImage?->image_url ?? ($firstPortfolio['url'] ?? null),
             'photos' => $galleryPhotos,
             'portfolio' => $portfolio,
+
             'amenities' => $profile->amenities
                 ->pluck('amenity_name')
                 ->values(),
+
             'packages' => $profile->packages
                 ->sortBy('sort_order')
                 ->values()
@@ -148,15 +172,26 @@ class PublicVendorController extends Controller
                         ? array_values(array_filter(preg_split('/\r\n|\r|\n/', $package->description)))
                         : [],
                 ]),
-            // Review and admin-verification tables do not exist yet. Returning
-            // neutral values prevents the public UI from presenting fake data.
-            'rating' => null,
-            'reviewCount' => 0,
-            'reviews' => [],
+
+            'rating' => round($profile->ratings->avg('rating') ?? 0, 1),
+
+            'reviewCount' => $profile->reviews->count(),
+
+            'reviews' => $profile->reviews
+                ->sortByDesc('created_at')
+                ->values()
+                ->map(fn ($review) => [
+                    'id' => $review->id,
+                    'user' => $review->user?->name,
+                    'comment' => $review->comment,
+                    'createdAt' => $review->created_at,
+                ]),
+
             'verified' => false,
             'featured' => false,
         ];
     }
+
 
     private function availabilityPayload(VendorProfile $profile): array
     {
@@ -184,6 +219,7 @@ class PublicVendorController extends Controller
                 ->values(),
         ];
     }
+
 
     private function isPubliclyVisible(VendorProfile $profile): bool
     {
