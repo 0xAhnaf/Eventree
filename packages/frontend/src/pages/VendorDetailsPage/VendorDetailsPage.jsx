@@ -29,9 +29,13 @@ const VendorDetailsPage = () => {
   const [pageError, setPageError] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [eventDateLock, setEventDateLock] = useState("");
-  const handleEventSelect = useCallback((date) => { setEventDateLock(date); setSelectedDate(date); }, []);
+  const handleEventSelect = useCallback((date) => {
+    setEventDateLock(date);
+    setSelectedDate(date);
+  }, []);
   const [selectedPackageId, setSelectedPackageId] = useState("");
   const [bookedDates, setBookedDates] = useState([]);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const refreshAvailability = useCallback(async () => {
     const availability = await fetchPublicVendorAvailability(id);
@@ -85,7 +89,10 @@ const VendorDetailsPage = () => {
   }, [id]);
 
   const handleDateSelect = (date) => {
-    if ((eventDateLock && date !== eventDateLock) || bookedDates.includes(date)) {
+    if (
+      (eventDateLock && date !== eventDateLock) ||
+      bookedDates.includes(date)
+    ) {
       return;
     }
 
@@ -120,7 +127,10 @@ const VendorDetailsPage = () => {
 
       <VendorGallery vendor={vendor} />
 
-      <VendorHeader vendor={vendor} />
+      <VendorHeader
+        vendor={vendor}
+        onMessageClick={() => setIsChatOpen(true)}
+      />
 
       <VendorTabs />
 
@@ -162,7 +172,11 @@ const VendorDetailsPage = () => {
         </aside>
       </div>
 
-      <ChatManager vendor={vendor} />
+      <ChatManager
+        vendor={vendor}
+        open={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+      />
 
       <Footer />
     </div>

@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerProfileController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\MessageController;
 
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
@@ -68,6 +69,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/vendor/registration-status', [VendorRegistrationController::class, 'show']);
     Route::post('/vendor/registration-payment/complete', [VendorRegistrationController::class, 'completePayment']);
     Route::get('/vendor/dashboard', [VendorProfileController::class, 'dashboard']);
+
+    // Customer <-> Vendor messaging
+    Route::get('/messages/vendors/{vendorProfile}', [MessageController::class, 'customerConversation']);
+    Route::post('/messages/vendors/{vendorProfile}', [MessageController::class, 'sendToVendor']);
+    Route::get('/vendor/messages', [MessageController::class, 'vendorConversations']);
+    Route::get('/vendor/messages/{customerId}', [MessageController::class, 'vendorConversation']);
+    Route::post('/vendor/messages/{customerId}', [MessageController::class, 'sendToCustomer']);
 
     // Event Routes
     Route::post('/events/{event}/complete', [EventController::class, 'complete']);

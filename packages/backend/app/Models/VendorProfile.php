@@ -76,4 +76,9 @@ class VendorProfile extends Model
     {
         return $this->hasMany(VendorBlockedDate::class);
     }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
 }
