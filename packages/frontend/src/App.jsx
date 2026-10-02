@@ -25,7 +25,7 @@ import { completeVendorRegistrationPayment } from "./services/vendorApi.js";
 import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 import MyEvents from "./pages/MyEvents/MyEvents.jsx";
 import EmailVerified from "./pages/EmailVerified/EmailVerified.jsx";
-
+import RagChatbot from "./components/RagChatbot/RagChatbot";
 // Role-Based Access Control (RBAC) Guard
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user } = useAuth();
@@ -133,6 +133,7 @@ function App() {
   return (
     <AuthProvider>
       <VendorRegistrationStatusSync>
+      <RagChatbot />
         <main>
           <BrowserRouter>
             <Routes>
@@ -143,6 +144,7 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/verify-email" element={<EmailVerified />} />
+              
               <Route
                 path="/browse-vendor/:id/booking-request-sent"
                 element={<BookingRequestSuccessPage />}
@@ -196,7 +198,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-
+              
               {/* Admin-Only Routes */}
               <Route
                 path="/admin/*"
