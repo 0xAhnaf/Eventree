@@ -84,7 +84,7 @@
   border: none;
   border-radius: 6px;
   background: none;
-  color: #002319;
+  color: #0b3d2e;
   cursor: pointer;
 }
 
@@ -141,18 +141,18 @@
 }
 
 .vlp-sidebar-link:hover {
-  color: #002319;
+  color: #0b3d2e;
   background-color: rgba(250, 221, 203, 0.6);
 }
 
 .vlp-sidebar-link-active {
   color: #ffffff;
-  background-color: #002319;
+  background-color: #0b3d2e;
 }
 
 .vlp-sidebar-link-active:hover {
   color: #ffffff;
-  background-color: #002319;
+  background-color: #0b3d2e;
 }
 
 .vlp-sidebar-bottom {
@@ -200,7 +200,7 @@
   border: none;
   border-radius: 8px;
   background: none;
-  color: #002319;
+  color: #0b3d2e;
   cursor: pointer;
 
   transition: background-color 0.2s ease;

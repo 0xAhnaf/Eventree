@@ -27,6 +27,7 @@ import BookingRequests from "./components/BookingRequests.jsx";
 import BusinessProfile from "./components/BusinessProfile/BusinessProfile.jsx";
 import VendorBookings from "./components/VendorBookings/VendorBookings.jsx";
 import VendorAvailability from "./components/VendorAvailability/VendorAvailability.jsx";
+import VendorMessages from "./components/VendorMessages/VendorMessages.jsx";
 
 import {
   fetchVendorDashboard,
@@ -58,6 +59,7 @@ const sidebarLinks = [
   {
     icon: <Mail size={20} />,
     label: "Messages",
+    view: "messages",
   },
 ];
 
@@ -80,6 +82,11 @@ const viewDetails = {
     title: "Availability Calendar",
     subtitle:
       "Control the dates clients can select from your public vendor page.",
+  },
+  messages: {
+    title: "Messages",
+    subtitle:
+      "Reply to customers and keep every vendor conversation in one place.",
   },
 };
 
@@ -122,10 +129,13 @@ function VendorLandingPage() {
         iconVariant: "revenue",
         label: "Total Revenue",
         loading,
-        value: `৳${Number(rawStats?.total_revenue ?? 0).toLocaleString("en-BD", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}`,
+        value: `৳${Number(rawStats?.total_revenue ?? 0).toLocaleString(
+          "en-BD",
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          },
+        )}`,
       },
       {
         icon: <CalendarCheck size={20} />,
@@ -172,6 +182,9 @@ function VendorLandingPage() {
       case "availability":
         return <VendorAvailability />;
 
+      case "messages":
+        return <VendorMessages />;
+
       case "analytics":
       default:
         return (
@@ -199,9 +212,7 @@ function VendorLandingPage() {
               </div>
 
               <div className="vlp-bento-bookings">
-                <BookingRequests
-                  requests={dashboardData?.booking_requests}
-                />
+                <BookingRequests requests={dashboardData?.booking_requests} />
               </div>
             </div>
           </>
