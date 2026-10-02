@@ -1,16 +1,15 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Bell } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import logo from "../assets/eventree-logo2.png";
 import "./Navbar.css";
 
 import { useAuth } from "../context/AuthContext";
+import NotificationBell from "./Notifications/NotificationBell.jsx";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [bellShake, setBellShake] = useState(false);
-
   const { user, logout } = useAuth();
   const location = useLocation();
 
@@ -18,18 +17,14 @@ function Navbar() {
     return null;
   }
 
-  const handleBellClick = () => {
-    setBellShake(true);
-    setTimeout(() => setBellShake(false), 500);
-  };
-
   const handleLogout = () => {
     logout();
     setProfileOpen(false);
     setOpen(false);
   };
 
-  const profileImageUrl = user?.profile_image_url || user?.profile?.profile_image_url;
+  const profileImageUrl =
+    user?.profile_image_url || user?.profile?.profile_image_url;
 
   const profileMenu =
     user?.role === "vendor"
@@ -37,10 +32,6 @@ function Navbar() {
           {
             name: "Vendor Dashboard",
             path: "/vendor",
-          },
-          {
-            name: "Settings",
-            path: "/settings",
           },
         ]
       : user?.role === "admin"
@@ -100,18 +91,9 @@ function Navbar() {
             </>
           ) : (
             <div className="profile-wrapper">
-              {user.role === "vendor" && (
-                <button
-                  type="button"
-                  className={`navbar-notification-btn ${
-                    bellShake ? "navbar-notification-shake" : ""
-                  }`}
-                  onClick={handleBellClick}
-                  aria-label="Notifications"
-                >
-                  <Bell size={21} />
-                </button>
-              )}
+              {user.role === "vendor" || user.role === "customer" ? (
+                <NotificationBell />
+              ) : null}
 
               <button
                 className={`profile-avatar ${
@@ -162,17 +144,8 @@ function Navbar() {
         </div>
 
         <div className="navbar-mobile-actions">
-          {user?.role === "vendor" && (
-            <button
-              type="button"
-              className={`navbar-notification-btn ${
-                bellShake ? "navbar-notification-shake" : ""
-              }`}
-              onClick={handleBellClick}
-              aria-label="Notifications"
-            >
-              <Bell size={21} />
-            </button>
+          {(user?.role === "vendor" || user?.role === "customer") && (
+            <NotificationBell />
           )}
 
           <button

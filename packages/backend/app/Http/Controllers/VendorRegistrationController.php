@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\VendorProfile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Services\NotificationService;
 
 class VendorRegistrationController extends Controller
 {
@@ -21,11 +22,17 @@ class VendorRegistrationController extends Controller
 
         // This endpoint records the current frontend-only/mock payment. A real
         // gateway callback must replace it when payment integration is added.
+        $wasPaymentCompleted = $profile->registration_payment_completed_at !== null;
+
         $profile->forceFill([
             'onboarding_completed_at' => $profile->onboarding_completed_at ?? now(),
             'registration_payment_completed_at' =>
                 $profile->registration_payment_completed_at ?? now(),
         ])->save();
+
+        if (!$wasPaymentCompleted) {
+            $this->notificationService->vendorPendingApproval($profile->fresh('user'));
+        }
 
         return response()->json([
             'message' => 'Vendor registration payment recorded successfully.',

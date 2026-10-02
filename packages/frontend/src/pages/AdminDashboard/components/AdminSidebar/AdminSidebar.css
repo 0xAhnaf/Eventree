@@ -175,3 +175,25 @@
     padding: 11px 12px;
   }
 }
+
+.admin-menu-item {
+  position: relative;
+}
+.admin-menu-badge {
+  margin-left: auto;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #b91c1c;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-menu-item.active .admin-menu-badge {
+  background: #d6b36a;
+  color: #003d2c;
+}

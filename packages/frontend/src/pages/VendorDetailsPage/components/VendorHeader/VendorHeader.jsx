@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { MessageCircle } from "lucide-react";
 import { toggleFavoriteApi } from "../../../../services/favoritesApi";
 import "./VendorHeader.css";
 
-const VendorHeader = ({ vendor }) => {
+const VendorHeader = ({ vendor, onMessageClick }) => {
   const [copied, setCopied] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -21,7 +22,7 @@ const VendorHeader = ({ vendor }) => {
     try {
       setSaving(true);
       const response = await toggleFavoriteApi(vendor.id);
-      
+
       // Update state based on backend response, or fall back to toggling state
       if (typeof response?.favorited === "boolean") {
         setSaved(response.favorited);
@@ -30,7 +31,9 @@ const VendorHeader = ({ vendor }) => {
       }
     } catch (err) {
       console.error("Failed to toggle favorite:", err);
-      alert("Failed to update saved status. Please check if you are logged in.");
+      alert(
+        "Failed to update saved status. Please check if you are logged in.",
+      );
     } finally {
       setSaving(false);
     }
@@ -38,8 +41,8 @@ const VendorHeader = ({ vendor }) => {
 
   // Handle Share functionality
   const handleShare = async () => {
-    const shareUrl = vendor?.id 
-      ? `${window.location.origin}/browse-vendor/${vendor.id}` 
+    const shareUrl = vendor?.id
+      ? `${window.location.origin}/browse-vendor/${vendor.id}`
       : window.location.href;
 
     const shareData = {
@@ -49,7 +52,11 @@ const VendorHeader = ({ vendor }) => {
     };
 
     // 1. Mobile / Supported Browsers: Native Share Menu
-    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+    if (
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare(shareData)
+    ) {
       try {
         await navigator.share(shareData);
         return;
@@ -103,16 +110,25 @@ const VendorHeader = ({ vendor }) => {
         </div>
 
         <div className="vendor-actions">
-          <button 
-            type="button" 
+          <button
+            type="button"
+            onClick={onMessageClick}
+            className="message-vendor-btn"
+          >
+            <MessageCircle size={17} />
+            Message Vendor
+          </button>
+
+          <button
+            type="button"
             onClick={handleShare}
             className={copied ? "copied" : ""}
           >
             {copied ? "✓ Copied!" : "↗ Share"}
           </button>
 
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={handleToggleSave}
             disabled={saving}
             className={saved ? "saved-btn" : ""}

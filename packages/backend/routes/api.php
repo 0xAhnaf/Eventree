@@ -23,8 +23,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerProfileController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\VendorReviewController;
 use App\Http\Controllers\RagAgentController;
+use App\Http\Controllers\NotificationController;
 
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
@@ -57,6 +59,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/customer-profile', [CustomerProfileController::class, 'show']);
     Route::put('/customer-profile', [CustomerProfileController::class, 'update']);
     Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/summary', [NotificationController::class, 'summary']);
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
     
     Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::post('/favorites/toggle', [FavoriteController::class, 'toggle']);
@@ -89,6 +96,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/vendor/registration-status', [VendorRegistrationController::class, 'show']);
     Route::post('/vendor/registration-payment/complete', [VendorRegistrationController::class, 'completePayment']);
     Route::get('/vendor/dashboard', [VendorProfileController::class, 'dashboard']);
+
+    // Customer <-> Vendor messaging
+    Route::get('/messages/vendors/{vendorProfile}', [MessageController::class, 'customerConversation']);
+    Route::post('/messages/vendors/{vendorProfile}', [MessageController::class, 'sendToVendor']);
+    Route::get('/vendor/messages', [MessageController::class, 'vendorConversations']);
+    Route::get('/vendor/messages/{customerId}', [MessageController::class, 'vendorConversation']);
+    Route::post('/vendor/messages/{customerId}', [MessageController::class, 'sendToCustomer']);
 
     // Event Routes
     Route::post('/events/{event}/complete', [EventController::class, 'complete']);

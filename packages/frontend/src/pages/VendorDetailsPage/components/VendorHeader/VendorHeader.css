@@ -113,3 +113,17 @@
     gap: 10px;
   }
 }
+
+.message-vendor-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #0b3d2e !important;
+  background: #0b3d2e !important;
+  color: #fff !important;
+}
+
+.message-vendor-btn:hover {
+  opacity: 0.92;
+}
