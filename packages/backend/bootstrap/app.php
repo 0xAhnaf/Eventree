@@ -19,6 +19,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ]);
 
     $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
+
+    // SSLCommerz posts to these URLs from its own servers / the payer's browser,
+    // so they cannot carry a CSRF token. Authenticity is verified server-side
+    // via Sslcommerz::validatePayment() instead.
+    $middleware->preventRequestForgery(except: ['sslcommerz/*']);
 })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

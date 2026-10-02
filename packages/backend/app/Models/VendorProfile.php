@@ -81,6 +81,11 @@ class VendorProfile extends Model
     {
         return $this->hasMany(Message::class);
     }
+
+    public function registrationPayments(): HasMany
+    {
+        return $this->hasMany(VendorRegistrationPayment::class);
+    }
     public function ratings()
 {
     return $this->hasMany(VendorRating::class);

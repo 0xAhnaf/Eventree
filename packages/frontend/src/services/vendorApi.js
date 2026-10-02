@@ -126,9 +126,12 @@ export const saveVendorAvailability = async (blockedDates) => {
 export const fetchVendorRegistrationStatus = async () =>
   request("/vendor/registration-status", {}, true);
 
-export const completeVendorRegistrationPayment = async () =>
+// Starts an SSLCommerz session. Resolves to { gateway_url, tran_id }, or
+// { already_paid: true } when the vendor has already paid. Payment is only
+// marked complete by the backend after SSLCommerz validates the transaction.
+export const initiateVendorRegistrationPayment = async () =>
   request(
-    "/vendor/registration-payment/complete",
+    "/vendor/registration-payment/initiate",
     { method: "POST" },
     true,
   );
