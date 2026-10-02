@@ -25,13 +25,18 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\VendorReviewController;
+use App\Http\Controllers\RagAgentController;
 use App\Http\Controllers\NotificationController;
 
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::post('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
+Route::post('/agent/chat', [RagAgentController::class, 'chat']);
+Route::get('/rag/vendors', [RagAgentController::class, 'vendors']);
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    
     Route::get('/user', function (Request $request) {
         return $request->user();
 

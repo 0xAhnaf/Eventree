@@ -16,3 +16,7 @@ packages/frontend/.env.*
 
 
 docs/
+
+.env
+__pycache__/
+chroma_db/
