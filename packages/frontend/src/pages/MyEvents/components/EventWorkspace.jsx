@@ -61,7 +61,10 @@ export default function EventWorkspace({ event, busy, onBack, onEdit, onDelete, 
             <span className="me-eyebrow">{event.category}</span>
             <h1>{event.title}</h1>
           </div>
-          <span className="me-badge">{done ? "Completed" : event.status}</span>
+
+          <span className="me-badge">
+            {done ? "Completed" : event.status}
+          </span>
         </div>
 
         <div className="me-meta">
@@ -73,29 +76,42 @@ export default function EventWorkspace({ event, busy, onBack, onEdit, onDelete, 
 
         {!done && (
           <div className="me-actions">
-            <button className="me-secondary" onClick={onEdit} disabled={busy}>
+
+            <button 
+              className="me-secondary" 
+              onClick={onEdit} 
+              disabled={busy}
+            >
               Edit details
             </button>
 
             <button
               className="me-primary"
               onClick={onComplete}
-              disabled={busy || event.date >= todayLocal()}
+              disabled={busy || event.date > todayLocal()}
             >
               Complete event
             </button>
 
             {!event.has_bookings && (
-              <button className="me-danger" onClick={onDelete} disabled={busy}>
+              <button 
+                className="me-danger" 
+                onClick={onDelete} 
+                disabled={busy}
+              >
                 Delete event
               </button>
             )}
+
           </div>
         )}
 
         {!done && winners.length > 0 && (
           <div className="me-actions" style={{ marginTop: "12px" }}>
-            <button className="me-primary" onClick={handleDownloadInvoice}>
+            <button 
+              className="me-primary" 
+              onClick={handleDownloadInvoice}
+            >
               Download Invoice
             </button>
           </div>
@@ -103,7 +119,7 @@ export default function EventWorkspace({ event, busy, onBack, onEdit, onDelete, 
 
         {!done && (
           <p className="me-note">
-            Complete event becomes available after the event date. Confirmed means at least one vendor has accepted.
+            Complete event becomes available on the event date. Confirmed means at least one vendor has accepted.
           </p>
         )}
       </section>
@@ -116,20 +132,33 @@ export default function EventWorkspace({ event, busy, onBack, onEdit, onDelete, 
         </p>
 
         <div className="me-category-grid">
+
           {VENDOR_CATEGORIES.map((category) => {
-            const requests = event.bookings.filter((b) => b.category === category);
-            const winner = winners.find((b) => b.category === category);
+
+            const requests = event.bookings.filter(
+              (b) => b.category === category
+            );
+
+            const winner = winners.find(
+              (b) => b.category === category
+            );
 
             return (
               <article key={category} className="me-category">
+
                 <h3>{category}</h3>
 
-                {!requests.length && <p>No vendors requested yet.</p>}
+                {!requests.length && (
+                  <p>No vendors requested yet.</p>
+                )}
 
                 {requests.map((booking) => (
                   <div className="me-request" key={booking.id}>
+
                     <div>
-                      <Link to={`/browse-vendor/${booking.vendor_id}?eventId=${event.id}`}>
+                      <Link 
+                        to={`/browse-vendor/${booking.vendor_id}?eventId=${event.id}`}
+                      >
                         {booking.vendor_name}
                       </Link>
 
@@ -141,32 +170,45 @@ export default function EventWorkspace({ event, busy, onBack, onEdit, onDelete, 
                     <span className={"me-badge me-" + booking.status}>
                       {booking.status}
                     </span>
+
                   </div>
                 ))}
 
                 {winner ? (
+
                   <p className="me-chosen">
                     <Check size={16} /> Vendor selected
                   </p>
+
                 ) : (
+
                   !done &&
                   event.date >= todayLocal() && (
+
                     <Link
                       className="me-secondary"
                       to={vendorSearchLink(event.id, category)}
                     >
                       <Plus size={16} /> Find {category}
                     </Link>
+
                   )
+
                 )}
+
               </article>
             );
+
           })}
+
         </div>
+
       </section>
 
       {done && (
+
         <section className="me-panel">
+
           <h2>Review your vendors</h2>
 
           <p>
@@ -174,17 +216,28 @@ export default function EventWorkspace({ event, busy, onBack, onEdit, onDelete, 
           </p>
 
           {winners.length ? (
+
             <div className="me-category-grid">
+
               {winners.map((b) => (
-                <VendorReviewDraft key={b.id} booking={b} />
+                <VendorReviewDraft 
+                  key={b.id} 
+                  booking={b} 
+                />
               ))}
+
             </div>
+
           ) : (
+
             <p>No confirmed vendors to review.</p>
+
           )}
+
         </section>
+
       )}
+
     </>
   );
 }
-

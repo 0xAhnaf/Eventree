@@ -374,13 +374,10 @@ function BusinessProfile() {
   };
 
   const updatePackageFeatures = (packageIndex, value) => {
-    const features = value
-      .split("\n")
-      .map((feature) => feature.trim())
-      .filter(Boolean);
+  const features = value.split("\n");
 
-    updatePackage(packageIndex, "features", features);
-  };
+  updatePackage(packageIndex, "features", features);
+};
 
   const addPackage = () => {
     if (profile.packages.length >= 3) {

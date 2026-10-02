@@ -17,7 +17,7 @@ import ContactStep from "./components/ContactStep";
 import HighlightsStep from "./components/HighlightsStep";
 import ServicesStep from "./components/ServicesStep";
 import ReviewStep from "./components/ReviewStep";
-
+import { getAmenitySuggestions } from "../VendorLandingPage/components/BusinessProfile/utils/amenitySuggestions.js";
 import "./VendorOnboarding.css";
 
 const onboardingSteps = [
@@ -131,6 +131,16 @@ function VendorOnboarding() {
 
   const [categories, setCategories] = useState([]);
   const [categoriesError, setCategoriesError] = useState("");
+
+  const selectedCategoryName =
+    categories.find(
+      (category) => String(category.id) === String(profile.categoryId),
+    )?.name || "";
+
+  const amenitySuggestions = useMemo(
+    () => getAmenitySuggestions(selectedCategoryName),
+    [selectedCategoryName],
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -440,6 +450,25 @@ function VendorOnboarding() {
     setAmenityInput("");
   };
 
+  const addAmenityValue = (value) => {
+    const newAmenity = value.trim();
+
+    if (!newAmenity) return;
+
+    if (
+      profile.amenities.some(
+        (amenity) => amenity.toLowerCase() === newAmenity.toLowerCase(),
+      )
+    ) {
+      return;
+    }
+
+    setProfile((prev) => ({
+      ...prev,
+      amenities: [...prev.amenities, newAmenity],
+    }));
+  };
+
   const removeAmenity = (item) => {
     setProfile((prev) => ({
       ...prev,
@@ -471,10 +500,7 @@ function VendorOnboarding() {
     updatePackage(
       idx,
       "features",
-      value
-        .split("\n")
-        .map((f) => f.trim())
-        .filter(Boolean),
+      value.split("\n"),
     );
   };
 
@@ -524,7 +550,10 @@ function VendorOnboarding() {
             amenityInput={amenityInput}
             setAmenityInput={setAmenityInput}
             addAmenity={addAmenity}
+            addAmenityValue={addAmenityValue}
             removeAmenity={removeAmenity}
+            amenitySuggestions={amenitySuggestions}
+            categoryName={selectedCategoryName}
             addPackage={addPackage}
             updatePackage={updatePackage}
             updatePackageFeatures={updatePackageFeatures}

@@ -24,6 +24,7 @@ use App\Http\Controllers\CustomerProfileController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\VendorReviewController;
 
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
@@ -34,6 +35,21 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
 
     });
+    Route::post('/vendors/{vendor}/rating', 
+        [VendorReviewController::class, 'storeRating']
+    );
+
+    Route::post('/vendors/{vendor}/reviews', 
+        [VendorReviewController::class, 'storeReview']
+    );
+
+    Route::put('/reviews/{review}', 
+        [VendorReviewController::class, 'updateReview']
+    );
+
+    Route::delete('/reviews/{review}', 
+        [VendorReviewController::class, 'deleteReview']
+    );
     Route::get('/customer-profile', [CustomerProfileController::class, 'show']);
     Route::put('/customer-profile', [CustomerProfileController::class, 'update']);
     Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);

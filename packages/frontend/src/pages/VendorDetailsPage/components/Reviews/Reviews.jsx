@@ -9,24 +9,31 @@ const Reviews = ({ vendor }) => {
       <h2>Reviews</h2>
 
       <div className="rating-summary">
-        <h3>{vendor.rating ?? "—"}</h3>
+        <h3>{vendor.rating ?? 0}</h3>
 
         <div>
-          <div className="stars">{vendor.rating == null ? "☆☆☆☆☆" : "★★★★★"}</div>
+          <div className="stars">
+            {vendor.rating
+              ? "★".repeat(Math.round(vendor.rating)) +
+                "☆".repeat(5 - Math.round(vendor.rating))
+              : "☆☆☆☆☆"}
+          </div>
 
-          <p>Based on {vendor.reviewCount || 0} reviews</p>
+          <p>
+            Based on {vendor.reviewCount || 0} reviews
+          </p>
         </div>
       </div>
 
-      {!reviews.length && <p>No customer reviews have been added yet.</p>}
+      {!reviews.length && (
+        <p>No customer reviews have been added yet.</p>
+      )}
 
       <div className="reviews-list">
-        {reviews.map((review, index) => (
-          <div className="review-card" key={index}>
+        {reviews.map((review) => (
+          <div className="review-card" key={review.id}>
             <div className="review-header">
-              <h4>{review.name}</h4>
-
-              <span>{review.rating}</span>
+              <h4>{review.user ?? "Anonymous"}</h4>
             </div>
 
             <p>{review.comment}</p>

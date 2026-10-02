@@ -81,4 +81,13 @@ class VendorProfile extends Model
     {
         return $this->hasMany(Message::class);
     }
+    public function ratings()
+{
+    return $this->hasMany(VendorRating::class);
+}
+
+public function reviews()
+{
+    return $this->hasMany(VendorReview::class);
+}
 }
