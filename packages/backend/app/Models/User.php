@@ -46,6 +46,21 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(CustomerProfile::class);
     }
+
+    public function sentMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'recipient_id');
+    }
+
+    public function userNotifications(): HasMany
+    {
+        return $this->hasMany(UserNotification::class, 'recipient_id');
+    }
     
 
     public function favorites()

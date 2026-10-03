@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchFavorites, toggleFavoriteApi } from "../../services/favoritesApi";
 import VendorCard from "../../components/VendorCard";
+import { CustomerDashboardLayout } from "../../components/CustomerDashboard";
 import "./FavouritePage.css";
 
 const FavouritePage = () => {
@@ -35,26 +36,51 @@ const FavouritePage = () => {
     }
   };
 
-  if (loading) return <div className="favorites-page"><p>Loading saved vendors...</p></div>;
-  if (error) return <div className="favorites-page"><p className="error-text">{error}</p></div>;
-
   return (
-    <div className="favorites-page">
+    <CustomerDashboardLayout
+      className="favorites-page"
+      contentClassName="favorites-main"
+    >
       <div className="favorites-container">
-        <h2>Saved Vendors ({favorites.length})</h2>
+        <div className="favorites-header">
+          <div>
+            <p className="favorites-eyebrow">YOUR COLLECTION</p>
+            <h2>
+              Saved Vendors <span>({favorites.length})</span>
+            </h2>
+            <p className="favorites-description">
+              Keep your favorite event professionals close at hand.
+            </p>
+          </div>
+        </div>
 
-        {favorites.length === 0 ? (
+        {loading ? (
+          <p role="status" className="favorites-message">
+            Loading saved vendors...
+          </p>
+        ) : error ? (
+          <p className="favorites-message error-text" role="alert">
+            {error}
+          </p>
+        ) : favorites.length === 0 ? (
           <div className="empty-favorites">
-            <p>You haven't saved any vendors to your favorites yet.</p>
+            <div className="empty-favorites-icon">♡</div>
+            <h3>No saved vendors yet</h3>
+            <p>
+              You haven't saved any vendors to your favorites yet. Explore
+              vendors and save the ones you love.
+            </p>
           </div>
         ) : (
           <div className="favorites-grid">
             {favorites.map((vendor) => (
-              <div key={vendor.id} className="favorite-card-wrapper" style={{ position: "relative" }}>
+              <div key={vendor.id} className="favorite-card-wrapper">
                 <button
+                  type="button"
                   className="remove-favorite-btn"
                   onClick={() => handleRemove(vendor.id)}
                   title="Remove from favorites"
+                  aria-label={`Remove ${vendor.name || "vendor"} from favorites`}
                 >
                   ✕
                 </button>
@@ -64,7 +90,7 @@ const FavouritePage = () => {
           </div>
         )}
       </div>
-    </div>
+    </CustomerDashboardLayout>
   );
 };
 

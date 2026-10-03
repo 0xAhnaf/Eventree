@@ -19,8 +19,11 @@ import { isVendorOnboardingRequired } from "./utils/vendorProfileStorage.js";
 import {
   isVendorPaymentCompleted,
   isVendorPaymentRequired,
+  markVendorPaymentCompleted,
+  markVendorPaymentRequired,
 } from "./utils/vendorPaymentStorage.js";
-import { completeVendorRegistrationPayment } from "./services/vendorApi.js";
+import { fetchVendorRegistrationStatus } from "./services/vendorApi.js";
+import VendorPaymentResult from "./pages/VendorPaymentPage/VendorPaymentResult.jsx";
 
 import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 import MyEvents from "./pages/MyEvents/MyEvents.jsx";
@@ -117,13 +120,22 @@ const VendorRegistrationStatusSync = ({ children }) => {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user?.role !== "vendor" || !isVendorPaymentCompleted(user)) return;
+    if (user?.role !== "vendor") return;
 
-    // Migrates vendors who completed the earlier localStorage-only mock
-    // payment flow to the backend registration status on their next visit.
-    completeVendorRegistrationPayment().catch(() => {
-      // The normal payment page still reports backend failures interactively.
-    });
+    // The backend is the source of truth for payment. localStorage is only a
+    // UI cache, so it must never be able to *create* a paid state: we only
+    // copy the server's answer into it.
+    fetchVendorRegistrationStatus()
+      .then((status) => {
+        if (status.payment_completed) {
+          markVendorPaymentCompleted(user);
+        } else if (status.onboarding_completed) {
+          markVendorPaymentRequired(user);
+        }
+      })
+      .catch(() => {
+        // No vendor profile yet (still onboarding) or offline: leave as is.
+      });
   }, [user]);
 
   return children;
@@ -199,6 +211,16 @@ function App() {
                 }
               />
               
+
+              <Route
+                path="/vendor/payment/result"
+                element={
+                  <ProtectedRoute allowedRoles={["vendor"]}>
+                    <VendorPaymentResult />
+                  </ProtectedRoute>
+                }
+              />
+
               {/* Admin-Only Routes */}
               <Route
                 path="/admin/*"

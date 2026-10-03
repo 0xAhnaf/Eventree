@@ -1,0 +1,34 @@
+.vpr-card {
+  max-width: 520px;
+  margin: 4rem auto;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border-top: 5px solid #94a3b8;
+}
+
+.vpr-card h1 {
+  margin: 0 0 0.75rem;
+  font-size: 1.6rem;
+}
+
+.vpr-card p {
+  margin: 0 0 1.5rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.vpr-paid {
+  border-top-color: #16a34a;
+}
+
+.vpr-cancelled {
+  border-top-color: #d97706;
+}
+
+.vpr-failed,
+.vpr-error {
+  border-top-color: #dc2626;
+}
