@@ -33,7 +33,7 @@ Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::post('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
 Route::post('/agent/chat', [RagAgentController::class, 'chat']);
 Route::get('/rag/vendors', [RagAgentController::class, 'vendors']);
-Route::middleware(['auth:sanctum', 'throttle:20,1'])->post('/chatbot', [ChatbotController::class, 'chat']);
+
 
 Route::middleware('auth:sanctum')->group(function () {
 
