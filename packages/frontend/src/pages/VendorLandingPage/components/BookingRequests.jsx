@@ -1,13 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Check, X } from "lucide-react";
 
 import {
-  DEMO_VENDOR_ID,
-  getVendorBookings,
+  fetchVendorBookings,
   updateVendorBookingStatus,
-  VENDOR_BOOKINGS_STORAGE_KEY,
   VENDOR_BOOKINGS_UPDATED_EVENT,
-} from "../../../utils/vendorPortalStorage.js";
+} from "../../../services/vendorApi.js";
 
 import "./BookingRequests.css";
 
@@ -34,51 +32,54 @@ const getInitials = (name = "") =>
     .join("")
     .toUpperCase() || "CL";
 
-function BookingRequests() {
-  const [bookings, setBookings] = useState(() =>
-    getVendorBookings(DEMO_VENDOR_ID),
-  );
+function BookingRequests({ requests }) {
+  const [bookings, setBookings] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  useEffect(() => {
-    const syncBookings = (event) => {
-      if (
-        event?.type === "storage" &&
-        event.key &&
-        event.key !== VENDOR_BOOKINGS_STORAGE_KEY
-      ) {
-        return;
-      }
-
-      setBookings(getVendorBookings(DEMO_VENDOR_ID));
-    };
-
-    window.addEventListener("storage", syncBookings);
-    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
-
-    return () => {
-      window.removeEventListener("storage", syncBookings);
-      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
-    };
+  const loadBookings = useCallback(async () => {
+    try {
+      setBookings(await fetchVendorBookings());
+      setErrorMessage("");
+    } catch (error) {
+      setErrorMessage(error.message || "Could not load booking requests.");
+    }
   }, []);
 
-  const pendingRequests = useMemo(
-    () =>
-      bookings
-        .filter((booking) => booking.status === "pending")
-        .sort(
-          (firstBooking, secondBooking) =>
-            new Date(firstBooking.createdAt) -
-            new Date(secondBooking.createdAt),
-        ),
-    [bookings],
-  );
+  useEffect(() => {
+    if (!requests) {
+      loadBookings();
+    }
+    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
 
-  const handleDecline = (bookingId) => {
-    updateVendorBookingStatus(bookingId, "rejected");
+    return () => {
+      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
+    };
+  }, [requests, loadBookings]);
+
+  const pendingRequests = useMemo(() => {
+    const list = requests && Array.isArray(requests) ? requests : bookings.filter((booking) => booking.status === "pending");
+
+    return list.sort(
+      (firstBooking, secondBooking) =>
+        new Date(firstBooking.createdAt || firstBooking.created_at) -
+        new Date(secondBooking.createdAt || secondBooking.created_at),
+    );
+  }, [requests, bookings]);
+
+  const handleDecline = async (bookingId) => {
+    try {
+      await updateVendorBookingStatus(bookingId, "rejected");
+    } catch (error) {
+      setErrorMessage(error.message || "Booking could not be rejected.");
+    }
   };
 
-  const handleAccept = (bookingId) => {
-    updateVendorBookingStatus(bookingId, "accepted");
+  const handleAccept = async (bookingId) => {
+    try {
+      await updateVendorBookingStatus(bookingId, "accepted");
+    } catch (error) {
+      setErrorMessage(error.message || "Booking could not be accepted.");
+    }
   };
 
   return (
@@ -92,6 +93,7 @@ function BookingRequests() {
       </div>
 
       <div className="booking-requests-table-wrap-VLP">
+        {errorMessage && <p className="booking-empty-VLP">{errorMessage}</p>}
         <table className="booking-requests-table-VLP">
           <thead>
             <tr>
@@ -104,33 +106,39 @@ function BookingRequests() {
           </thead>
 
           <tbody>
-            {pendingRequests.map((request) => (
-              <tr key={request.id}>
-                <td>
-                  <div className="booking-client-VLP">
-                    <span className="booking-avatar-VLP">
-                      {getInitials(request.clientName)}
+            {pendingRequests.map((request) => {
+              const clientName = request.clientName || request.customer?.name || "Client";
+              const eventType = request.eventType || request.event_type || "Event type not provided";
+              const eventDate = request.eventDate || request.event_date;
+              const packageName = request.packageName || request.package_name || "Package not selected";
+
+              return (
+                <tr key={request.id}>
+                  <td>
+                    <div className="booking-client-VLP">
+                      <span className="booking-avatar-VLP">
+                        {getInitials(clientName)}
+                      </span>
+
+                      <span className="booking-client-name-VLP">
+                        {clientName}
+                      </span>
+                    </div>
+                  </td>
+
+                  <td className="booking-cell-muted-VLP">
+                    {eventType}
+                  </td>
+
+                  <td className="booking-cell-muted-VLP">
+                    {formatDate(eventDate)}
+                  </td>
+
+                  <td>
+                    <span className="booking-package-VLP">
+                      {packageName}
                     </span>
-
-                    <span className="booking-client-name-VLP">
-                      {request.clientName || "Client"}
-                    </span>
-                  </div>
-                </td>
-
-                <td className="booking-cell-muted-VLP">
-                  {request.eventType || "Event type not provided"}
-                </td>
-
-                <td className="booking-cell-muted-VLP">
-                  {formatDate(request.eventDate)}
-                </td>
-
-                <td>
-                  <span className="booking-package-VLP">
-                    {request.packageName || "Package not selected"}
-                  </span>
-                </td>
+                  </td>
 
                 <td>
                   <div className="booking-actions-VLP">
@@ -156,7 +164,8 @@ function BookingRequests() {
                   </div>
                 </td>
               </tr>
-            ))}
+            );
+          })}
 
             {pendingRequests.length === 0 && (
               <tr>

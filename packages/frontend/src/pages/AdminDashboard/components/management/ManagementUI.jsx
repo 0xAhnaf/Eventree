@@ -22,7 +22,16 @@ export const DirectoryToolbar = ({ search, setSearch, placeholder, filter, setFi
   </div>
 );
 
-const statusLabels = { active: "Active", inactive: "Inactive", paid: "Paid", approved: "Approved", pending: "Pending approval" };
+const statusLabels = {
+  active: "Active",
+  inactive: "Inactive",
+  paid: "Paid",
+  approved: "Approved",
+  pending: "Pending",
+  accepted: "Accepted",
+  rejected: "Rejected",
+  completed: "Completed",
+};
 export const StatusBadge = ({ status }) => <span className={`management-status ${status}`}><i />{statusLabels[status] || status}</span>;
 
 export const EmptyState = () => <div className="management-empty"><Search size={24} /><h3>No matching records</h3><p>Try changing your search or filter.</p></div>;

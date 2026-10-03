@@ -1,9 +1,14 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Admin\AdminManagementController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\PublicVendorController;
+use App\Http\Controllers\VendorAvailabilityController;
+use App\Http\Controllers\VendorBookingController;
 use App\Http\Controllers\VendorDetailsController;
 use App\Http\Controllers\VendorProfileController;
+use App\Http\Controllers\VendorRegistrationController;
 use App\Mail\TestGatewayEmail;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
@@ -15,17 +20,54 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CustomerProfileController;
+use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\VendorReviewController;
+use App\Http\Controllers\RagAgentController;
+use App\Http\Controllers\NotificationController;
 
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::post('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
+Route::post('/agent/chat', [RagAgentController::class, 'chat']);
+Route::get('/rag/vendors', [RagAgentController::class, 'vendors']);
+Route::middleware(['auth:sanctum', 'throttle:20,1'])->post('/chatbot', [ChatbotController::class, 'chat']);
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    
     Route::get('/user', function (Request $request) {
         return $request->user();
-    });
 
+    });
+    Route::post('/vendors/{vendor}/rating', 
+        [VendorReviewController::class, 'storeRating']
+    );
+
+    Route::post('/vendors/{vendor}/reviews', 
+        [VendorReviewController::class, 'storeReview']
+    );
+
+    Route::put('/reviews/{review}', 
+        [VendorReviewController::class, 'updateReview']
+    );
+
+    Route::delete('/reviews/{review}', 
+        [VendorReviewController::class, 'deleteReview']
+    );
+    Route::get('/customer-profile', [CustomerProfileController::class, 'show']);
+    Route::put('/customer-profile', [CustomerProfileController::class, 'update']);
     Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/summary', [NotificationController::class, 'summary']);
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
+    
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+    Route::post('/favorites/toggle', [FavoriteController::class, 'toggle']);
 
     Route::post('/email/verification-notification', function (Request $request) {
         $request->user()->sendEmailVerificationNotification();
@@ -38,13 +80,47 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/vendor-profile', [VendorProfileController::class, 'show']);
     Route::put('/vendor-profile', [VendorProfileController::class, 'update']);
     Route::post('/vendor-profile/cover-image', [VendorProfileController::class, 'updateCoverImage']);
+    Route::put('/vendor-profile/cover-image/{image}', [VendorProfileController::class, 'selectCoverImage']);
     Route::post('/vendor-profile/portfolio-images', [VendorProfileController::class, 'addPortfolioImages']);
     Route::delete('/vendor-profile/images/{image}', [VendorProfileController::class, 'deleteImage']);
-
+    Route::get('/events/{eventId}/invoice', [InvoiceController::class, 'show']);
     Route::post('/vendor-details', [VendorDetailsController::class, 'store']);
+    Route::get('/events/{eventId}/invoice/download', [InvoiceController::class, 'download']);
+
+    Route::post('/bookings', [VendorBookingController::class, 'store']);
+    Route::get('/vendor/bookings', [VendorBookingController::class, 'index']);
+    Route::patch('/vendor/bookings/{booking}/status', [VendorBookingController::class, 'updateStatus']);
+
+    Route::get('/vendor/availability', [VendorAvailabilityController::class, 'show']);
+    Route::put('/vendor/availability', [VendorAvailabilityController::class, 'update']);
+
+    Route::get('/vendor/registration-status', [VendorRegistrationController::class, 'show']);
+    Route::post('/vendor/registration-payment/initiate', [VendorRegistrationController::class, 'initiatePayment'])
+        ->middleware('throttle:10,1');
+    Route::get('/vendor/dashboard', [VendorProfileController::class, 'dashboard']);
+
+    // Customer <-> Vendor messaging
+    Route::get('/messages/vendors/{vendorProfile}', [MessageController::class, 'customerConversation']);
+    Route::post('/messages/vendors/{vendorProfile}', [MessageController::class, 'sendToVendor']);
+    Route::get('/vendor/messages', [MessageController::class, 'vendorConversations']);
+    Route::get('/vendor/messages/{customerId}', [MessageController::class, 'vendorConversation']);
+    Route::post('/vendor/messages/{customerId}', [MessageController::class, 'sendToCustomer']);
 
     // Event Routes
+    Route::post('/events/{event}/complete', [EventController::class, 'complete']);
     Route::apiResource('events', EventController::class);
+
+    Route::prefix('admin')->middleware('admin')->group(function () {
+        Route::get('/dashboard', [AdminManagementController::class, 'dashboard']);
+        Route::get('/customers', [AdminManagementController::class, 'customers']);
+        Route::delete('/customers/{customer}', [AdminManagementController::class, 'destroyCustomer']);
+        Route::get('/vendors', [AdminManagementController::class, 'vendors']);
+        Route::patch('/vendors/{vendor}/approve', [AdminManagementController::class, 'approveVendor']);
+        Route::delete('/vendors/{vendor}', [AdminManagementController::class, 'destroyVendor']);
+        Route::get('/bookings', [AdminManagementController::class, 'bookings']);
+        Route::get('/payments', [AdminManagementController::class, 'payments']);
+        Route::get('/reports', [AdminManagementController::class, 'reports']);
+    });
 });
 
 Route::get('/vendor-categories', function () {
@@ -52,6 +128,10 @@ Route::get('/vendor-categories', function () {
         DB::table('vendor_categories')->select('id', 'name')->orderBy('name')->get()
     );
 });
+
+Route::get('/vendors', [PublicVendorController::class, 'index']);
+Route::get('/vendors/{vendorProfile}/availability', [PublicVendorController::class, 'availability']);
+Route::get('/vendors/{vendorProfile}', [PublicVendorController::class, 'show']);
 
 Route::post('/forgot-password', function (Request $request) {
     $request->validate(['email' => 'required|email']);

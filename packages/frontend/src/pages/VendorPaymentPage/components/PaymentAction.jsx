@@ -6,6 +6,7 @@ function PaymentAction({
   hasAcceptedTerms,
   onTermsChange,
   onContinue,
+  errorMessage,
 }) {
   return (
     <div className="vpp-payment-action">
@@ -29,15 +30,22 @@ function PaymentAction({
         <LockKeyhole size={18} />
         <span>
           {isProcessing
-            ? "Preparing payment..."
+            ? "Redirecting to secure payment..."
             : `Proceed to Payment — ${formattedFee}`}
         </span>
         {!isProcessing && <ArrowRight size={18} />}
       </button>
 
-      <p className="vpp-action-note">
-        This frontend-only action currently continues to the vendor dashboard.
-      </p>
+      {errorMessage ? (
+        <p className="vpp-action-error" role="alert">
+          {errorMessage}
+        </p>
+      ) : (
+        <p className="vpp-action-note">
+          You will be redirected to SSLCommerz to complete your payment, then
+          brought back to Eventree.
+        </p>
+      )}
     </div>
   );
 }

@@ -25,6 +25,20 @@
   transition: 0.5s;
 }
 
+.vendor-image-placeholder-CLP {
+  align-items: center;
+  background: linear-gradient(145deg, #e5eee9, #f7f1e7);
+  color: #0b4a3c;
+  display: flex;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 3rem;
+  font-weight: 700;
+  height: 100%;
+  justify-content: center;
+  min-height: 220px;
+  width: 100%;
+}
+
 .vendor-card-CLP:hover img {
   transform: scale(1.08);
 }

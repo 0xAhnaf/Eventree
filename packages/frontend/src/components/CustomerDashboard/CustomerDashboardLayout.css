@@ -1,0 +1,79 @@
+.customer-dashboard-page{
+  --customer-dashboard-green:#003d2e;
+  --customer-dashboard-muted:#71817d;
+  --customer-dashboard-border:#e1e9e5;
+  min-height:100vh;
+  background:#fff8f4;
+  color:var(--customer-dashboard-green);
+}
+.customer-dashboard-page *{box-sizing:border-box}
+.customer-dashboard-shell{display:flex;min-height:75vh}
+.customer-dashboard-sidebar{
+  width:245px;
+  flex-shrink:0;
+  padding:28px 20px;
+  background:#fff0e8;
+  border-right:1px solid var(--customer-dashboard-border);
+}
+.customer-dashboard-sidebar h2{font-size:22px;margin:0 0 6px}
+.customer-dashboard-sidebar p{font-size:12px;color:var(--customer-dashboard-muted);margin:0 0 35px}
+.customer-dashboard-sidebar-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.customer-dashboard-nav{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:6px 0;
+  padding:13px 15px;
+  border-radius:7px;
+  color:var(--customer-dashboard-green);
+  font-size:14px;
+  text-decoration:none;
+  transition:background-color .18s ease,color .18s ease;
+}
+.customer-dashboard-nav.is-active{background:var(--customer-dashboard-green);color:#fff}
+.customer-dashboard-main{width:100%;min-width:0}
+.customer-dashboard-menu{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin:14px;
+  padding:10px 14px;
+  border:1px solid #ccdcd5;
+  border-radius:7px;
+  background:#fff;
+  color:var(--customer-dashboard-green);
+  font:inherit;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+}
+.customer-dashboard-close{margin:0;padding:6px}
+.customer-dashboard-scrim{display:none}
+@media(hover:hover){
+  .customer-dashboard-nav:not(.is-active):hover{background:#dcebe5;color:#07543f}
+  .customer-dashboard-menu:hover{background:#0b654c;color:#fff;border-color:#0b654c}
+}
+@media(max-width:1150px){
+  .customer-dashboard-sidebar{width:210px}
+}
+@media(max-width:700px){
+  .customer-dashboard-shell{display:block}
+  .customer-dashboard-menu{display:inline-flex}
+  .customer-dashboard-sidebar{display:none}
+  .customer-dashboard-sidebar.is-open{
+    display:block;
+    position:fixed;
+    inset:0 auto 0 0;
+    width:280px;
+    z-index:1001;
+  }
+  .customer-dashboard-scrim{
+    display:block;
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    border:0;
+    background:#001e1680;
+  }
+}

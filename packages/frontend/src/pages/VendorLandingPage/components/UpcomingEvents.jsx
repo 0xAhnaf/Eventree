@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
-  DEMO_VENDOR_ID,
-  getVendorBookings,
-  VENDOR_BOOKINGS_STORAGE_KEY,
+  fetchVendorBookings,
   VENDOR_BOOKINGS_UPDATED_EVENT,
-} from "../../../utils/vendorPortalStorage.js";
+} from "../../../services/vendorApi.js";
 
 import "./UpcomingEvents.css";
 
@@ -30,47 +28,39 @@ const getDateParts = (dateValue) => {
   };
 };
 
-function UpcomingEvents({ onViewCalendar }) {
-  const [bookings, setBookings] = useState(() =>
-    getVendorBookings(DEMO_VENDOR_ID),
-  );
+function UpcomingEvents({ events, onViewCalendar }) {
+  const [bookings, setBookings] = useState([]);
 
-  useEffect(() => {
-    const syncBookings = (event) => {
-      if (
-        event?.type === "storage" &&
-        event.key &&
-        event.key !== VENDOR_BOOKINGS_STORAGE_KEY
-      ) {
-        return;
-      }
-
-      setBookings(getVendorBookings(DEMO_VENDOR_ID));
-    };
-
-    window.addEventListener("storage", syncBookings);
-
-    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
-
-    return () => {
-      window.removeEventListener("storage", syncBookings);
-
-      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, syncBookings);
-    };
+  const loadBookings = useCallback(async () => {
+    try {
+      setBookings(await fetchVendorBookings());
+    } catch {
+      setBookings([]);
+    }
   }, []);
 
-  const upcomingEvents = useMemo(
-    () =>
-      bookings
-        .filter((booking) => ["accepted", "confirmed"].includes(booking.status))
-        .sort(
-          (firstBooking, secondBooking) =>
-            new Date(firstBooking.eventDate) -
-            new Date(secondBooking.eventDate),
-        )
-        .slice(0, 3),
-    [bookings],
-  );
+  useEffect(() => {
+    if (!events) {
+      loadBookings();
+    }
+    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
+
+    return () => {
+      window.removeEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, loadBookings);
+    };
+  }, [events, loadBookings]);
+
+  const upcomingEvents = useMemo(() => {
+    const list = events && Array.isArray(events) ? events : bookings.filter((booking) => ["accepted", "confirmed"].includes(booking.status));
+
+    return list
+      .sort(
+        (firstBooking, secondBooking) =>
+          new Date(firstBooking.eventDate || firstBooking.event_date) -
+          new Date(secondBooking.eventDate || secondBooking.event_date),
+      )
+      .slice(0, 3);
+  }, [events, bookings]);
 
   return (
     <div className="upcoming-events-VLP">
@@ -79,7 +69,8 @@ function UpcomingEvents({ onViewCalendar }) {
       <div className="upcoming-events-list-VLP">
         {upcomingEvents.length ? (
           upcomingEvents.map((event) => {
-            const { month, day } = getDateParts(event.eventDate);
+            const dateValue = event.eventDate || event.event_date;
+            const { month, day } = getDateParts(dateValue);
 
             return (
               <div className="upcoming-event-item-VLP" key={event.id}>
@@ -91,12 +82,12 @@ function UpcomingEvents({ onViewCalendar }) {
 
                 <div className="upcoming-event-info-VLP">
                   <p className="upcoming-event-name-VLP">
-                    {event.eventType || "Event type not provided"}
+                    {event.eventType || event.event_type || "Event type not provided"}
                   </p>
 
                   <p className="upcoming-event-meta-VLP">
-                    {event.clientName || "Client"} •{" "}
-                    {event.packageName || "Package not selected"}
+                    {event.clientName || event.customer?.name || "Client"} •{" "}
+                    {event.packageName || event.package_name || "Package not selected"}
                   </p>
                 </div>
               </div>

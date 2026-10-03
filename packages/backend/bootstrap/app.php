@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use App\Http\Middleware\EnsureAdmin;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,8 +14,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
-    })
+    $middleware->alias([
+        'admin' => EnsureAdmin::class,
+    ]);
+
+    $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
+
+    // SSLCommerz posts to these URLs from its own servers / the payer's browser,
+    // so they cannot carry a CSRF token. Authenticity is verified server-side
+    // via Sslcommerz::validatePayment() instead.
+    $middleware->preventRequestForgery(except: ['sslcommerz/*']);
+})
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),

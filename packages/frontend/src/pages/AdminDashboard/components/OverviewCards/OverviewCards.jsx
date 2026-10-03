@@ -37,11 +37,11 @@ const AnimatedNumber = ({ value, currency = false }) => {
   );
 };
 
-const OverviewCards = () => {
+const OverviewCards = ({ metrics = {} }) => {
   const cards = [
     {
       title: "Total Revenue",
-      value: 428930,
+      value: Number(metrics.totalRevenue || 0),
       currency: true,
       description: "Overall platform earnings",
       icon: <Wallet size={24} />,
@@ -49,7 +49,7 @@ const OverviewCards = () => {
 
     {
       title: "Total Bookings",
-      value: 1248,
+      value: Number(metrics.totalBookings || 0),
       currency: false,
       description: "Successful event bookings",
       icon: <CalendarCheck size={24} />,
@@ -57,15 +57,15 @@ const OverviewCards = () => {
 
     {
       title: "Active Vendors",
-      value: 248,
+      value: Number(metrics.activeVendors || 0),
       currency: false,
-      description: "Verified event partners",
+      description: "Approved paid vendors",
       icon: <Building2 size={24} />,
     },
 
     {
       title: "Pending Approvals",
-      value: 14,
+      value: Number(metrics.pendingApprovals || 0),
       currency: false,
       description: "Vendor requests waiting",
       icon: <Clock3 size={24} />,

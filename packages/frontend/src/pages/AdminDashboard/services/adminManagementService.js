@@ -1,9 +1,4 @@
-import { previewCustomers, previewVendors } from "../data/adminPreviewData";
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api";
-const previewMode = (import.meta.env.VITE_ADMIN_MANAGEMENT_MODE || "preview") !== "api";
-let customers = structuredClone(previewCustomers);
-let vendors = structuredClone(previewVendors);
 
 const request = async (path, options = {}) => {
   const token = localStorage.getItem("eventree_token");
@@ -16,6 +11,13 @@ const request = async (path, options = {}) => {
       ...options.headers,
     },
   });
+  if (response.status === 401) {
+    localStorage.removeItem("eventree_token");
+    localStorage.removeItem("eventree_user");
+    window.location.assign("/login");
+    throw new Error("Your session has expired. Please log in again.");
+  }
+
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
     throw new Error(body.message || "The request could not be completed.");
@@ -23,23 +25,35 @@ const request = async (path, options = {}) => {
   return response.status === 204 ? null : response.json();
 };
 
-const collection = (payload) =>
-  Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : [];
+export const getAdminDashboard = async () => request("/admin/dashboard");
 
-export const isAdminPreviewMode = () => previewMode;
-export const getCustomers = async () =>
-  previewMode ? structuredClone(customers) : collection(await request("/admin/customers"));
+export const getCustomers = async () => {
+  const payload = await request("/admin/customers");
+  return Array.isArray(payload?.customers) ? payload.customers : [];
+};
+
 export const deleteCustomer = async (id) => {
-  if (previewMode) customers = customers.filter((item) => item.id !== id);
-  else await request(`/admin/customers/${id}`, { method: "DELETE" });
+  await request(`/admin/customers/${id}`, { method: "DELETE" });
 };
-export const getVendors = async () =>
-  previewMode ? structuredClone(vendors) : collection(await request("/admin/vendors"));
+
+export const getVendors = async () => {
+  const payload = await request("/admin/vendors");
+  return Array.isArray(payload?.vendors) ? payload.vendors : [];
+};
+
 export const approveVendor = async (id) => {
-  if (previewMode) vendors = vendors.map((item) => item.id === id ? { ...item, approvalStatus: "approved" } : item);
-  else await request(`/admin/vendors/${id}/approve`, { method: "PATCH" });
+  return request(`/admin/vendors/${id}/approve`, { method: "PATCH" });
 };
+
 export const deleteVendor = async (id) => {
-  if (previewMode) vendors = vendors.filter((item) => item.id !== id);
-  else await request(`/admin/vendors/${id}`, { method: "DELETE" });
+  await request(`/admin/vendors/${id}`, { method: "DELETE" });
 };
+
+export const getBookings = async () => {
+  const payload = await request("/admin/bookings");
+  return Array.isArray(payload?.bookings) ? payload.bookings : [];
+};
+
+export const getPayments = async () => request("/admin/payments");
+
+export const getReports = async () => request("/admin/reports");

@@ -1,7 +1,13 @@
-import { ImagePlus, Trash2 } from "lucide-react";
+import { Camera, ImagePlus, Trash2 } from "lucide-react";
 import ProfileSectionHeading from "./ProfileSectionHeading.jsx";
 
-function PortfolioGallerySection({ portfolio, onUpload, onRemove }) {
+function PortfolioGallerySection({
+  portfolio,
+  coverImageId,
+  onUpload,
+  onRemove,
+  onSetCover,
+}) {
   const countBadge = <span className="vbp-count-badge">{portfolio.length} images</span>;
 
   return (
@@ -14,19 +20,42 @@ function PortfolioGallerySection({ portfolio, onUpload, onRemove }) {
       />
 
       <div className="vbp-portfolio-grid">
-        {portfolio.map((image, imageIndex) => (
-          <div className="vbp-portfolio-item" key={image.id}>
-            <img src={image.url} alt={`Portfolio preview ${imageIndex + 1}`} />
+        {portfolio.map((image, imageIndex) => {
+          const isCover = String(coverImageId) === String(image.id);
 
-            <button
-              type="button"
-              aria-label={`Remove portfolio image ${imageIndex + 1}`}
-              onClick={() => onRemove(image.id)}
+          return (
+            <div
+              className={`vbp-portfolio-item${isCover ? " is-cover" : ""}`}
+              key={image.id}
             >
-              <Trash2 size={16} />
-            </button>
-          </div>
-        ))}
+              <img src={image.url} alt={`Portfolio preview ${imageIndex + 1}`} />
+
+              <button
+                type="button"
+                className="vbp-portfolio-cover-action"
+                aria-label={
+                  isCover
+                    ? `Portfolio image ${imageIndex + 1} is the cover image`
+                    : `Set portfolio image ${imageIndex + 1} as cover`
+                }
+                onClick={() => !isCover && onSetCover(image)}
+                disabled={isCover}
+              >
+                <Camera size={15} />
+                {isCover ? "Cover image" : "Set as cover"}
+              </button>
+
+              <button
+                type="button"
+                className="vbp-portfolio-delete"
+                aria-label={`Remove portfolio image ${imageIndex + 1}`}
+                onClick={() => onRemove(image.id)}
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          );
+        })}
 
         <label className="vbp-portfolio-upload">
           <ImagePlus size={26} />

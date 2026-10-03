@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import "./VendorGallery.css";
 
 const VendorGallery = ({ vendor }) => {
-  const photos = vendor?.photos?.length ? vendor.photos : [vendor?.image];
+  const photos = vendor?.photos?.length
+    ? vendor.photos
+    : vendor?.image
+      ? [vendor.image]
+      : [];
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -25,11 +29,17 @@ const VendorGallery = ({ vendor }) => {
   return (
     <section className="vendor-gallery">
       <div className="vendor-banner">
-        <img
-          className="vendor-media"
-          src={photos[currentIndex]}
-          alt={`${vendor.name} ${currentIndex + 1}`}
-        />
+        {photos.length ? (
+          <img
+            className="vendor-media"
+            src={photos[currentIndex]}
+            alt={`${vendor.name} ${currentIndex + 1}`}
+          />
+        ) : (
+          <div className="vendor-media vendor-gallery-placeholder">
+            {vendor.name?.charAt(0)?.toUpperCase() || "V"}
+          </div>
+        )}
 
         {photos.length > 1 && (
           <>

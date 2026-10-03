@@ -7,6 +7,7 @@ function StatCard({
   value,
   trend,
   trendDirection = "up",
+  loading = false,
 }) {
   return (
     <div className="stat-card-VLP">
@@ -23,7 +24,11 @@ function StatCard({
       </div>
 
       <p className="stat-label-VLP">{label}</p>
-      <h3 className="stat-value-VLP">{value}</h3>
+      {loading ? (
+        <div className="stat-skeleton-pill-VLP" aria-hidden="true" />
+      ) : (
+        <h3 className="stat-value-VLP">{value}</h3>
+      )}
     </div>
   );
 }

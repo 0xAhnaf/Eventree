@@ -1,7 +1,7 @@
 import { Camera, Upload } from "lucide-react";
 import ProfileSectionHeading from "./ProfileSectionHeading.jsx";
 
-function CoverImageCard({ onCoverUpload }) {
+function CoverImageCard({ coverImage, onCoverUpload }) {
   return (
     <section className="vbp-card vbp-cover-card">
       <ProfileSectionHeading
@@ -11,9 +11,17 @@ function CoverImageCard({ onCoverUpload }) {
         compact
       />
 
+      {coverImage && (
+        <img
+          className="vbp-current-cover"
+          src={coverImage}
+          alt="Current business cover"
+        />
+      )}
+
       <label className="vbp-upload-button">
         <Upload size={17} />
-        Replace cover image
+        {coverImage ? "Upload new cover image" : "Upload cover image"}
         <input type="file" accept="image/*" onChange={onCoverUpload} />
       </label>
 

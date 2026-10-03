@@ -563,6 +563,14 @@
   text-align: center;
 }
 
+.vpp-action-error {
+  margin: 10px 0 0;
+  color: #b42318;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  text-align: center;
+}
+
 .vpp-security-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

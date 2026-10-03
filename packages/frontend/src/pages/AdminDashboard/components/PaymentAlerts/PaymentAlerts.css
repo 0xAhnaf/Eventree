@@ -27,6 +27,14 @@
   gap: 16px;
 }
 
+.payment-alert-empty {
+  margin: 0;
+  padding: 22px 0;
+  color: #6b7280;
+  font-size: 13px;
+  text-align: center;
+}
+
 .payment-alert-item {
   min-width: 0;
   display: grid;

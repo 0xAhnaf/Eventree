@@ -10,21 +10,21 @@ const AboutVendor = ({ vendor }) => {
 
       <div className="vendor-highlights">
         <div className="highlight-card">
-          <h3>8+</h3>
+          <h3>{vendor.yearsExperience ?? "—"}</h3>
 
           <p>Years Experience</p>
         </div>
 
         <div className="highlight-card">
-          <h3>500+</h3>
+          <h3>{vendor.eventsCompleted ?? "—"}</h3>
 
           <p>Events Completed</p>
         </div>
 
         <div className="highlight-card">
-          <h3>100%</h3>
+          <h3>{vendor.price || "Price on request"}</h3>
 
-          <p>Client Satisfaction</p>
+          <p>Starting Price</p>
         </div>
       </div>
     </section>

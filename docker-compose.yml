@@ -12,5 +12,33 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
+  # 2. Laravel Backend
+  backend:
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile
+    container_name: eventree_backend
+    restart: unless-stopped
+    working_dir: /var/www/html
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./packages/backend/.env
+    depends_on:
+      - db
+
+  # 3. React Frontend
+  frontend:
+    build:
+      context: ./packages/frontend
+      dockerfile: Dockerfile
+    container_name: eventree_frontend
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
 volumes:
   db_data:

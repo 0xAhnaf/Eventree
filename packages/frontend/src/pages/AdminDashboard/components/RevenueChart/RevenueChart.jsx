@@ -13,38 +13,8 @@ import {
 
 import "./RevenueChart.css";
 
-const RevenueChart = () => {
-  const revenueData = [
-    {
-      month: "Jan",
-      revenue: 32000,
-    },
-
-    {
-      month: "Feb",
-      revenue: 45000,
-    },
-
-    {
-      month: "Mar",
-      revenue: 38000,
-    },
-
-    {
-      month: "Apr",
-      revenue: 62000,
-    },
-
-    {
-      month: "May",
-      revenue: 76000,
-    },
-
-    {
-      month: "Jun",
-      revenue: 89000,
-    },
-  ];
+const RevenueChart = ({ data = [] }) => {
+  const revenueData = data;
 
   const barColors = [
     "#003d2c",
@@ -72,11 +42,7 @@ const RevenueChart = () => {
           <p>Monthly platform earnings overview</p>
         </div>
 
-        <select>
-          <option>2026</option>
-
-          <option>2025</option>
-        </select>
+        <span className="revenue-chart-period">Last 6 months</span>
       </div>
 
       <div className="revenue-chart">

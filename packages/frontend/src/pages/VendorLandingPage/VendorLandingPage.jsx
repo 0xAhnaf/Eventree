@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   LayoutDashboard,
   User,
@@ -11,11 +11,15 @@ import {
   Armchair,
   Eye,
   Contact,
+  Clock,
+  CheckCircle2,
   Menu,
   X,
 } from "lucide-react";
 
 import Navbar from "../../components/Navbar.jsx";
+import { useSearchParams } from "react-router-dom";
+import { fetchNotificationSummary } from "../../services/notificationsApi.js";
 import Footer from "../../components/Footer.jsx";
 
 import StatCard from "./components/StatCard.jsx";
@@ -25,7 +29,12 @@ import BookingRequests from "./components/BookingRequests.jsx";
 import BusinessProfile from "./components/BusinessProfile/BusinessProfile.jsx";
 import VendorBookings from "./components/VendorBookings/VendorBookings.jsx";
 import VendorAvailability from "./components/VendorAvailability/VendorAvailability.jsx";
+import VendorMessages from "./components/VendorMessages/VendorMessages.jsx";
 
+import {
+  fetchVendorDashboard,
+  VENDOR_BOOKINGS_UPDATED_EVENT,
+} from "../../services/vendorApi.js";
 import "./VendorLandingPage.css";
 
 const sidebarLinks = [
@@ -52,6 +61,7 @@ const sidebarLinks = [
   {
     icon: <Mail size={20} />,
     label: "Messages",
+    view: "messages",
   },
 ];
 
@@ -75,46 +85,119 @@ const viewDetails = {
     subtitle:
       "Control the dates clients can select from your public vendor page.",
   },
+  messages: {
+    title: "Messages",
+    subtitle:
+      "Reply to customers and keep every vendor conversation in one place.",
+  },
 };
-
-const stats = [
-  {
-    icon: <Wallet size={20} />,
-    iconVariant: "revenue",
-    label: "Total Revenue",
-    value: "৳24,850.00",
-    trend: "+12%",
-    trendDirection: "up",
-  },
-  {
-    icon: <Armchair size={20} />,
-    iconVariant: "bookings",
-    label: "Confirmed Bookings",
-    value: "42",
-    trend: "+5.2%",
-    trendDirection: "up",
-  },
-  {
-    icon: <Eye size={20} />,
-    iconVariant: "views",
-    label: "Profile Views",
-    value: "1,204",
-    trend: "-1.2%",
-    trendDirection: "down",
-  },
-  {
-    icon: <Contact size={20} />,
-    iconVariant: "contacts",
-    label: "Contact Unlocks",
-    value: "89",
-    trend: "+24%",
-    trendDirection: "up",
-  },
-];
 
 function VendorLandingPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeView, setActiveView] = useState("analytics");
+  const [searchParams] = useSearchParams();
+
+  const [dashboardData, setDashboardData] = useState(null);
+  const [pendingBookingCount, setPendingBookingCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      const data = await fetchVendorDashboard();
+      setDashboardData(data);
+    } catch (error) {
+      console.error("Failed to load vendor dashboard:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const requestedView = searchParams.get("view");
+    if (
+      [
+        "analytics",
+        "business-profile",
+        "bookings",
+        "availability",
+        "messages",
+      ].includes(requestedView)
+    ) {
+      setActiveView(requestedView);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    fetchDashboardData();
+
+    window.addEventListener(VENDOR_BOOKINGS_UPDATED_EVENT, fetchDashboardData);
+    return () => {
+      window.removeEventListener(
+        VENDOR_BOOKINGS_UPDATED_EVENT,
+        fetchDashboardData,
+      );
+    };
+  }, [fetchDashboardData]);
+
+  useEffect(() => {
+    const refreshPendingCount = async () => {
+      try {
+        const summary = await fetchNotificationSummary();
+        setPendingBookingCount(
+          Math.max(0, Number(summary.pendingBookingCount || 0)),
+        );
+      } catch {
+        // Keep the dashboard usable if the lightweight count request fails.
+      }
+    };
+
+    refreshPendingCount();
+    const timer = window.setInterval(() => {
+      if (!document.hidden) refreshPendingCount();
+    }, 15000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const computedStats = useMemo(() => {
+    const rawStats = dashboardData?.stats;
+
+    return [
+      {
+        icon: <Wallet size={20} />,
+        iconVariant: "revenue",
+        label: "Total Revenue",
+        loading,
+        value: `৳${Number(rawStats?.total_revenue ?? 0).toLocaleString(
+          "en-BD",
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          },
+        )}`,
+      },
+      {
+        icon: <CalendarCheck size={20} />,
+        iconVariant: "bookings",
+        label: "Confirmed Bookings",
+        loading,
+        value: String(rawStats?.confirmed_bookings ?? 0),
+      },
+      {
+        icon: <Clock size={20} />,
+        iconVariant: "contacts",
+        label: "Pending Requests",
+        loading,
+        value: String(rawStats?.pending_requests ?? 0),
+      },
+      {
+        icon: <CheckCircle2 size={20} />,
+        iconVariant: "views",
+        label: "Events Completed",
+        loading,
+        value: String(rawStats?.events_completed ?? 0),
+      },
+    ];
+  }, [dashboardData, loading]);
 
   const handleSidebarLinkClick = (event, link) => {
     event.preventDefault();
@@ -137,29 +220,37 @@ function VendorLandingPage() {
       case "availability":
         return <VendorAvailability />;
 
+      case "messages":
+        return <VendorMessages />;
+
       case "analytics":
       default:
         return (
           <>
             <div className="vlp-stats-grid">
-              {stats.map((stat) => (
+              {computedStats.map((stat) => (
                 <StatCard key={stat.label} {...stat} />
               ))}
             </div>
 
             <div className="vlp-bento-grid">
               <div className="vlp-bento-chart">
-                <RevenueChart />
+                <RevenueChart
+                  data={dashboardData?.revenue_chart}
+                  highlightDay={dashboardData?.highlight_day}
+                  loading={loading}
+                />
               </div>
 
               <div className="vlp-bento-events">
                 <UpcomingEvents
+                  events={dashboardData?.upcoming_events}
                   onViewCalendar={() => setActiveView("bookings")}
                 />
               </div>
 
               <div className="vlp-bento-bookings">
-                <BookingRequests />
+                <BookingRequests requests={dashboardData?.booking_requests} />
               </div>
             </div>
           </>
@@ -217,7 +308,12 @@ function VendorLandingPage() {
                   onClick={(event) => handleSidebarLinkClick(event, link)}
                 >
                   {link.icon}
-                  {link.label}
+                  <span>{link.label}</span>
+                  {link.view === "bookings" && pendingBookingCount > 0 && (
+                    <span className="vlp-sidebar-badge">
+                      {pendingBookingCount > 99 ? "99+" : pendingBookingCount}
+                    </span>
+                  )}
                 </a>
               );
             })}
@@ -246,19 +342,7 @@ function VendorLandingPage() {
                 </p>
               </div>
 
-              {isAnalyticsView && (
-                <div className="vlp-header-actions">
-                  <button type="button" className="vlp-btn vlp-btn-outline">
-                    <CalendarRange size={18} />
-                    Last 30 Days
-                  </button>
-
-                  <button type="button" className="vlp-btn vlp-btn-solid">
-                    <Download size={18} />
-                    Export Report
-                  </button>
-                </div>
-              )}
+              {isAnalyticsView && <div className="vlp-header-actions"></div>}
             </header>
 
             {renderActiveView()}

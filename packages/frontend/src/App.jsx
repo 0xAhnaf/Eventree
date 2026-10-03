@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 
@@ -9,19 +10,25 @@ import VendorLandingPage from "./pages/VendorLandingPage/VendorLandingPage.jsx";
 import ForgotPassword from "./pages/ForgotPassPage/ForgotPassPage.jsx";
 import ResetPassword from "./pages/ResetPassWord/ResetPassword.jsx";
 import VendorDetailsPage from "./pages/VendorDetailsPage/VendorDetailsPage.jsx";
+import BookingRequestSuccessPage from "./pages/BookingRequestSuccessPage/BookingRequestSuccessPage.jsx";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard.jsx";
 import VendorOnboarding from "./pages/VendorOnboarding/VendorOnboarding.jsx";
 import VendorPaymentPage from "./pages/VendorPaymentPage/VendorPaymentPage.jsx";
+import FavoritesPage from "./pages/FavouritePage/FavouritePage.jsx";
 import { isVendorOnboardingRequired } from "./utils/vendorProfileStorage.js";
 import {
   isVendorPaymentCompleted,
   isVendorPaymentRequired,
+  markVendorPaymentCompleted,
+  markVendorPaymentRequired,
 } from "./utils/vendorPaymentStorage.js";
+import { fetchVendorRegistrationStatus } from "./services/vendorApi.js";
+import VendorPaymentResult from "./pages/VendorPaymentPage/VendorPaymentResult.jsx";
 
 import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 import MyEvents from "./pages/MyEvents/MyEvents.jsx";
 import EmailVerified from "./pages/EmailVerified/EmailVerified.jsx";
-
+import RagChatbot from "./components/RagChatbot/RagChatbot";
 // Role-Based Access Control (RBAC) Guard
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user } = useAuth();
@@ -35,7 +42,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     // Smart redirect based on their role
     const fallbackRoute =
-      user.role === "client"
+      user.role === "customer"
         ? "/browse-vendor"
         : user.role === "vendor"
           ? "/vendor"
@@ -51,6 +58,10 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
 const HomeRoute = () => {
   const { user } = useAuth();
+
+  if (user?.role === "admin") {
+    return <Navigate to="/admin" replace />;
+  }
 
   if (isVendorOnboardingRequired(user)) {
     return <Navigate to="/vendor/onboarding" replace />;
@@ -105,65 +116,124 @@ const VendorPaymentRoute = () => {
   return <VendorPaymentPage />;
 };
 
+const VendorRegistrationStatusSync = ({ children }) => {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user?.role !== "vendor") return;
+
+    // The backend is the source of truth for payment. localStorage is only a
+    // UI cache, so it must never be able to *create* a paid state: we only
+    // copy the server's answer into it.
+    fetchVendorRegistrationStatus()
+      .then((status) => {
+        if (status.payment_completed) {
+          markVendorPaymentCompleted(user);
+        } else if (status.onboarding_completed) {
+          markVendorPaymentRequired(user);
+        }
+      })
+      .catch(() => {
+        // No vendor profile yet (still onboarding) or offline: leave as is.
+      });
+  }, [user]);
+
+  return children;
+};
+
 function App() {
   return (
     <AuthProvider>
-      <main>
-        <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<HomeRoute />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/verify-email" element={<EmailVerified />} />
-            <Route path="/browse-vendor/:id" element={<VendorDetailsPage />} />
-            <Route path="/browse-vendor" element={<ClientLandingPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/my-events" element={<MyEvents />} />
-            {/* Vendor-Only Route (or allow admin to inspect if desired) */}
-            <Route
-              path="/vendor/onboarding"
-              element={
-                <ProtectedRoute allowedRoles={["vendor"]}>
-                  <VendorOnboardingRoute />
-                </ProtectedRoute>
-              }
-            />
+      <VendorRegistrationStatusSync>
+      <RagChatbot />
+        <main>
+          <BrowserRouter>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<HomeRoute />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/verify-email" element={<EmailVerified />} />
+              
+              <Route
+                path="/browse-vendor/:id/booking-request-sent"
+                element={<BookingRequestSuccessPage />}
+              />
+              <Route path="/browse-vendor/:id" element={<VendorDetailsPage />} />
+              <Route path="/browse-vendor" element={<ClientLandingPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route
+                path="/my-events"
+                element={
+                  <ProtectedRoute allowedRoles={["customer"]}>
+                    <MyEvents />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/favorites"
+                element={
+                  <ProtectedRoute allowedRoles={["customer"]}>
+                    <FavoritesPage />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/vendor"
-              element={
-                <ProtectedRoute allowedRoles={["vendor"]}>
-                  <VendorOnboardingGuard>
-                    <VendorLandingPage />
-                  </VendorOnboardingGuard>
-                </ProtectedRoute>
-              }
-            />
+              {/* Vendor-Only Route (or allow admin to inspect if desired) */}
+              <Route
+                path="/vendor/onboarding"
+                element={
+                  <ProtectedRoute allowedRoles={["vendor"]}>
+                    <VendorOnboardingRoute />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/vendor/payment"
-              element={
-                <ProtectedRoute allowedRoles={["vendor"]}>
-                  <VendorPaymentRoute />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/vendor"
+                element={
+                  <ProtectedRoute allowedRoles={["vendor"]}>
+                    <VendorOnboardingGuard>
+                      <VendorLandingPage />
+                    </VendorOnboardingGuard>
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Admin-Only Routes */}
-            <Route
-              path="/admin/*"
-              element={
-                <ProtectedRoute allowedRoles={["admin"]}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </BrowserRouter>
-      </main>
+              <Route
+                path="/vendor/payment"
+                element={
+                  <ProtectedRoute allowedRoles={["vendor"]}>
+                    <VendorPaymentRoute />
+                  </ProtectedRoute>
+                }
+              />
+              
+
+              <Route
+                path="/vendor/payment/result"
+                element={
+                  <ProtectedRoute allowedRoles={["vendor"]}>
+                    <VendorPaymentResult />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Admin-Only Routes */}
+              <Route
+                path="/admin/*"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </BrowserRouter>
+        </main>
+      </VendorRegistrationStatusSync>
     </AuthProvider>
   );
 }

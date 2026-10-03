@@ -2,48 +2,38 @@ import React from "react";
 import "./Reviews.css";
 
 const Reviews = ({ vendor }) => {
-  const reviews = [
-    {
-      name: "Sarah Ahmed",
-      rating: "★★★★★",
-      comment:
-        "Amazing service and very professional team. They made our event memorable.",
-    },
-
-    {
-      name: "Rahim Hasan",
-      rating: "★★★★★",
-      comment: "Great experience. Quality work and excellent communication.",
-    },
-
-    {
-      name: "Nusrat Jahan",
-      rating: "★★★★☆",
-      comment: "Good service with creative ideas. Highly recommended.",
-    },
-  ];
+  const reviews = Array.isArray(vendor.reviews) ? vendor.reviews : [];
 
   return (
     <section className="reviews-section" id="reviews">
       <h2>Reviews</h2>
 
       <div className="rating-summary">
-        <h3>{vendor.rating}</h3>
+        <h3>{vendor.rating ?? 0}</h3>
 
         <div>
-          <div className="stars">★★★★★</div>
+          <div className="stars">
+            {vendor.rating
+              ? "★".repeat(Math.round(vendor.rating)) +
+                "☆".repeat(5 - Math.round(vendor.rating))
+              : "☆☆☆☆☆"}
+          </div>
 
-          <p>Based on 120 Reviews</p>
+          <p>
+            Based on {vendor.reviewCount || 0} reviews
+          </p>
         </div>
       </div>
 
-      <div className="reviews-list">
-        {reviews.map((review, index) => (
-          <div className="review-card" key={index}>
-            <div className="review-header">
-              <h4>{review.name}</h4>
+      {!reviews.length && (
+        <p>No customer reviews have been added yet.</p>
+      )}
 
-              <span>{review.rating}</span>
+      <div className="reviews-list">
+        {reviews.map((review) => (
+          <div className="review-card" key={review.id}>
+            <div className="review-header">
+              <h4>{review.user ?? "Anonymous"}</h4>
             </div>
 
             <p>{review.comment}</p>

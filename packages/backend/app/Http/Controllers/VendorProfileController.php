@@ -59,6 +59,12 @@ class VendorProfileController extends Controller
             'starting_price' => $validated['starting_price'] ?? null,
         ]);
 
+        if ($vendorProfile->onboarding_completed_at === null) {
+            $vendorProfile->forceFill([
+                'onboarding_completed_at' => now(),
+            ])->save();
+        }
+
         // Sync phone number to the users table
         $request->user()->update([
             'phone' => $validated['phone'],
@@ -79,6 +85,10 @@ class VendorProfileController extends Controller
         */
 
         if ($request->hasFile('cover_image')) {
+            $existingCovers = $vendorProfile->images()
+                ->where('image_type', 'cover')
+                ->get();
+
             $result = $uploadApi->upload(
                 $request->file('cover_image')->getRealPath(),
                 [
@@ -86,13 +96,28 @@ class VendorProfileController extends Controller
                 ]
             );
 
-            VendorImage::create([
+            $coverImage = VendorImage::create([
                 'vendor_profile_id' => $vendorProfile->id,
                 'image_type' => 'cover',
                 'image_url' => $result['secure_url'],
                 'public_id' => $result['public_id'],
                 'sort_order' => 0,
             ]);
+
+            $vendorProfile->forceFill([
+                'cover_image_id' => $coverImage->id,
+            ])->save();
+
+            foreach ($existingCovers as $existingCover) {
+                try {
+                    $uploadApi->destroy($existingCover->public_id);
+                } catch (\Throwable $e) {
+                    // The new cover is already stored, so stale remote cleanup
+                    // must not make the profile update fail.
+                }
+
+                $existingCover->delete();
+            }
         }
 
         /*
@@ -214,16 +239,7 @@ class VendorProfileController extends Controller
         ]);
 
         $uploadApi = new UploadApi();
-        $existingCover = $vendorProfile->images()->where('image_type', 'cover')->first();
-
-        if ($existingCover) {
-            try {
-                $uploadApi->destroy($existingCover->public_id);
-            } catch (\Throwable $e) {
-                // Continue even if Cloudinary cleanup fails; DB stays consistent below.
-            }
-            $existingCover->delete();
-        }
+        $existingCovers = $vendorProfile->images()->where('image_type', 'cover')->get();
 
         $result = $uploadApi->upload(
             $request->file('cover_image')->getRealPath(),
@@ -238,9 +254,46 @@ class VendorProfileController extends Controller
             'sort_order' => 0,
         ]);
 
+        $vendorProfile->forceFill([
+            'cover_image_id' => $coverImage->id,
+        ])->save();
+
+        foreach ($existingCovers as $existingCover) {
+            try {
+                $uploadApi->destroy($existingCover->public_id);
+            } catch (\Throwable $e) {
+                // The new cover is already stored, so stale remote cleanup
+                // must not make the profile update fail.
+            }
+
+            $existingCover->delete();
+        }
+
         return response()->json([
             'message' => 'Cover image updated successfully.',
             'image' => $coverImage,
+        ], 200);
+    }
+
+    public function selectCoverImage(Request $request, VendorImage $image): JsonResponse
+    {
+        $vendorProfile = VendorProfile::where('user_id', $request->user()->id)->first();
+
+        if (
+            ! $vendorProfile
+            || $image->vendor_profile_id !== $vendorProfile->id
+            || $image->image_type !== 'portfolio'
+        ) {
+            return response()->json(['message' => 'Portfolio image not found.'], 404);
+        }
+
+        $vendorProfile->forceFill([
+            'cover_image_id' => $image->id,
+        ])->save();
+
+        return response()->json([
+            'message' => 'Cover image selected successfully.',
+            'image' => $image,
         ], 200);
     }
 
@@ -294,6 +347,12 @@ class VendorProfileController extends Controller
             return response()->json(['message' => 'Image not found.'], 404);
         }
 
+        if ((int) $vendorProfile->cover_image_id === (int) $image->id) {
+            return response()->json([
+                'message' => 'Choose another cover image before deleting this image.',
+            ], 422);
+        }
+
         $uploadApi = new UploadApi();
 
         try {
@@ -305,5 +364,118 @@ class VendorProfileController extends Controller
         $image->delete();
 
         return response()->json(['message' => 'Image deleted successfully.'], 200);
+    }
+
+    public function dashboard(Request $request): JsonResponse
+    {
+        $profile = VendorProfile::where('user_id', $request->user()->id)->first();
+
+        if (!$profile) {
+            return response()->json(['message' => 'Vendor profile not found.'], 404);
+        }
+
+        $bookings = $profile->bookings()->get();
+
+        $confirmedBookings = $bookings->where('status', 'completed');
+        $totalRevenue = $confirmedBookings->sum('package_price');
+        $pendingRequestsCount = $bookings->where('status', 'pending')->count();
+
+        // Upcoming events (accepted bookings from today onward)
+        $upcomingEvents = $profile->bookings()
+            ->with('customer')
+            ->where('status', 'accepted')
+            ->whereDate('event_date', '>=', today())
+            ->orderBy('event_date', 'asc')
+            ->take(5)
+            ->get();
+
+        // Pending booking requests
+        $bookingRequests = $profile->bookings()
+            ->with('customer')
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        $serializeBooking = function ($booking) {
+            return [
+                'id' => $booking->id,
+                'eventId' => $booking->event_id,
+                'vendorId' => $booking->vendor_profile_id,
+                'customerId' => $booking->customer_id,
+                'clientName' => $booking->customer?->name,
+                'clientEmail' => $booking->customer?->email,
+                'eventDate' => $booking->event_date instanceof \DateTimeInterface ? $booking->event_date->format('Y-m-d') : (string) $booking->event_date,
+                'eventType' => $booking->event_type,
+                'guests' => $booking->guests,
+                'packageId' => $booking->vendor_package_id,
+                'packageName' => $booking->package_name,
+                'packagePrice' => $booking->package_price,
+                'status' => $booking->status,
+                'createdAt' => $booking->created_at?->toISOString(),
+            ];
+        };
+
+        // Compute revenue chart by day of the week
+        $daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        $startOfWeek = now()->startOfWeek();
+        $endOfWeek = now()->endOfWeek();
+
+        $weeklyRevenueByDay = [];
+        foreach ($daysOfWeek as $day) {
+            $weeklyRevenueByDay[$day] = 0.0;
+        }
+
+        $weeklyBookings = $confirmedBookings->filter(function ($b) use ($startOfWeek, $endOfWeek) {
+            if (!$b->event_date) {
+                return false;
+            }
+            $date = \Carbon\Carbon::parse($b->event_date);
+            return $date->between($startOfWeek, $endOfWeek);
+        });
+
+        // Only use current week's bookings (no fallback to historical data)
+        $sourceBookings = $weeklyBookings;
+
+        foreach ($sourceBookings as $b) {
+            if ($b->event_date) {
+                $dayName = \Carbon\Carbon::parse($b->event_date)->format('D');
+                if (isset($weeklyRevenueByDay[$dayName])) {
+                    $weeklyRevenueByDay[$dayName] += (float) ($b->package_price ?? 0);
+                }
+            }
+        }
+
+        $maxRevenue = $weeklyRevenueByDay ? max(array_values($weeklyRevenueByDay)) : 0;
+
+        $revenueChart = [];
+        foreach ($daysOfWeek as $day) {
+            $revenue = $weeklyRevenueByDay[$day];
+            $height = $maxRevenue > 0 && $revenue > 0
+                ? max(15, (int) round(($revenue / $maxRevenue) * 100))
+                : 0;
+
+            $revenueChart[] = [
+                'day' => $day,
+                'height' => $height,
+                'revenue' => $revenue,
+                'formatted_revenue' => '৳' . number_format($revenue, 2),
+            ];
+        }
+
+        $highlightDay = now()->format('D');
+
+        return response()->json([
+            'stats' => [
+                'total_revenue' => $totalRevenue,
+                'confirmed_bookings' => $confirmedBookings->count(),
+                'pending_requests' => $pendingRequestsCount,
+                'events_completed' => $bookings->where('status', 'completed')->count(),
+            ],
+            'upcoming_events' => $upcomingEvents->map($serializeBooking),
+            'booking_requests' => $bookingRequests->map($serializeBooking),
+            'revenue_chart' => $revenueChart,
+            'highlight_day' => $highlightDay,
+        ]);
     }
 }

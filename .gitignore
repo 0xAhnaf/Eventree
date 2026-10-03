@@ -13,3 +13,10 @@ packages/frontend/build/
 packages/frontend/.env
 packages/frontend/.env.*
 !packages/frontend/.env.example
+
+
+docs/
+
+.env
+__pycache__/
+chroma_db/

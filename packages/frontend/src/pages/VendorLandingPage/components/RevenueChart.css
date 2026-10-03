@@ -96,6 +96,23 @@
   background-color: #002319;
 }
 
+.revenue-skeleton-bar-VLP {
+  background: linear-gradient(180deg, #b5dac9 0%, #d8eae1 100%);
+  animation: chart-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes chart-skeleton-pulse {
+  0% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0.25;
+  }
+}
+
 .revenue-chart-labels-VLP {
   display: flex;
   justify-content: space-between;

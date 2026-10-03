@@ -1,0 +1,163 @@
+.favorites-page {
+  background: #fff8f4;
+  color: #003d2e;
+  font-family: sans-serif;
+}
+
+.favorites-main {
+  width: 100%;
+  min-width: 0;
+  padding: 45px 48px 70px;
+}
+
+.favorites-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.favorites-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.favorites-eyebrow {
+  margin: 0 0 8px;
+  color: #8a6d5c;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.favorites-container h2 {
+  margin: 0;
+  color: #003d2e;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.favorites-container h2 span {
+  color: #71817d;
+  font-family: sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.favorites-description {
+  margin: 10px 0 0;
+  color: #71817d;
+  font-size: 14px;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 24px;
+  padding: 8px 0 20px;
+}
+
+.favorite-card-wrapper {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.remove-favorite-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid #f0ddd6;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.96);
+  color: #b84b45;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.remove-favorite-btn:hover {
+  transform: scale(1.08);
+  background: #b84b45;
+  color: #fff;
+}
+
+.empty-favorites {
+  display: flex;
+  min-height: 300px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36px;
+  border: 1px dashed #d8c9c0;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.empty-favorites-icon {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: #fff0e8;
+  color: #003d2e;
+  font-size: 34px;
+}
+
+.empty-favorites h3 {
+  margin: 0 0 8px;
+  color: #003d2e;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 21px;
+}
+
+.empty-favorites p,
+.favorites-message {
+  max-width: 440px;
+  color: #71817d;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.error-text {
+  color: #b42318;
+}
+
+@media (max-width: 768px) {
+  .favorites-main {
+    padding: 24px 16px;
+  }
+  .favorites-container h2 {
+    font-size: 26px;
+  }
+  .favorites-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+  }
+  .empty-favorites {
+    min-height: 250px;
+    padding: 24px;
+  }
+}
+
+@media (max-width: 420px) {
+  .favorites-grid {
+    grid-template-columns: 1fr;
+  }
+}

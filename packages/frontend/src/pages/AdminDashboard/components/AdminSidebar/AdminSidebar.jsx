@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -11,8 +11,30 @@ import {
 } from "lucide-react";
 
 import "./AdminSidebar.css";
+import { fetchNotificationSummary } from "../../../../services/notificationsApi";
 
 const AdminSidebar = ({ isOpen = false, onClose }) => {
+  const [pendingVendorCount, setPendingVendorCount] = useState(0);
+
+  const refreshCount = useCallback(async () => {
+    try {
+      const summary = await fetchNotificationSummary();
+      setPendingVendorCount(
+        Math.max(0, Number(summary.pendingVendorApprovalCount || 0)),
+      );
+    } catch {
+      // Navigation remains usable if the count request fails.
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshCount();
+    const timer = window.setInterval(() => {
+      if (!document.hidden) refreshCount();
+    }, 15000);
+    return () => window.clearInterval(timer);
+  }, [refreshCount]);
+
   const menuItems = [
     {
       name: "Dashboard",
@@ -89,6 +111,11 @@ const AdminSidebar = ({ isOpen = false, onClose }) => {
             <span className="admin-menu-icon">{item.icon}</span>
 
             <span>{item.name}</span>
+            {item.name === "Vendors" && pendingVendorCount > 0 && (
+              <span className="admin-menu-badge">
+                {pendingVendorCount > 99 ? "99+" : pendingVendorCount}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>

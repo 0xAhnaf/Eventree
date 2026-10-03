@@ -4,10 +4,10 @@ import { useSearchParams } from "react-router-dom";
 import "./ClientLandingPage.css";
 import FilterSidebar from "../../components/FilterSidebar";
 import VendorCard from "../../components/VendorCard";
-import vendors from "../../components/vendors";
 import Pagination from "../../components/Pagination";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import { fetchPublicVendors } from "../../services/vendorApi.js";
 
 const vendorsPerPage = 6;
 
@@ -17,6 +17,7 @@ const validCategories = [
   "Decorations",
   "Photography & Videography",
   "Event Management",
+  "Music & Entertainment",
 ];
 
 const DEFAULT_PRICE_MAX = 50000;
@@ -28,9 +29,23 @@ const parsePrice = (price) => {
   return Number.isFinite(numeric) ? numeric : 0;
 };
 
+const getStartingPrice = (vendor) => {
+  if (vendor.startingPrice !== null && vendor.startingPrice !== undefined) {
+    const startingPrice = Number(vendor.startingPrice);
+    return Number.isFinite(startingPrice) ? startingPrice : null;
+  }
+
+  const parsedPrice = parsePrice(vendor.price);
+  return parsedPrice > 0 ? parsedPrice : null;
+};
+
 export default function ClientLandingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
+  const [vendors, setVendors] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [sortOption, setSortOption] = useState("recommended");
 
   const categoriesFromUrl = searchParams
     .getAll("category")
@@ -45,10 +60,36 @@ export default function ClientLandingPage() {
     availabilityDate: "",
   });
 
-  const handleApplyFilters = (filters) => {
-    setAppliedFilters(filters);
-    setCurrentPage(1);
-  };
+  useEffect(() => {
+    let isMounted = true;
+
+    setIsLoading(true);
+    setLoadError("");
+
+    fetchPublicVendors({
+      availabilityDate: appliedFilters.availabilityDate,
+    })
+      .then((realVendors) => {
+        if (isMounted) {
+          setVendors(realVendors);
+        }
+      })
+      .catch((error) => {
+        if (isMounted) {
+          setVendors([]);
+          setLoadError(error.message || "Could not load vendors.");
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [appliedFilters.availabilityDate]);
 
   useEffect(() => {
     setSelectedCategories(categoriesFromUrl);
@@ -56,7 +97,8 @@ export default function ClientLandingPage() {
   }, [searchParams.toString()]);
 
   const updateCategoryParams = (categories) => {
-    const newSearchParams = new URLSearchParams();
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete("category");
 
     categories.forEach((category) => {
       newSearchParams.append("category", category);
@@ -65,26 +107,11 @@ export default function ClientLandingPage() {
     setSearchParams(newSearchParams);
   };
 
-  const handleCategoryChange = (category) => {
-    let updatedCategories;
-
-    if (selectedCategories.includes(category)) {
-      updatedCategories = selectedCategories.filter(
-        (selectedCategory) => selectedCategory !== category,
-      );
-    } else {
-      updatedCategories = [...selectedCategories, category];
-    }
-
-    setSelectedCategories(updatedCategories);
+  const handleApplyFilters = ({ categories, ...filters }) => {
+    setSelectedCategories(categories);
+    setAppliedFilters(filters);
     setCurrentPage(1);
-    updateCategoryParams(updatedCategories);
-  };
-
-  const handleAllServices = () => {
-    setSelectedCategories([]);
-    setCurrentPage(1);
-    setSearchParams({});
+    updateCategoryParams(categories);
   };
 
   const filteredVendors = useMemo(() => {
@@ -97,18 +124,33 @@ export default function ClientLandingPage() {
             category.trim().toLowerCase(),
         );
 
-      const matchesPrice = parsePrice(vendor.price) <= appliedFilters.priceMax;
+      const vendorPrice = getStartingPrice(vendor);
+      const matchesPrice =
+        appliedFilters.priceMax >= DEFAULT_PRICE_MAX ||
+        vendorPrice === null ||
+        vendorPrice <= appliedFilters.priceMax;
 
       const matchesRating =
         appliedFilters.minRating === 0 ||
         (vendor.rating ?? 0) >= appliedFilters.minRating;
 
-      // Note: vendors don't carry availability data yet, so the date
-      // picker doesn't filter results until that's added on the backend.
-
       return matchesCategory && matchesPrice && matchesRating;
+    }).sort((firstVendor, secondVendor) => {
+      if (sortOption === "top-rated") {
+        return (secondVendor.rating ?? 0) - (firstVendor.rating ?? 0);
+      }
+
+      if (sortOption === "price-low-high") {
+        return parsePrice(firstVendor.price) - parsePrice(secondVendor.price);
+      }
+
+      if (sortOption === "price-high-low") {
+        return parsePrice(secondVendor.price) - parsePrice(firstVendor.price);
+      }
+
+      return String(firstVendor.name).localeCompare(String(secondVendor.name));
     });
-  }, [selectedCategories, appliedFilters]);
+  }, [vendors, selectedCategories, appliedFilters, sortOption]);
 
   const lastIndex = currentPage * vendorsPerPage;
   const firstIndex = lastIndex - vendorsPerPage;
@@ -132,8 +174,6 @@ export default function ClientLandingPage() {
         <div className="browse-container-CLP">
           <FilterSidebar
             selectedCategories={selectedCategories}
-            onCategoryChange={handleCategoryChange}
-            onAllServices={handleAllServices}
             priceMax={appliedFilters.priceMax}
             minRating={appliedFilters.minRating}
             availabilityDate={appliedFilters.availabilityDate}
@@ -149,7 +189,13 @@ export default function ClientLandingPage() {
                   : "selected category vendors"}
               </p>
 
-              <select defaultValue="recommended">
+              <select
+                value={sortOption}
+                onChange={(event) => {
+                  setSortOption(event.target.value);
+                  setCurrentPage(1);
+                }}
+              >
                 <option value="recommended">Recommended</option>
 
                 <option value="top-rated">Top Rated</option>
@@ -168,10 +214,18 @@ export default function ClientLandingPage() {
               </div>
             )}
 
-            {currentVendors.length > 0 ? (
+            {isLoading ? (
+              <div className="vendor-empty-CLP">
+                <p>Loading vendors...</p>
+              </div>
+            ) : loadError ? (
+              <div className="vendor-empty-CLP">
+                <p>{loadError}</p>
+              </div>
+            ) : currentVendors.length > 0 ? (
               <div className="vendor-grid-CLP">
                 {currentVendors.map((vendor) => (
-                  <VendorCard key={vendor.id} vendor={vendor} />
+                  <VendorCard key={vendor.id} vendor={vendor} eventId={searchParams.get("eventId")} />
                 ))}
               </div>
             ) : (

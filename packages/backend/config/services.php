@@ -17,9 +17,16 @@ return [
     'client_id'     => env('GOOGLE_CLIENT_ID'),
     'client_secret' => env('GOOGLE_CLIENT_SECRET'),
     'redirect'      => env('GOOGLE_REDIRECT_URI'),
-],
+    ],
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
+    ],
+
+    'openrouter' => [
+    'key'             => env('OPENROUTER_API_KEY'),
+    'chat_model'      => env('OPENROUTER_MODEL'),
+    'embedding_model' => env('OPENROUTER_EMBEDDING_MODEL', 'nvidia/llama-nemotron-embed-vl-1b-v2:free'),
+    'base_url'        => 'https://openrouter.ai/api/v1',
     ],
 
     'resend' => [

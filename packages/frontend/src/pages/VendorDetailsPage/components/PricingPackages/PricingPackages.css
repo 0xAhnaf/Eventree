@@ -28,7 +28,7 @@
   background: white;
 }
 
-.package-card.premium {
+.package-card.selected {
   border: 2px solid #0b3d2e;
 }
 
