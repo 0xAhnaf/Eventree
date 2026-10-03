@@ -18,3 +18,10 @@ Route::prefix('sslcommerz')
         Route::post('cancel', 'cancel')->name('cancel');
         Route::post('ipn', 'ipn')->name('ipn');
     });
+
+
+// Serve the React application for all non-API routes.
+// React Router handles the frontend routes in the browser.
+Route::get('/{any?}', function () {
+    return response()->file(public_path('app/index.html'));
+})->where('any', '(?!api/|sslcommerz/|up$).*');
