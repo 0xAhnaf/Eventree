@@ -27,6 +27,18 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\VendorReviewController;
 use App\Http\Controllers\RagAgentController;
 use App\Http\Controllers\NotificationController;
+use Illuminate\Support\Facades\File;
+
+Route::get('/health', function () {
+    $versionFile = public_path('deploy-version.txt');
+
+    return response()->json([
+        'status' => 'ok',
+        'commit' => File::exists($versionFile)
+            ? trim(File::get($versionFile))
+            : null,
+    ]);
+});
 
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
