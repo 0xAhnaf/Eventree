@@ -1,0 +1,99 @@
+name: Deploy Eventree
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  DEPLOY_USER: s20230204038
+  DEPLOY_HOST: 187.52.122.100
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: mbstring, bcmath, ctype, fileinfo, gd, intl, pdo, pdo_mysql, zip
+          tools: composer:v2
+
+      - name: Install Composer dependencies
+        working-directory: packages/backend
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: packages/frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: packages/frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: packages/frontend
+        run: npm run build
+
+      - name: Verify frontend build
+        run: test -f packages/backend/public/app/index.html
+
+      - name: Create release archive
+        run: |
+          tar \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.env' \
+            -czf release.tar.gz \
+            packages/backend
+
+      - name: Prepare SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/cse3100_deploy
+          chmod 600 ~/.ssh/cse3100_deploy
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload release
+        run: |
+          scp \
+            -i ~/.ssh/cse3100_deploy \
+            -o IdentitiesOnly=yes \
+            release.tar.gz \
+            "$DEPLOY_USER@$DEPLOY_HOST:~/release.tar.gz"
+
+      - name: Deploy release
+        run: |
+          ssh \
+            -i ~/.ssh/cse3100_deploy \
+            -o IdentitiesOnly=yes \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            'bash -s' <<'REMOTE'
+          set -e
+
+          cd ~/laravel
+
+          tar -xzf ~/release.tar.gz \
+            --strip-components=2 \
+            -C ~/laravel
+
+          mkdir -p storage bootstrap/cache
+
+          chmod -R u+rwX storage bootstrap/cache
+
+          php artisan migrate --force
+          php artisan optimize
+
+          rm ~/release.tar.gz
+          REMOTE
