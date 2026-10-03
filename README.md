@@ -2,6 +2,8 @@
 
 **A one-stop event planning marketplace that connects customers with event service vendors.**
 
+🌐 **Live Demo:** http://eventree.austattendance.online
+
 Customers plan events, discover vendors (venues, caterers, decorators, photographers, planners, entertainers), chat with them, and send booking requests. Vendors onboard, pay a one-time registration fee, get approved by an admin, and then manage their profile, packages, availability, and incoming bookings. Admins oversee the whole platform. An AI assistant answers questions about the platform and live vendor data.
 
 > Built as a **CSE 3100** course project. Prices are in Bangladeshi Taka (BDT, ৳).
@@ -537,7 +539,7 @@ Pushes to **`main`** (or a manual `workflow_dispatch`) trigger `.github/workflow
 6. Load the deploy key from the `SSH_PRIVATE_KEY` secret, then `scp` the archive to the VPS
 7. Over SSH: unpack into `~/laravel`, fix permissions on `storage/` and `bootstrap/cache/`, run `php artisan migrate --force` and `php artisan optimize`, and delete the archive
 
-Server-side conventions (from the course guideline in `docs/`):
+Server-side conventions:
 - nginx serves static files from `public/` and hands everything else to PHP-FPM; Laravel answers `/api/*` and falls back to the React `index.html`.
 - Nothing is installed or built on the server, and no Node process or open port is needed for the UI.
 - The production `.env` is created **once, by hand, on the server** and is never touched by the pipeline. After editing it, run `php artisan optimize`.
