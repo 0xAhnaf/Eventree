@@ -16,18 +16,18 @@ class VendorKnowledgeService
         ]);
 
         // Filter by minimum rating.
-       if (isset($filters['min_rating'])) {
-    $minRating = (float) $filters['min_rating'];
+        if (isset($filters['min_rating'])) {
+            $minRating = (float) $filters['min_rating'];
 
-    $query->whereHas('ratings')
-        ->withAvg('ratings', 'rating')
-        ->whereRaw(
-            '(SELECT AVG(vr.rating)
-              FROM vendor_ratings vr
-              WHERE vr.vendor_profile_id = vendor_profiles.id) >= ?',
-            [$minRating]
-        );
-}
+            $query->whereHas('ratings')
+                ->withAvg('ratings', 'rating')
+                ->whereRaw(
+                    '(SELECT AVG(vr.rating)
+                      FROM vendor_ratings vr
+                      WHERE vr.vendor_profile_id = vendor_profiles.id) >= ?',
+                    [$minRating]
+                );
+        }
 
         // Filter by category.
         if (!empty($filters['category'])) {
@@ -67,7 +67,8 @@ class VendorKnowledgeService
             );
         }
 
-        $vendors = $query->get();
+        // Limit results to preventing context payload bloat in LLM
+        $vendors = $query->limit(10)->get();
 
         return $vendors->map(function ($vendor) {
             $ratings = $vendor->ratings;
