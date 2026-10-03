@@ -36,7 +36,7 @@ function ProblemsSection() {
           <p className="problems-subtitle">The Challenge</p>
 
           <h2 className="problems-title">
-            Event Planning Should Not Feel Complicated
+            Event Planning Should Not Feel Hard
           </h2>
 
           <p className="problems-header-desc">
