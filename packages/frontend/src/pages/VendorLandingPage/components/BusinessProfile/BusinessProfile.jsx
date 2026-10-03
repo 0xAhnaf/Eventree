@@ -14,7 +14,7 @@ import PublicPreviewCard from "./components/PublicPreviewCard.jsx";
 import { getAmenitySuggestions } from "./utils/amenitySuggestions.js";
 import "./BusinessProfile.css";
 
-const API_BASE = "http://127.0.0.1:8000/api";
+const API_BASE = "/api";
 
 const createEmptyProfile = () => ({
   businessName: "",

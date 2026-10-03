@@ -144,7 +144,7 @@ function VendorOnboarding() {
 
   useEffect(() => {
     let isMounted = true;
-    fetch("http://127.0.0.1:8000/api/vendor-categories")
+    fetch("/api/vendor-categories")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load categories.");
         return res.json();
@@ -246,7 +246,7 @@ function VendorOnboarding() {
         formData.append("portfolio_images[]", file);
       });
 
-      const response = await fetch("http://127.0.0.1:8000/api/vendor-profile", {
+      const response = await fetch("/api/vendor-profile", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -282,7 +282,7 @@ function VendorOnboarding() {
         if (validAmenities.length || validPackages.length) {
           try {
             const detailsResponse = await fetch(
-              "http://127.0.0.1:8000/api/vendor-details",
+              "/api/vendor-details",
               {
                 method: "POST",
                 headers: {

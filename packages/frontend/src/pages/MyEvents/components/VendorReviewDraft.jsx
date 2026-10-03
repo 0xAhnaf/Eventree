@@ -18,7 +18,7 @@ export default function VendorReviewDraft({ booking }) {
 
       // Submit rating
       const ratingResponse = await fetch(
-        `http://localhost:8000/api/vendors/${booking.vendor_id}/rating`,
+        `/api/vendors/${booking.vendor_id}/rating`,
         {
           method: "POST",
           headers: {
@@ -38,7 +38,7 @@ export default function VendorReviewDraft({ booking }) {
 
       // Submit review
       const reviewResponse = await fetch(
-        `http://localhost:8000/api/vendors/${booking.vendor_id}/reviews`,
+        `/api/vendors/${booking.vendor_id}/reviews`,
         {
           method: "POST",
           headers: {

@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (identifier, password) => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login", {
+      const response = await fetch("/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (formData, role) => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/register", {
+      const response = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }) => {
   const loginWithGoogle = async (googleAccessToken, role) => {
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/auth/google/callback",
+        "/api/auth/google/callback",
         {
           method: "POST",
           headers: {
@@ -176,7 +176,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       if (token) {
-        await fetch("http://127.0.0.1:8000/api/logout", {
+        await fetch("/api/logout", {
           method: "POST",
           headers: {
             Accept: "application/json",

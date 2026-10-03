@@ -6,7 +6,7 @@ const getToken = () => localStorage.getItem("eventree_token");
 
 const canUseChat = (user) => ["customer", "vendor"].includes(user?.role);
 
-const API_URL = "http://127.0.0.1:8000/api/agent/chat";
+const API_URL = "/api/agent/chat";
 
 const ChatIcon = () => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">

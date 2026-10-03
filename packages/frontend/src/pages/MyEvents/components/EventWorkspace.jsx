@@ -12,7 +12,7 @@ export default function EventWorkspace({ event, busy, onBack, onEdit, onDelete, 
       const token = localStorage.getItem("eventree_token");
 
       const response = await fetch(
-        `http://localhost:8000/api/events/${event.id}/invoice/download`,
+        `/api/events/${event.id}/invoice/download`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -36,7 +36,7 @@ const ProfilePage = () => {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/customer-profile", {
+      const res = await fetch("/api/customer-profile", {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -75,7 +75,7 @@ const ProfilePage = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/customer-profile", {
+      const res = await fetch("/api/customer-profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
